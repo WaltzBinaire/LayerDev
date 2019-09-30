@@ -1,5 +1,4 @@
 #pragma once
-#include "layer_base.h"
 #include "layer_filter_shader.h"
 
 class Layer_filter_chromatic_aberation : public Layer_filter_shader
@@ -13,7 +12,7 @@ protected:
 
     virtual void onSetupParams() override;
 
-    virtual void setupShader();
+    virtual void setupShader() override;
     virtual void setUniforms(const ofTexture & _baseTex) const override;
     
     ofParameter<float> p_angle;

@@ -14,7 +14,8 @@ Layer_base::~Layer_base()
 }
 
 void Layer_base::setup(int  _width, int _height) {
-    setupFbo(_width, _height);
+    size = glm::vec2(_width, _height);
+    setupFbo(size.x, size.y);
 
     onSetup();
 
@@ -72,7 +73,8 @@ void Layer_base::setupFbo(int w, int h)
 
 void Layer_base::resize(int _height, int _width)
 {
-    setupFbo(_height,  _width);
+    size = glm::vec2(_width, _height);
+    setupFbo(size.x, size.y);
     onResize();
     redraw();
 }
@@ -94,11 +96,11 @@ void Layer_base::onResetInternal(bool & b_reset) {
 bool Static_base::draw() const
 {
     if (p_disable) {
-        ofLogVerbose(this->get_display_name()) << "Disabled...";
+        //ofLogVerbose(this->get_display_name()) << "Disabled...";
         return needsRedraw();
     }
     else if (needsRedraw()) {
-        ofLogVerbose(this->get_display_name()) << "Redrawing...";
+        //ofLogVerbose(this->get_display_name()) << "Redrawing...";
         fbo.begin();
         ofClear(0);
         onDraw();
@@ -108,7 +110,7 @@ bool Static_base::draw() const
         return true;
     }
     else {    
-        ofLogVerbose(this->get_display_name()) << "Not Redrawing...";    
+        //ofLogVerbose(this->get_display_name()) << "Not Redrawing...";    
         fbo.draw(0, 0);
         return false;
 

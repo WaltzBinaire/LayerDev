@@ -42,10 +42,15 @@ void Layer_collage_manual::onFileDragEvent(ofDragInfo & _fileInfo)
 //--------------------------------------------------------------
 void Layer_collage_manual::onMouseMoved(ofMouseEventArgs & _args)
 {
-    float angle = glm::angle(
-        glm::vec2(ofGetMouseX(), ofGetMouseY()),
-        active_image->center
-    );
+    //float angle = glm::angle(
+    //    glm::vec2(ofGetMouseX(), ofGetMouseY()),
+    //    active_image->center
+    //);
+
+    if (mode == Mode::EDITING) {
+        active_image->center = glm::vec2(_args.x, _args.y);
+
+    }
 }
 
 //--------------------------------------------------------------
@@ -64,16 +69,16 @@ void Layer_collage_manual::onMouseScrolled(ofMouseEventArgs & _args)
 //--------------------------------------------------------------
 void Layer_collage_manual::onModeViewing()
 {
-    ofRemoveListener(ofEvents().mouseMoved   , this, &Layer_collage_manual::onMouseMoved);
-    ofRemoveListener(ofEvents().mousePressed , this, &Layer_collage_manual::onMousePressed);
-    ofRemoveListener(ofEvents().mouseScrolled, this, &Layer_collage_manual::onMouseScrolled);
+    ofRemoveListener(layer_manager->canvasMouseMoved   , this, &Layer_collage_manual::onMouseMoved);
+    ofRemoveListener(layer_manager->canvasMousePressed , this, &Layer_collage_manual::onMousePressed);
+    ofRemoveListener(layer_manager->canvasMouseScrolled, this, &Layer_collage_manual::onMouseScrolled);
 
 }
 
 //--------------------------------------------------------------
 void Layer_collage_manual::onModeEditing()
 {
-    ofAddListener(ofEvents().mouseMoved   , this, &Layer_collage_manual::onMouseMoved);
-    ofAddListener(ofEvents().mousePressed , this, &Layer_collage_manual::onMousePressed);
-    ofAddListener(ofEvents().mouseScrolled, this, &Layer_collage_manual::onMouseScrolled);
+    ofAddListener(layer_manager->canvasMouseMoved   , this, &Layer_collage_manual::onMouseMoved);
+    ofAddListener(layer_manager->canvasMousePressed , this, &Layer_collage_manual::onMousePressed);
+    ofAddListener(layer_manager->canvasMouseScrolled, this, &Layer_collage_manual::onMouseScrolled);
 }

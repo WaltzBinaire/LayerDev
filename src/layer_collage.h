@@ -22,7 +22,7 @@ class Layer_collage : public Static_base
 {
 public:
 
-    Layer_collage(string _name, Layer_Manager * _layer_manager)  : Static_base(name, _layer_manager) {};
+    Layer_collage(string _name, Layer_Manager * _layer_manager)  : Static_base(_name, _layer_manager) {};
 
      void onAlphaRangeChanged(glm::vec2 & _val);
 
@@ -46,8 +46,6 @@ protected:
 
     virtual void onModeViewing() {};
     virtual void onModeEditing() {};
-
-
 
     bool extensionValid(const ofFile _file);
     static const vector<string> allowed_extensions;

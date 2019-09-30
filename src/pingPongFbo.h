@@ -20,6 +20,10 @@ public:
         allocate(settings);
     }
         
+    bool isAllocated() const {
+        return fbos[0].isAllocated() && fbos[1].isAllocated();
+    }
+
     void allocate(ofFboSettings _settings){
         fbos[0].allocate(_settings);
         fbos[1].allocate(_settings);
@@ -35,7 +39,7 @@ public:
         
     ofTexture& getTexture() { return fbos[flag].getTexture(); }
     ofTexture& getBackTexture() { return fbos[!flag].getTexture(); }
-        
+
     void bind() { fbos[flag].bind(); }
     void unbind() { fbos[flag].unbind(); }
     void begin() { fbos[flag].begin(); }

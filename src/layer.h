@@ -2,9 +2,9 @@
 #include "layer_base.h"
 
 // Static Layers
-//#include "layer_collage.h"
-//#include "layer_collage_generative.h"
-//#include "layer_collage_manual.h"
+#include "layer_collage.h"
+#include "layer_collage_generative.h"
+#include "layer_collage_manual.h"
 
 #include "layer_file.h"
 #include "layer_file_image.h"

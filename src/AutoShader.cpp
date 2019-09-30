@@ -198,7 +198,7 @@ void main() {\n\
     string version_vert_header = vertexSrc.substr(0, vertexSrc.find("\n", 0)) + "\n";
     string version_frag_header = fragmentSrc.substr(0, fragmentSrc.find("\n", 0)) + "\n";
 
-    vertexSrc = vertexSrc.substr(vertexSrc.find("\n", 0), vertexSrc.size());
+    vertexSrc   = vertexSrc.substr(vertexSrc.find("\n", 0), vertexSrc.size());
     fragmentSrc = fragmentSrc.substr(fragmentSrc.find("\n", 0), fragmentSrc.size());
             
     if ( vertexSrc.size() > 0 ) {

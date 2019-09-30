@@ -68,6 +68,7 @@ protected:
 
     ofEventListener l_paramsChanged;
 
+    glm::vec2 size;
     mutable ofFbo fbo;
 
 private:

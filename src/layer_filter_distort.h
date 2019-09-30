@@ -31,7 +31,7 @@ protected:
     void onMouseDragged(ofMouseEventArgs & _args);
     void onMouseReleased(ofMouseEventArgs & _args);
 
-    virtual void setupShader();
+    virtual void setupShader() override;
     virtual void setUniforms(const ofTexture & _baseTex) const override;
 
     void setupBrushFbo();

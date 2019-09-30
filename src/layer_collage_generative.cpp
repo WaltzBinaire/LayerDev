@@ -5,6 +5,8 @@ REGISTER_TYPE(Layer_collage_generative)
 
 void Layer_collage_generative::onSetupParams()
 {
+    Layer_collage::onSetupParams();
+
     p_loadFolder.set("Load", false);
     p_loadFolder.addListener(this, &Layer_collage_generative::onLoadFolder);
 
@@ -12,14 +14,14 @@ void Layer_collage_generative::onSetupParams()
     p_generate.addListener(this, &Layer_collage_generative::onGenerate);
 
     p_number.set("Number", 10, 1, 100);
-    p_alphaRange.set("Alpha", glm::vec2(0.5, 0.55), glm::vec2(0.0), glm::vec2(1.0));
-    p_alphaRange.addListener(static_cast<Layer_collage*>(this), &Layer_collage::onAlphaRangeChanged);
-    
+
+    p_mode.set("Mode", (int)MODE::RANDOM, (int)MODE::RANDOM, (int)MODE::LINES);
+
     params.add(
         p_loadFolder,
         p_generate,
-        p_number,
-        p_alphaRange
+        p_mode,
+        p_number
     );
 }
 
@@ -93,14 +95,52 @@ void Layer_collage_generative::onGenerate(bool & _generate)
 
     std::random_shuffle(image_paths.begin(), image_paths.end());
 
+    switch ((MODE)p_mode.get())
+    {
+    case MODE::LINES:
+        generate_lines();
+        break;
+    case MODE::RANDOM:
+    default:
+        generate_random();
+        break;
+    }
+
+    redraw();
+
+}
+
+void Layer_collage_generative::generate_random()
+{
+    int w  = floor(size.x / p_number);
+    int h  = size.y;
+
     for (int i = 0; i < p_number; i++) {
         int index = i % image_paths.size();
         ofImage newImage(image_paths[index]);
 
-        glm::vec2 pos = glm::vec2(ofRandom(0.0, ofGetWidth()), ofRandom(0.0, ofGetHeight()));
+        float scale = size.x / newImage.getHeight();
+        newImage.resize(  scale * newImage.getWidth(), scale * newImage.getHeight());
+
+        int x        = floor(ofRandom(0.0, newImage.getWidth() - w));
+        int y  = 0.0;
+
+        newImage.crop(x, y, w, h);
+
+        glm::vec2 pos((i + 0.5) * w, h * 0.5);
 
         images.push_back( CollageImage(newImage, pos) );
     }
-    redraw();
+}
 
+void Layer_collage_generative::generate_lines()
+{
+    for (int i = 0; i < p_number; i++) {
+        int index = i % image_paths.size();
+        ofImage newImage(image_paths[index]);
+
+        glm::vec2 pos = glm::vec2(ofRandom(0.0, size.x), ofRandom(0.0, size.y));
+
+        images.push_back( CollageImage(newImage, pos) );
+    }
 }
