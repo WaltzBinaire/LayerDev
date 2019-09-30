@@ -71,7 +71,7 @@ void Layer_base::setupFbo(int w, int h)
     clearFbo();
 }
 
-void Layer_base::resize(int _height, int _width)
+void Layer_base::resize(int _width, int _height )
 {
     size = glm::vec2(_width, _height);
     setupFbo(size.x, size.y);

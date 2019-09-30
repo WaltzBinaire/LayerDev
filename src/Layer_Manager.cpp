@@ -285,7 +285,7 @@ void Layer_Manager::saveAs() const
         else {
             savePath = ofFilePath::join(dir, baseName + ".png");
         }
-        _save();
+        internalSave();
     }
 }
 
@@ -295,12 +295,12 @@ void Layer_Manager::save() const
         saveAs();
     }
     else {
-        _save();
+        internalSave();
     }
     
 }
 
-void Layer_Manager::_save() const
+void Layer_Manager::internalSave() const
 {
     ofPixels pixels;
     fbo.getTexture().readToPixels(pixels);

@@ -39,7 +39,7 @@ public:
     void setRedraw(bool _redraw)   const { b_redraw = _redraw; }
     bool needsRedraw() const { return b_redraw; }
 
-    void resize(int height, int width);
+    void resize( int width, int height);
 
     const string& get_name() const { return name; }
     virtual const string get_display_name() const { return get_name(); }

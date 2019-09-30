@@ -55,7 +55,7 @@ private:
     void quadSetup();
     void setQuad(const ofTexture & _baseTex) const;   
     
-    void _save() const;
+    void internalSave() const;
 
     void onWindowResized(ofResizeEventArgs & _args);
 
