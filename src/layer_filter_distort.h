@@ -30,6 +30,7 @@ protected:
     void onMousePressed(ofMouseEventArgs & _args);
     void onMouseDragged(ofMouseEventArgs & _args);
     void onMouseReleased(ofMouseEventArgs & _args);
+    void onMouseScrolled(ofMouseEventArgs & _args);
 
     virtual void setupShader() override;
     virtual void setUniforms(const ofTexture & _baseTex) const override;

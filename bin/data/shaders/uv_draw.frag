@@ -9,6 +9,8 @@ uniform float u_blur;
 uniform float u_size;
 uniform int   u_shape;
 uniform int   u_drawing;
+uniform int   u_initialized;
+
 
 in vec2 texCoordVarying;
 
@@ -78,8 +80,14 @@ void main()
     vec2 _uv     = vec2( texCoordVarying.x, texCoordVarying.y);
     vec2 pos     = _uv - vec2(u_pos.x, u_pos.y);
             
-    vec2  base_uv = texture( u_imageTex, _uv).rg;
-    float base_a  = texture( u_imageTex, _uv).a;
+
+    vec2  base_uv = _uv;
+    float base_a  = 1.0;            
+
+    if(u_initialized == 1){
+        base_uv = texture( u_imageTex, _uv).rg;
+        base_a  = texture( u_imageTex, _uv).a;      
+    }    
 
     vec2 srt_uv = vec2(u_srtPos.x, u_srtPos.y) - vec2(u_pos.x, u_pos.y) + _uv;
     
@@ -106,7 +114,7 @@ void main()
         //outputColor = vec4(base_uv.x, base_uv.y, 0.0, 1.0);
         //outputColor = vec4(d_pos, d_pos, d_pos, 1.0);
     } else{
-        outputColor = vec4(_uv.x, _uv.y, 0.0, 1.0);
+        outputColor = vec4(base_uv.x, base_uv.y, 0.0, base_a);
     }
     
 }  

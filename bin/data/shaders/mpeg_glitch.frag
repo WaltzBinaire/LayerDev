@@ -13,14 +13,14 @@ out vec4 outputColor;
 
 void main()
 {
-    float time = u_time / 1000;
+    float time = u_time / 100;
 
 	vec2 uv = texCoordVarying.xy;
 	vec2 block = floor(uv * vec2(u_blockSize)) /  vec2(u_blockSize);
 	vec2 uv_noise = block;
 
-	//uv_noise += mod(time * vec2(0.001234, 0.004657), 10.0) / 10;
-	uv_noise += time * vec2(0.001234, 0.004657);
+	uv_noise += mod(time * vec2(0.001234, 0.004657), 10.0) / 10;
+	//uv_noise += time * vec2(0.001234, 0.004657);
 	
 	float block_thresh = pow(fract(time * 0.01236), 2.0) * 0.2;
 	float line_thresh  = pow(fract(time * 0.02236), 3.0) * 0.7;

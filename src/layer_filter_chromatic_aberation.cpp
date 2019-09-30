@@ -22,6 +22,7 @@ void Layer_filter_chromatic_aberation::setupShader()
 void Layer_filter_chromatic_aberation::setUniforms(const ofTexture & _baseTex) const
 {
     shader->setUniformTexture("u_imageTex", _baseTex, 0);
-    shader->setUniform2f("u_amount", p_amount.get() * glm::vec2( 1.0, _baseTex.getWidth()/ _baseTex.getHeight() ));
+    shader->setUniform2f("u_resolution", _baseTex.getWidth(), _baseTex.getHeight());
+    shader->setUniform1f("u_amount", p_amount);
     shader->setUniform1f("u_angle", p_angle);
 }
