@@ -1,4 +1,6 @@
 #include "layer_filter_alpha_replace.h"
+#include "LayerUtils.h"
+
 
 void Layer_filter_alpha_replace::onSetupParams()
 {    
@@ -29,7 +31,9 @@ void Layer_filter_alpha_replace::setUniforms(const ofTexture & _baseTex) const
 {
     shader->setUniformTexture("u_imageTex"      , _baseTex          , 0);
     shader->setUniformTexture("u_alphaTex"      , getAlphaTexture() , 1);
-    shader->setUniformTexture("u_replacementTex", replacementTexture, 2);
+
+    if(replacementTexture.isAllocated())
+        shader->setUniformTexture("u_replacementTex", replacementTexture, 2);
 }
 
 
@@ -73,25 +77,7 @@ void Layer_filter_alpha_replace::onFileDragEvent(ofDragInfo & _fileInfo)
 void Layer_filter_alpha_replace::onLoadFile(bool & _loadFile)
 {
     if (_loadFile) {
-        auto result = ofSystemLoadDialog();
-
-        if (result.bSuccess) {
-            ofFile file(result.getPath());
-
-            if (!file.exists()) {
-                ofLogWarning(name) << "Cannot load: " << file.path();
-                return;
-            }
-
-            const vector<string> & allowed_exts = get_allowed_exts();
-
-            if (std::find(allowed_exts.begin(), allowed_exts.end(), file.getExtension()) == allowed_exts.end()) {
-                ofLogWarning(name) << "Cannot load: " << file.path() << "\nWrong type";
-                return;
-            }
-            ofLogVerbose(name) << "Handling " << file.path();
-            handle_file(file.path());
-        }
+        LayerUtils::loadFileDialogue(get_allowed_exts(), this, &Layer_filter_alpha_replace::handle_file);
     }
     _loadFile = false;
 }
@@ -102,4 +88,5 @@ void Layer_filter_alpha_replace::handle_file(const string & _path)
     img.setUseTexture(false);
     img.load(_path);
     replacementTexture.loadData(img);
+    replacementTexture.setTextureWrap(GL_REPEAT, GL_REPEAT );  
 }

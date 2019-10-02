@@ -6,6 +6,7 @@
 *.jpg
 *.json
 *.hray
+*.dat
 
 #########################
 # general patterns

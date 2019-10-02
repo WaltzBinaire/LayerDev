@@ -4,6 +4,8 @@
 class Layer_filter_alpha_replace : public Layer_filter_shader {
 public:
     Layer_filter_alpha_replace(string name, Layer_Manager * _layer_manager) : Layer_filter_shader(name, _layer_manager) {};
+    
+    void handle_file(const string & _path);
 
 protected:
 
@@ -16,7 +18,6 @@ protected:
     const static vector<string> get_allowed_exts();
     void onFileDragEvent(ofDragInfo & _fileInfo);
     void onLoadFile(bool & _loadFile);
-    void handle_file(const string & _path);
 
     virtual void setupShader() override;
     virtual void setUniforms(const ofTexture & _baseTex) const override;

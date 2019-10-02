@@ -9,31 +9,37 @@ class Layer_factory;
 class Layer_base
 {
 public:
-    Layer_base(string _name, Layer_Manager * _layer_manager );
+    Layer_base(string _name, Layer_Manager * _layer_manager);
     virtual ~Layer_base();
 
     void setup(int _height, int width);
     void drawGui();
 
-    static void registerType( const string& name, Layer_factory *factory);
+    static void registerType(const string& name, Layer_factory *factory);
     static Layer_base *create(const string &name, Layer_Manager * _layer_manager);
     static vector<string> get_layer_names();
 
-    void update()      { onUpdate(); };
+    void update() { onUpdate(); };
     void reset() { clearFbo(); onReset(); redraw(); };
-    
-    void activate()   {
+
+    void activate() {
         if (!b_active) {
-            b_active = true; 
-            onActivate(); 
+            b_active = true;
+            onActivate();
         }
     };
     void deactivate() {
         if (b_active) {
             b_active = false;
-            onDeactivate(); 
+            onDeactivate();
         }
     };
+
+    void destroy(){
+        deactivate();
+        onDestroy();
+    }
+
 
     void redraw() const { setRedraw(true); }
     void setRedraw(bool _redraw)   const { b_redraw = _redraw; }

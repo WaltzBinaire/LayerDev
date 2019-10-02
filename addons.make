@@ -1,2 +1,5 @@
 ofxCollageViewer
+ofxCv
+ofxFaceTracker2
 ofxImGui
+ofxOpenCv

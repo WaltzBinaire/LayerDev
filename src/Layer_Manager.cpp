@@ -123,7 +123,7 @@ void Layer_Manager::delete_layer(Layer_base* _layer)
         layers.erase(layer_itr);
 
         if (active_layer == _layer) active_layer = nullptr;
-        _layer->deactivate();
+        _layer->destroy();
         delete _layer;
     }
 }
