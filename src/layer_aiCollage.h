@@ -20,6 +20,5 @@ protected:
 
 private:
     static vector<string> allowed_exts;
-
     Collage m_collage;
 };

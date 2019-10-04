@@ -22,6 +22,7 @@ void Layer_base::setup(int  _width, int _height) {
     p_reset.addListener(this, &Layer_base::onResetInternal);
     p_reset.set("Reset", false);
     p_disable.set("Disable", false);
+    p_debugRedraw.set("Redraw", false);
     params.add(
         p_reset,
         p_disable

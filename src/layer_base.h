@@ -71,8 +71,10 @@ protected:
 
     ofParameter<bool> p_reset;
     ofParameter<bool> p_disable;
+    ofParameter<bool> p_debugRedraw;
 
     ofEventListener l_paramsChanged;
+    ofEventListener l_debugRedraw;
 
     glm::vec2 size;
     mutable ofFbo fbo;
