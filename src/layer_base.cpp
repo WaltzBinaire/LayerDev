@@ -94,7 +94,7 @@ void Layer_base::onResetInternal(bool & b_reset) {
     }
 }
 
-bool Static_base::draw() const
+bool Static_base::draw(pingPongFbo mainFbo) const
 {
     if (p_disable) {
         //ofLogVerbose(this->get_display_name()) << "Disabled...";
@@ -106,36 +106,47 @@ bool Static_base::draw() const
         ofClear(0);
         onDraw();
         fbo.end();
-        drawTexture(fbo.getTexture());
+
+        mainFbo.begin();
+        fbo.draw(0, 0);
+        mainFbo.end();
         setRedraw(false);
         return true;
     }
     else {    
-        //ofLogVerbose(this->get_display_name()) << "Not Redrawing...";    
+        //ofLogVerbose(this->get_display_name()) << "Not Redrawing...";           
+        mainFbo.begin();
         fbo.draw(0, 0);
+        mainFbo.end();
         return false;
 
 
     }
 }
 
-bool Filter_base::draw(const ofTexture & _baseTex, bool _forceRedraw) const
+bool Filter_base::draw(pingPongFbo & mainFbo, bool _forceRedraw) const
 {
     if (p_disable ) {
-        clearFbo();
-        _baseTex.draw(0,0);
         return needsRedraw();
     } else if (needsRedraw() || _forceRedraw) {
+        mainFbo.swap();
+
         fbo.begin();
         ofClear(0);
-        onDraw(_baseTex);
+        onDraw(mainFbo.getBackTexture());
         fbo.end();
+
         setRedraw(false);
-        drawTexture(fbo.getTexture());
+        
+        mainFbo.begin();
+        fbo.draw(0, 0);
+        mainfFbo.end();
         return true;
     }
     else {
+        mainFbo.begin();
         fbo.draw(0, 0);
+        mainFbo.end();
         return false;
     }
 }

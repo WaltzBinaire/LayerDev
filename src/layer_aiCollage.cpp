@@ -19,7 +19,6 @@ void Layer_file_aiCollage::onDraw() const
 {
     if (m_collage.isLoaded()) {
         glm::vec2 size = scale * glm::vec2(m_collage.getWidth(), m_collage.getHeight());
-        m_collage.render(true);
         m_collage.draw(position - size * 0.5, size.x, size.y);
             
     }

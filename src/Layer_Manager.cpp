@@ -154,29 +154,24 @@ void Layer_Manager::move_layer(Layer_base* _layer, DIRECTION _dir)
 
 void Layer_Manager::draw() const
 {
-
     clearFbo();
 
-    fbo.begin();
     ofBackground(backgroundColour);
     bool forceRedraw = false;
     for (auto & layer : layers) {
         
         Static_base * s_layer = dynamic_cast<Static_base *>(layer);
         if (s_layer) {
-            forceRedraw |= s_layer->draw();
+            forceRedraw |= s_layer->draw(fbo);
         }
         else {
             Filter_base * f_layer = dynamic_cast<Filter_base *>(layer);
             if (f_layer) {
-                fbo.end();
-                fbo.swap();
-                fbo.begin();
-                forceRedraw |= f_layer->draw(fbo.getBackTexture(), forceRedraw);
+
+                forceRedraw |= f_layer->draw(fbo, forceRedraw);
             }
         }
     }
-    fbo.end();
 
     fbo.draw(0,0);
 }
@@ -293,7 +288,7 @@ void Layer_Manager::save() const
 {
     if (savePath == "") {
         saveAs();
-    }
+    } 
     else {
         internalSave();
     }

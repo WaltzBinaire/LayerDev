@@ -15,7 +15,7 @@ namespace Shader_lib
 
         return shader;
     }
-    static shared_ptr<AutoShader> get_passthrough_shader()  { return get_shader("shaders/vertVFlip.vert", "shaders/frag.frag"                 ); };
+    static shared_ptr<AutoShader> get_passthrough_shader()  { return get_shader("shaders/vert.vert"     , "shaders/frag.frag"                 ); };
     static shared_ptr<AutoShader> get_collage_shader()      { return get_shader("shaders/vert.vert"     , "shaders/collage.frag"              ); };
     static shared_ptr<AutoShader> get_chromatic_shader()    { return get_shader("shaders/vert.vert"     , "shaders/chromatic_aberation.frag"  ); };
     static shared_ptr<AutoShader> get_mpeg_glitch_shader()  { return get_shader("shaders/vert.vert"     , "shaders/mpeg_glitch.frag"          ); };

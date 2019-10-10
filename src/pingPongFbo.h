@@ -40,13 +40,13 @@ public:
     ofTexture& getTexture() { return fbos[flag].getTexture(); }
     ofTexture& getBackTexture() { return fbos[!flag].getTexture(); }
 
-    void bind() { fbos[flag].bind(); }
+    void bind()   { fbos[flag].bind();   }
     void unbind() { fbos[flag].unbind(); }
-    void begin() { fbos[flag].begin(); }
-    void end() { fbos[flag].end(); }
+    void begin()  { fbos[flag].begin();  }
+    void end()    { fbos[flag].end();    }
 
-    void clear() { clear(get()); }
-    void clearBack(){ clear(getBack());}
+    void clear()    { clear(get());         }
+    void clearBack(){ clear(getBack());     }
     void clearAll() { clear(); clearBack(); }
 
     float getWidth() { return fbos[flag].getWidth(); }

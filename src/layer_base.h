@@ -100,7 +100,7 @@ class Static_base : public Layer_base
 {
 public:
     Static_base(string name, Layer_Manager * layer_manager )  : Layer_base(name, layer_manager) {};
-    bool draw() const;
+    bool draw(pingPongFbo & mainFbo) const;
 protected:
     virtual void onDraw() const {};
 };
@@ -109,10 +109,10 @@ class Filter_base  : public Layer_base
 {
 public:
     Filter_base(string name, Layer_Manager * layer_manager) : Layer_base(name, layer_manager) { redraw(); };
-    bool draw(const ofTexture & _baseTex, bool _forceRedraw = false) const;
+    bool draw(pingPongFbo & mainFbo, bool _forceRedraw = false) const;
 
 protected:
-    virtual void onDraw(const ofTexture & _baseTex) const {};
+    virtual void onDraw(const ofTexture _baseTex) const {};
 
 };
 
