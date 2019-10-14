@@ -4,6 +4,7 @@ REGISTER_TYPE(Layer_collage_manual)
 
 void Layer_collage_manual::onActivate()
 {
+    Layer_collage::onActivate();
     ofAddListener(ofEvents().fileDragEvent, this, &Layer_collage_manual::onFileDragEvent);
 }
 
@@ -19,25 +20,25 @@ void Layer_collage_manual::onFileDragEvent(ofDragInfo & _fileInfo)
 
     glm::vec2 pos = _fileInfo.position;
 
-    if (_fileInfo.files.size() > 1) ofLogWarning() << "Can't add multiple images.";
+    //if (_fileInfo.files.size() > 1) ofLogWarning() << "Can't add multiple images.";
 
-    string file_path = _fileInfo.files[0];
+    //string file_path = _fileInfo.files[0];
 
-    ofFile file(file_path);
+    //ofFile file(file_path);
 
-    ofLogVerbose() << "File dragged " << file.getExtension() ;
+    //ofLogVerbose() << "File dragged " << file.getExtension() ;
 
-    if (!file.exists())          return;
-    if (!extensionValid(file) )  return;
+    //if (!file.exists())          return;
+    //if (!extensionValid(file) )  return;
 
 
-    ofImage newImage = ofImage(file.getAbsolutePath());
+    //ofImage newImage = ofImage(file.getAbsolutePath());
 
-    images.push_back( CollageImage(newImage, pos) );
-    active_image = images.end() - 1;
-    setMode(Mode::EDITING);
+    //images.push_back( CollageImage(newImage, pos) );
+    //active_image = images.end() - 1;
+    //setMode(Mode::EDITING);
 
-    ofLogVerbose() << "Added image: " << file.path();
+    //ofLogVerbose() << "Added image: " << file.path();
 }
 //--------------------------------------------------------------
 void Layer_collage_manual::onMouseMoved(ofMouseEventArgs & _args)

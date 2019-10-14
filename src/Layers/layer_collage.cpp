@@ -1,10 +1,16 @@
 #include "Layers\layer_collage.h"
+#include "GUI/SingleLayerGui.h"
 
-const vector<string> Layer_collage::allowed_extensions {
-    "png",
-    "jpg",
-    "gif"
-};
+void Layer_collage::onActivate()
+{    
+    ofAddListener(ofEvents().fileDragEvent, this, &Layer_collage::onFileDragEvent);
+}
+
+void Layer_collage::onDeactivate()
+{
+    ofRemoveListener(ofEvents().fileDragEvent, this, &Layer_collage::onFileDragEvent);
+}
+
 
 //--------------------------------------------------------------
 void Layer_collage::onSetup()
@@ -18,7 +24,14 @@ void Layer_collage::onSetupParams()
 {    
     p_alphaRange.set("Alpha", glm::vec2(0.5, 0.8), glm::vec2(0.0), glm::vec2(1.0));
     p_alphaRange.addListener(this, &Layer_collage::onAlphaRangeChanged);
-    params.add(p_alphaRange);
+
+    p_loadFolder.set("Load", false);
+    p_loadFolder.addListener(this, &Layer_collage::onLoadFolder);
+
+    params.add(
+        p_alphaRange,
+        p_loadFolder
+    );
 }
 
 //--------------------------------------------------------------
@@ -39,12 +52,11 @@ void Layer_collage::onDraw() const
     collageShader->end();
 
     ofPopStyle();
+}
 
-    if (mode == Mode::EDITING) {
-        ofSetColor(ofColor::gray);
-        ofDrawBitmapString("EDITING", glm::vec2(50, 50));
-    }
-
+void Layer_collage::onDrawGui()
+{
+    SingleLayerGui::specialisedDrawGui<Layer_collage>(this); 
 }
 
 //--------------------------------------------------------------
@@ -65,6 +77,7 @@ void Layer_collage::onUpdate()
 void Layer_collage::onReset()
 {
     images.clear();
+    image_paths.clear();
 }
 
 
@@ -92,7 +105,39 @@ void Layer_collage::onAlphaRangeChanged(glm::vec2 & _val)
     redraw();
 }
 
+void Layer_collage::onFileDragEvent(ofDragInfo & _fileInfo)
+{
+    if (_fileInfo.files.size() > 1) ofLogWarning(__FUNCTION__) << "Can't add multiple images.";
+    string file_path = _fileInfo.files[0];
+    populate_images(file_path); // Needs to handle more cases!!
 
+}
+
+void Layer_collage::onLoadFolder(bool & _loadFolder)
+{
+    if (_loadFolder) {
+        LayerUtils::loadFolderDialogue(this, &Layer_collage::populate_images);        
+    }return;
+    _loadFolder = false;
+
+}
+
+void Layer_collage::populate_images(const string & _path)
+{
+    ofDirectory dir(_path);
+    if (!dir.exists()) {
+        return;
+    }
+
+    for (auto ext : LayerUtils::img_exts) dir.allowExt(ext);
+
+    dir.listDir();
+
+    image_paths.clear();
+    for (auto file : dir) {
+        image_paths.push_back(file.path());
+    }
+}
 
 //--------------------------------------------------------------
 void Layer_collage::setupQuad()
@@ -135,10 +180,4 @@ void Layer_collage::setQuad(const CollageImage &colImage) const
     drawQuad.setVertex(1, pos_10);
     drawQuad.setVertex(2, pos_11);
     drawQuad.setVertex(3, pos_01);
-}
-
-//--------------------------------------------------------------
-bool Layer_collage::extensionValid(const ofFile _file)
-{
-    return std::find(allowed_extensions.begin(), allowed_extensions.end(), _file.getExtension()) != allowed_extensions.end();
 }

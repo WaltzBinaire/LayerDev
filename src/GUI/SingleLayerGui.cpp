@@ -40,6 +40,14 @@ void SingleLayerGui::LoadButton(ofParameter<bool> & load)
     };
 }
 
+
+void SingleLayerGui::Button(ofParameter<bool> & load)
+{
+    if (ImGui::Button(load.getName().c_str())) {
+        load.set(true);
+    };
+}
+
 //--------------------------------------------------------------
 void SingleLayerGui::AngleSlider(ofParameter<float>& parameter)
 {

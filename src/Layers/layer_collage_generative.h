@@ -14,22 +14,18 @@ public:
 protected:
     
     virtual void onSetupParams() override ;
-    virtual void onActivate()    override ;
-    virtual void onDeactivate()  override ;
 
-    void onFileDragEvent(ofDragInfo & _fileInfo);
-    void onLoadFolder(bool & _loadFolder);
-    void populate_images(ofDirectory &dir);
     void onGenerate(bool & _generate);
+    virtual void onDrawGui()     override ;
 
     void generate_random();
     void generate_lines();
 
-    ofParameter<bool> p_loadFolder;
+
     ofParameter<bool> p_generate;
     ofParameter<int>  p_number;
     ofParameter<int>  p_mode;
 
-    vector<string> image_paths;
+
 };
 

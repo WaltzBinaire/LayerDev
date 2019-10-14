@@ -16,7 +16,6 @@ const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_name
     {RESOURCE_TYPE::TARGET   , resource_name_c[2] }
 };
 
-
 ProjectResource::~ProjectResource()
 {
     for (ofImage* & img : thumbnail_images) {
@@ -74,16 +73,7 @@ vector<string> ProjectResource::get_allowed_exts()
     case RESOURCE_TYPE::RAW:
     case RESOURCE_TYPE::SEGMENTED:
     case RESOURCE_TYPE::TARGET:
-        return vector<string> {
-            "jpg",
-            "JPG",
-            "jpeg",
-            "JPEG",
-            "png",
-            "PNG",
-            "gif",
-            "GIF"
-        };
+        return LayerUtils::img_exts;
         break;
     default:
         return vector<string> { "" };

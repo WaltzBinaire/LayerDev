@@ -2,6 +2,7 @@
 #include "ofMain.h"
 #include "Layers/layer_base.h"
 #include "Utils/shader_base.h"
+#include "Utils/LayerUtils.h"
 
 
 struct CollageImage {
@@ -24,7 +25,7 @@ public:
 
     Layer_collage(string _name, Layer_Manager * _layer_manager)  : Static_base(_name, _layer_manager) {};
 
-     void onAlphaRangeChanged(glm::vec2 & _val);
+    void onAlphaRangeChanged(glm::vec2 & _val);
 
 protected:
 
@@ -33,11 +34,18 @@ protected:
         EDITING
     };
 
+    virtual void onActivate()    override ;
+    virtual void onDeactivate()  override ;
     virtual void onSetup()       override ;
     virtual void onSetupParams() override ;
     virtual void onDraw()  const override ;
+    virtual void onDrawGui()     override ;
     virtual void onUpdate()      override ;
     virtual void onReset()       override ;    
+
+    void onFileDragEvent(ofDragInfo & _fileInfo);
+    void onLoadFolder(bool & _loadFolder);
+    void populate_images(const string & _path);
 
     void setupQuad();
     void setQuad(const CollageImage &colImage) const;
@@ -47,10 +55,10 @@ protected:
     virtual void onModeViewing() {};
     virtual void onModeEditing() {};
 
-    bool extensionValid(const ofFile _file);
-    static const vector<string> allowed_extensions;
-
     ofParameter<glm::vec2> p_alphaRange;
+    ofParameter<bool>      p_loadFolder;
+
+    vector<string> image_paths;
 
     Mode mode;
     
