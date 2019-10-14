@@ -7,7 +7,7 @@ const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_rel_
     {RESOURCE_TYPE::TARGET   , "Assets/Targets"   }
 };
 
-const char* ProjectResource::resource_name_c[] = {"Raw", "Segmented", "Target"};
+const char* ProjectResource::resource_name_c[] = {"Instagram", "Segmented", "Target"};
 
 const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_names
 {

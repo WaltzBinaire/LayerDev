@@ -1,12 +1,18 @@
 #pragma once
 #include "ofMain.h"
+#include "ProjectManager.h"
 
 namespace LayerUtils {
 
     template <class Caller>
     bool loadFileDialogue(const vector<string> & allowed_exts, Caller * caller, void (Caller::*_handle_file)(const string&))
     {
-        auto result = ofSystemLoadDialog();
+        ProjectManager & projectManager = ProjectManager::getInstance();
+        
+        string defaultPath = "";
+        if (projectManager.isLoaded()) defaultPath = projectManager.getPath();
+
+        auto result = ofSystemLoadDialog("Load File", false, defaultPath );
 
         if (result.bSuccess) {
             ofFile file(result.getPath());
@@ -29,7 +35,13 @@ namespace LayerUtils {
     template <class Caller>
     bool loadFolderDialogue(Caller * caller, void (Caller::*_handle_folder)(const string&))
     {
-        auto result = ofSystemLoadDialog("Open Folder...", true);
+
+        ProjectManager & projectManager = ProjectManager::getInstance();
+        
+        string defaultPath = "";
+        if (projectManager.isLoaded()) defaultPath = projectManager.getPath();
+
+        auto result = ofSystemLoadDialog("Open Folder...", true, defaultPath );
 
         if (result.bSuccess) {
             ofDirectory folder(result.getPath());
@@ -39,7 +51,7 @@ namespace LayerUtils {
                 return false;
             }
 
-            ofLogVerbose(__FUNCTION__) << "Handling " << folder.path();
+            ofLogVerbose(__FUNCTION__) << "Handlinga " << folder.path();
             (*caller.*_handle_folder)(folder.path());
         }
         return true;

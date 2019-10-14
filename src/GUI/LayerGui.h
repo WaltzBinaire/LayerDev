@@ -40,5 +40,7 @@ private:
     ImFont * font_normal;
     ImFont * font_bold;
 
+    mutable float menuBarHeight;
+
 };
 

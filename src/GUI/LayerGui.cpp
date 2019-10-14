@@ -68,11 +68,17 @@ void LayerGui::draw(Layer_Manager * manager) const
 
 void LayerGui::drawLayerMenu(Layer_Manager * manager) const
 {
-    ImGuiWindowFlags sidebarFlags = ImGuiWindowFlags_None;
-    sidebarFlags |=  ImGuiWindowFlags_NoCollapse;
+    static int width = 350;
 
-    ImGui::SetNextWindowPos(ImVec2(0, 20), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(0, 300), ImGuiCond_FirstUseEver);
+    static ImGuiWindowFlags sidebarFlags = 
+        ImGuiWindowFlags_None     |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove   |
+        ImGuiWindowFlags_NoCollapse;
+
+    ImGui::SetNextWindowPos( ImVec2(0    , menuBarHeight)                , ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(width, (ofGetHeight() - menuBarHeight) * 0.66), ImGuiCond_Always);
+
 
     if (ImGui::Begin("Layers", NULL, sidebarFlags)) {
 
@@ -111,13 +117,19 @@ void LayerGui::drawProjectMenu(Layer_Manager * manager) const
     ProjectManager & projectManager = manager->projectManager();
 
     if (projectManager.isLoaded()) {
-        ImGuiWindowFlags sidebarFlags = ImGuiWindowFlags_None;
-        sidebarFlags |=  ImGuiWindowFlags_NoCollapse;
+        static int width = 450;
 
-        ImGui::SetNextWindowPos(ImVec2(ofGetWidth() -  300, 20), ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowSize(ImVec2(0, ofGetHeight() - 20), ImGuiCond_FirstUseEver);
+        static ImGuiWindowFlags projectWindowFlags = 
+            ImGuiWindowFlags_None     |
+            ImGuiWindowFlags_NoResize |
+            ImGuiWindowFlags_NoMove   |
+            ImGuiWindowFlags_AlwaysVerticalScrollbar |
+            ImGuiWindowFlags_NoCollapse;
 
-        if (ImGui::Begin("Project", NULL, sidebarFlags)) {
+        ImGui::SetNextWindowPos( ImVec2(ofGetWidth() -  width, menuBarHeight), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(width, ofGetHeight() - menuBarHeight), ImGuiCond_Always);
+
+        if (ImGui::Begin("Project", NULL, projectWindowFlags)) {
             using RESOURCE_TYPE = ProjectResource::RESOURCE_TYPE;
 
             ImGui::Text(projectManager.getName().c_str());
@@ -163,11 +175,17 @@ void LayerGui::drawActiveLayerMenu(Layer_Manager * manager) const
     Layer_base * layer = manager->active_layer;
     if (layer == nullptr) return;
 
-    ImGuiWindowFlags sidebarFlags = ImGuiWindowFlags_None;
-    sidebarFlags |=  ImGuiWindowFlags_NoCollapse;
+    static int width = 350;
 
-    ImGui::SetNextWindowPos( ImVec2(ofGetWidth() - 300, 20), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(0, 300), ImGuiCond_FirstUseEver);
+    static ImGuiWindowFlags sidebarFlags = 
+        ImGuiWindowFlags_None     |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove   |
+        ImGuiWindowFlags_NoCollapse;
+
+    ImGui::SetNextWindowPos( ImVec2(0.0 ,  menuBarHeight + (ofGetHeight() - menuBarHeight) * 0.66 ) , ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(width, (ofGetHeight() - menuBarHeight) * 0.33), ImGuiCond_Always);
+
 
 
     if (ImGui::Begin("Layer Settings", NULL, sidebarFlags)) {
@@ -192,6 +210,8 @@ void LayerGui::drawMainMenuBar(Layer_Manager * manager) const
             if (ImGui::MenuItem(T_SAVE_AS          )) { manager->saveAs(); }
             ImGui::EndMenu();
         }
+
+
         if (ImGui::BeginMenu("Settings"))
         {
             if (ImGui::BeginMenu("Background"))
@@ -210,6 +230,8 @@ void LayerGui::drawMainMenuBar(Layer_Manager * manager) const
             }
             ImGui::EndMenu();
         }
+
+
         if (ImGui::BeginMenu("Add"))
         {
             for (auto & type : manager->layer_types) {
@@ -219,6 +241,8 @@ void LayerGui::drawMainMenuBar(Layer_Manager * manager) const
             }
             ImGui::EndMenu();
         }
+
+        menuBarHeight = ImGui::GetWindowSize().y;
         ImGui::EndMainMenuBar();
     }
 }

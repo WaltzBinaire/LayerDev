@@ -39,3 +39,23 @@ void SingleLayerGui::LoadButton(ofParameter<bool> & load)
         load.set(true);
     };
 }
+
+//--------------------------------------------------------------
+void SingleLayerGui::AngleSlider(ofParameter<float>& parameter)
+{
+	auto tmpRef = parameter.get();
+	if (ImGui::SliderAngle(parameter.getName().c_str(), &tmpRef, parameter.getMin(), parameter.getMax()))
+	{
+		parameter.set(tmpRef);
+	}
+}
+
+//--------------------------------------------------------------
+void SingleLayerGui::Slider(ofParameter<float>& parameter)
+{
+	auto tmpRef = parameter.get();
+	if (ImGui::SliderFloat(parameter.getName().c_str(), &tmpRef, parameter.getMin(), parameter.getMax()))
+	{
+		parameter.set(tmpRef);
+	}
+}

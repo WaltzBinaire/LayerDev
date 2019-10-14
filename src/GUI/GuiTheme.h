@@ -14,4 +14,5 @@ public:
 
     // Menus
     ofColor menuBackground;
+    ofColor menuLight;
 };

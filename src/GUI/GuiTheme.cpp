@@ -10,6 +10,7 @@ void GuiTheme::setup()
 {
     textColor      = ofColor(220);
     menuBackground = ofColor::fromHex(0x2d2c31);
+    menuLight      = ofColor::fromHex(0x737379);
 
     ImGuiStyle* style = &ImGui::GetStyle();
     
@@ -46,9 +47,9 @@ void GuiTheme::setup()
     style->Colors[ImGuiCol_TitleBgActive]        = ImVec4(menuBackground, 1.00f);
     style->Colors[ImGuiCol_MenuBarBg]            = ImVec4(menuBackground, 1.00f);
     style->Colors[ImGuiCol_ScrollbarBg]          = ImVec4(menuBackground, 1.00f);
-    style->Colors[ImGuiCol_ScrollbarGrab]        = ImVec4(menuBackground, 1.00f);
-    style->Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(menuBackground, 1.00f);
-    style->Colors[ImGuiCol_ScrollbarGrabActive]  = ImVec4(menuBackground, 1.00f);
+    style->Colors[ImGuiCol_ScrollbarGrab]        = ImVec4(menuLight     , 0.60f);
+    style->Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(menuLight     , 0.80f);
+    style->Colors[ImGuiCol_ScrollbarGrabActive]  = ImVec4(menuLight     , 1.00f);
     style->Colors[ImGuiCol_CheckMark]            = ImVec4(menuBackground, 1.00f);
     style->Colors[ImGuiCol_SliderGrab]           = ImVec4(menuBackground, 1.00f);
     style->Colors[ImGuiCol_SliderGrabActive]     = ImVec4(menuBackground, 1.00f);

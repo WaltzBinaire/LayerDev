@@ -10,6 +10,7 @@ public:
 
 protected:
 
+    virtual void onDrawGui()     override;
     virtual void onSetupParams() override;
 
     virtual void setupShader() override;
