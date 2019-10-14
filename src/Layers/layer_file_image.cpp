@@ -2,17 +2,6 @@
 
 REGISTER_TYPE(Layer_file_image)
 
-vector<string> Layer_file_image::allowed_exts{
-    "jpg",
-    "JPG",
-    "jpeg",
-    "JPEG",
-    "png",
-    "PNG",
-    "gif",
-    "GIF"
-};
-
 void Layer_file_image::onDraw() const
 {
     if (img.isAllocated()) {
@@ -31,9 +20,9 @@ void Layer_file_image::onReset()
     position = glm::vec2(0);
 }
 
-void Layer_file_image::handle_file(string path)
+void Layer_file_image::handle_file(const string & _path)
 {
-    if (!img.load(path)) {
+    if (!img.load(_path)) {
         ofLogWarning(name) << "Could not open image.";
     }
     else {

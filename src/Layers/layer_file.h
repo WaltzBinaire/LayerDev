@@ -7,7 +7,7 @@ public:
     Layer_file(string name, Layer_Manager * _layer_manager) : Static_base(name, _layer_manager) {};
     
     
-    virtual void handle_file(string path) = 0;
+    virtual void handle_file(const string & _path) = 0;
 
 protected:
     virtual void onSetupParams() override ;
@@ -15,11 +15,11 @@ protected:
     virtual void onDeactivate()  override ;
     virtual void onDrawGui()     override ;
 
-    virtual vector<string> & get_allowed_exts() = 0;
+    virtual const vector<string> & get_allowed_exts() = 0;
 
 
     void onFileDragEvent(ofDragInfo & _fileInfo);
-    void onLoadFolder(bool & _loadFolder);
+    void onLoadFile(bool & _loadFolder);
     void onMousePressed ( ofMouseEventArgs & args);
     void onMouseScrolled( ofMouseEventArgs & args);
     void onMouseMoved   ( ofMouseEventArgs & args);

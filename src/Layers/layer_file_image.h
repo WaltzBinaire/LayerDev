@@ -1,5 +1,6 @@
 #pragma once
 #include "Layers\layer_file.h"
+#include "Utils/LayerUtils.h"
 
 class Layer_file_image : public Layer_file
 {
@@ -13,12 +14,10 @@ protected:
     virtual void onDraw() const override;
     virtual void onReset() override;
 
-    virtual vector<string> & get_allowed_exts() { return allowed_exts; }
-    virtual void handle_file(string path);
+    virtual const vector<string> & get_allowed_exts() { return LayerUtils::img_exts; }
+    virtual void handle_file(const string & _path) override;
 
     ofImage img;
 
-private:
-    static vector<string> allowed_exts;
 };
 

@@ -36,20 +36,9 @@ void Layer_filter_alpha_replace::setUniforms(const ofTexture & _baseTex) const
         shader->setUniformTexture("u_replacementTex", replacementTexture, 2);
 }
 
-
 const vector<string> Layer_filter_alpha_replace::get_allowed_exts()
-{
-    const vector<string> allowed_exts {
-            "jpg",
-            "JPG",
-            "jpeg",
-            "JPEG",
-            "png",
-            "PNG",
-            "gif",
-            "GIF"
-    };
-    return allowed_exts;
+{  
+    return LayerUtils::img_exts;
 }
 
 void Layer_filter_alpha_replace::onFileDragEvent(ofDragInfo & _fileInfo)

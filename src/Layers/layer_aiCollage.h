@@ -16,7 +16,7 @@ protected:
     virtual void onReset()  override;
 
     virtual vector<string> & get_allowed_exts() { return allowed_exts; }
-    virtual void handle_file(string path);
+    virtual void handle_file(const string & _path);
 
 private:
     static vector<string> allowed_exts;

@@ -1,4 +1,5 @@
 #include "Layers\layer_file.h"
+#include "Utils\LayerUtils.h"
 #include "GUI/SingleLayerGui.h"
 
 void Layer_file::onDrawGui()
@@ -9,7 +10,7 @@ void Layer_file::onDrawGui()
 void Layer_file::onSetupParams()
 {
     p_loadFolder.set("Load", false);
-    p_loadFolder.addListener(this, &Layer_file::onLoadFolder);
+    p_loadFolder.addListener(this, &Layer_file::onLoadFile);
 
     params.add(
         p_loadFolder
@@ -45,7 +46,7 @@ void Layer_file::onFileDragEvent(ofDragInfo & _fileInfo)
         return;
     }
 
-    vector<string> & allowed_exts = get_allowed_exts();
+    const vector<string> & allowed_exts = get_allowed_exts();
 
     if (std::find(allowed_exts.begin(), allowed_exts.end(), file.getExtension()) == allowed_exts.end()) {
         ofLogWarning(name) << "Cannot load: " << file.path() << "\nWrong type";
@@ -55,30 +56,12 @@ void Layer_file::onFileDragEvent(ofDragInfo & _fileInfo)
     handle_file(file.path());
 }
 
-void Layer_file::onLoadFolder(bool & _loadFolder)
+void Layer_file::onLoadFile(bool & _loadFile)
 {
-    if (_loadFolder) {
-        auto result = ofSystemLoadDialog();
-
-        if (result.bSuccess) {
-            ofFile file(result.getPath());
-
-            if (!file.exists()) {
-                ofLogWarning(name) << "Cannot load: " << file.path();
-                return;
-            }
-
-            vector<string> & allowed_exts = get_allowed_exts();
-
-            if (std::find(allowed_exts.begin(), allowed_exts.end(), file.getExtension()) == allowed_exts.end()) {
-                ofLogWarning(name) << "Cannot load: " << file.path() << "\nWrong type";
-                return;
-            }
-            ofLogVerbose(name) << "Handling " << file.path();
-            handle_file(file.path());
-        }
+    if (_loadFile) {
+        LayerUtils::loadFileDialogue(get_allowed_exts(), this, &Layer_file::handle_file);
     }
-    _loadFolder = false;
+    _loadFile = false;
 }
 
 void Layer_file::onMousePressed(ofMouseEventArgs & args)

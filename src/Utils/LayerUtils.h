@@ -45,4 +45,15 @@ namespace LayerUtils {
         return true;
     }
 
+    static const vector<string> img_exts  {
+            "jpg",
+            "JPG",
+            "jpeg",
+            "JPEG",
+            "png",
+            "PNG",
+            "gif",
+            "GIF"
+    };
+
 }

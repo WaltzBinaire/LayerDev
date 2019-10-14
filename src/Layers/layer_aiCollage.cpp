@@ -34,8 +34,8 @@ void Layer_file_aiCollage::onReset()
     if (m_collage.isLoaded()) m_collage.clear();
 }
 
-void Layer_file_aiCollage::handle_file(string path)
+void Layer_file_aiCollage::handle_file(const string & _path)
 {
-    m_collage.load(path);
+    m_collage.load(_path);
     if (m_collage.isLoaded()) redraw(); 
 }
