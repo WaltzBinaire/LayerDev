@@ -1,11 +1,17 @@
 #include "Layer_Manager.h"
-#include "layer_base.h"
+#include "Layers/layer_base.h"
+#include "GUI/LayerGui.h"
+
 
 Layer_Manager::Layer_Manager()
 {
-    layer_types = Layer_base::get_layer_names();
 
-    gui.setup();
+
+    layer_types = Layer_base::get_layer_names();
+    gui = new LayerGui();
+
+    backgroundColour = ofColor::white;
+
     setupFbo();
     quadSetup();
     setupParams();
@@ -16,15 +22,19 @@ Layer_Manager::Layer_Manager()
 
 void Layer_Manager::setupParams()
 {
-    gui.begin();
-    gui.setTheme( new GuiTheme());
-    gui.end();
+
 }
 
 
 Layer_Manager::~Layer_Manager()
 {    
     removeListeners();
+
+    if (gui != nullptr) delete(gui);
+
+    for (auto layer = layers.begin(); layer < layers.end(); layer++) {
+        if (*layer != nullptr) delete(*layer);
+    }
 }
 
 void Layer_Manager::add_layer(string name, bool _activate)
@@ -52,6 +62,15 @@ void Layer_Manager::redrawAll()
     for (auto & layer : layers) {
         layer->redraw();
     }
+}
+
+void Layer_Manager::setBackgroundColor(float _backgroundColor[4]) {
+    backgroundColour = ofColor(
+        _backgroundColor[0] * 255.0,
+        _backgroundColor[1] * 255.0,
+        _backgroundColor[2] * 255.0,
+        _backgroundColor[3] * 255.0
+    );
 }
 
 void Layer_Manager::addListeners()
@@ -156,7 +175,12 @@ void Layer_Manager::draw() const
 {
     clearFbo();
 
+
+    // Do we need this?
+    fbo.begin();
     ofBackground(backgroundColour);
+    fbo.end();
+
     bool forceRedraw = false;
     for (auto & layer : layers) {
         
@@ -178,84 +202,8 @@ void Layer_Manager::draw() const
 
 void Layer_Manager::drawGui()
 {
-    gui.begin();
-    
-    if (ImGui::BeginMainMenuBar())
-    {
-        if (ImGui::BeginMenu("File"))
-        {
-            if (ImGui::MenuItem("Save", "Ctrl+S")) { save(); }
-            if (ImGui::MenuItem("Save As.."))      { saveAs(); }
-            ImGui::EndMenu();
-        }
-        if (ImGui::BeginMenu("Settings"))
-        {
-            if (ImGui::BeginMenu("Background"))
-            {
-                ImGui::ColorEdit4("Background Color", (float*)&backgroundColour);
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenu();
-        }
-        if (ImGui::BeginMenu("Add"))
-        {
-            for (auto & type : layer_types) {
-                if (ImGui::MenuItem(type.c_str())) {
-                    add_layer(type, true);
-                }
-            }
-            ImGui::EndMenu();
-        }
-        ImGui::EndMainMenuBar();
-    }
-
-       
-    ofxImGui::Settings mainWindow;
-
-
-    ImGui::SetNextTreeNodeOpen(true);
-    if (active_layer != nullptr) {
-        ofxImGui::AddGroup(active_layer->params, mainWindow);
-    }
-
-    bool sidebar_active = true;
-    ImGuiWindowFlags sidebarFlags = ImGuiWindowFlags_None;
-    //sidebarFlags |=  ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse;
-    ImGui::SetNextWindowPos(ImVec2(0, 20), ImGuiCond_FirstUseEver);     
-    ImGui::SetNextWindowSize(ImVec2(300, 600), ImGuiCond_FirstUseEver);
-    if (ImGui::Begin("Layers", &sidebar_active, sidebarFlags)) {
-
-        for( auto itr = layers.rbegin(); itr != layers.rend(); ++itr){
-            Layer_base* layer = (*itr);
-            string label = layer->get_display_name();
-
-            if (layer == active_layer) label += "*";
-
-            if (ImGui::Button(label.c_str())) {
-                setActiveLayer(layer);
-            }
-            ImGui::SameLine();
-            if (ImGui::Button(("+##" + label).c_str())) {
-                move_layer(layer, Layer_Manager::UP);
-                break;
-            }
-            ImGui::SameLine();
-            if (ImGui::Button(("-##" + label).c_str())) {
-                move_layer(layer, Layer_Manager::DOWN);
-                break;
-            }
-            ImGui::SameLine();
-            if (ImGui::Button(("d##" + label).c_str())) {
-                delete_layer(layer);
-                break;
-            }
-        }    
-        ImGui::End();
-    }
-
-    b_mouseOverGui = ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
-
-    gui.end();
+    gui->draw(this);
+    b_mouseOverGui = gui->mouseOverGui();
 }
 
 void Layer_Manager::update()
