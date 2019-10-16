@@ -14,7 +14,7 @@
 #include "Layers/layer_filter_chromatic_aberation.h"
 #include "Layers/layer_filter_distort.h"
 
-//#include "Layers/layer_alpha_replace_face.h"
+#include "Layers/layer_alpha_replace_face.h"
 #include "Layers/layer_alpha_replace_chanel.h"
 
 #include "Layer_Manager.h"

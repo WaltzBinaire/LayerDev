@@ -23,6 +23,9 @@ private:
     static void Button(ofParameter<bool> & load);
     static void AngleSlider(ofParameter<float>& parameter);
     static void Slider(ofParameter<float>& parameter);
+    static void Slider(ofParameter<int>& parameter);
+    static void SliderVec2(ofParameter<glm::vec2>& parameter);
+    static void Dropdown(ofParameter<int>& parameter, std::vector<std::string> labels);
 
 };
 
@@ -65,12 +68,18 @@ void SingleLayerGui::specialisedDrawGui(Layer_collage * layer)
     ofParameter<glm::vec2> & p_alpha = layer->params.get("Alpha").cast<glm::vec2>();  
 
     LoadButton(p_load);
+    SliderVec2(p_alpha);
 }
 
 
 template<>
 void SingleLayerGui::specialisedDrawGui(Layer_collage_generative * layer)
 {
-    ofParameter<bool> & p_generate       = layer->params.get("Generate").cast<bool>();   
+    ofParameter<bool> & p_generate  = layer->params.get("Generate").cast<bool>();   
+    ofParameter<int>  & p_number    = layer->params.get("Number").cast<int>();  
+    ofParameter<int>  & p_mode      = layer->params.get("Mode").cast<int>();  
+
+    Dropdown(p_mode, Layer_collage_generative::getModeNames());
+    Slider(p_number);
     Button(p_generate);
 }

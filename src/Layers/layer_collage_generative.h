@@ -7,6 +7,11 @@ class Layer_collage_generative : public Layer_collage
 public:
     enum class MODE { RANDOM, LINES };
 
+    static const vector<string> & getModeNames() {
+        static const vector<string> modeNames{ "Random", "Lines " };
+        return modeNames;
+    }
+
     Layer_collage_generative(string name, Layer_Manager * _layer_manager) : Layer_collage(name, _layer_manager) {};
 
     virtual const string get_display_name() const override { return "Folder Collage"; }

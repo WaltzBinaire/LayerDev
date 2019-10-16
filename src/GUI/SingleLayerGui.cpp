@@ -67,3 +67,54 @@ void SingleLayerGui::Slider(ofParameter<float>& parameter)
 		parameter.set(tmpRef);
 	}
 }
+
+
+//--------------------------------------------------------------
+void SingleLayerGui::Slider(ofParameter<int>& parameter)
+{
+	auto tmpRef = parameter.get();
+	if (ImGui::SliderInt(parameter.getName().c_str(), &tmpRef, parameter.getMin(), parameter.getMax()))
+	{
+		parameter.set(tmpRef);
+	}
+}
+
+
+//--------------------------------------------------------------
+void SingleLayerGui::SliderVec2(ofParameter<glm::vec2>& parameter)
+{
+	auto tmpRef = parameter.get();
+	if (ImGui::SliderFloat2(parameter.getName().c_str(), glm::value_ptr(tmpRef), parameter.getMin().x, parameter.getMax().x))
+	{
+		parameter.set(tmpRef);
+	}
+}
+
+//--------------------------------------------------------------
+void SingleLayerGui::Dropdown(ofParameter<int>& parameter, std::vector<std::string> labels)
+{
+	auto result = false;
+	auto tmpRef = parameter.get();
+	if (ImGui::BeginCombo(parameter.getName().c_str(), labels.at(parameter.get()).c_str()))
+	{
+		for (int i = 0; i < labels.size(); ++i)
+		{
+			bool selected = (i == tmpRef);
+			if (ImGui::Selectable(labels[i].c_str(), selected))
+			{
+				tmpRef = i;
+				result = true;
+			}
+			if (selected)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+
+		ImGui::EndCombo();
+	}
+	if (result)
+	{
+		parameter.set(tmpRef);
+	}
+}
