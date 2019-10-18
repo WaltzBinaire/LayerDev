@@ -1,10 +1,11 @@
 #pragma once
-#include "Utils/pingPongFbo.h"
 #include "Utils/AutoShader.h"
 #include "ProjectManager.h"
+#include "Canvas.h"
 
 class LayerGui;
 class Layer_base;
+
 
 class Layer_Manager
 {
@@ -24,11 +25,11 @@ public:
     Layer_Manager();
     ~Layer_Manager();
 
-    void setupParams();
-
     void draw() const;
     void drawGui();
     void update();
+
+    Canvas & getCanvas() { return canvas; }
 
     void saveAs() const;
     void save() const;
@@ -38,16 +39,6 @@ public:
     vector<string> get_layer_names();
 
     void redrawAll();
-
-    void setBackgroundColor(float _backgroundColor[4]);
-    float* getBackgroundColor() const  {
-        return new float[4] {
-            (float)(backgroundColour.r / 255.0),
-            (float)(backgroundColour.g / 255.0),
-            (float)(backgroundColour.b / 255.0),
-            (float)(backgroundColour.a / 255.0)
-        };
-    };
 
 private:
 
@@ -59,42 +50,29 @@ private:
     void onMouseEntered ( ofMouseEventArgs & _args) { if(!b_mouseOverGui) canvasMouseEntered.notify(this, _args);  }
     void onMouseExited  ( ofMouseEventArgs & _args) { if(!b_mouseOverGui) canvasMouseExited.notify(this, _args);   }
 
-
     void addListeners();
     void removeListeners();
-    void setupFbo();
-    void clearFbo() const;
-
-    void quadSetup();
-    void setQuad(const ofTexture & _baseTex) const;   
     
     void internalSave() const;
 
-    void onWindowResized(ofResizeEventArgs & _args);
+    void onCanvasResized(glm::vec2 & _size);
 
     deque<Layer_base*>::iterator findLayer(Layer_base* _layer);
     void setActiveLayer(Layer_base* _layer);
     void delete_layer(Layer_base* _layer);
     void move_layer(Layer_base* _layer, DIRECTION _dir);
 
-    ofColor backgroundColour;
-
+    mutable Canvas canvas;
     vector<string> layer_types;
 
     deque<Layer_base*> layers;
     Layer_base* active_layer;
-
-    shared_ptr<AutoShader> base_shader;
-    mutable ofMesh baseQuad;
-
 
     // Gui
     LayerGui * gui;
     bool b_mouseOverGui;
     friend class LayerGui; 
 
-
-    mutable pingPongFbo fbo;
     mutable string savePath;
 };
 

@@ -5,26 +5,15 @@
 
 Layer_Manager::Layer_Manager()
 {
-
-
     layer_types = Layer_base::get_layer_names();
     gui = new LayerGui();
 
-    backgroundColour = ofColor::white;
-
-    setupFbo();
-    quadSetup();
-    setupParams();
+    canvas.setup();
     addListeners();
 
     ofDisableArbTex();
-}
-
-void Layer_Manager::setupParams()
-{
 
 }
-
 
 Layer_Manager::~Layer_Manager()
 {    
@@ -44,7 +33,7 @@ void Layer_Manager::add_layer(string name, bool _activate)
     }
 
     auto layer = Layer_base::create(name, this);
-    layer->setup(fbo.getWidth(), fbo.getHeight());
+    layer->setup(canvas.getWidth(), canvas.getHeight());
     layers.push_back(layer);
 
     if (_activate) {
@@ -64,19 +53,10 @@ void Layer_Manager::redrawAll()
     }
 }
 
-void Layer_Manager::setBackgroundColor(float _backgroundColor[4]) {
-    backgroundColour = ofColor(
-        _backgroundColor[0] * 255.0,
-        _backgroundColor[1] * 255.0,
-        _backgroundColor[2] * 255.0,
-        _backgroundColor[3] * 255.0
-    );
-}
 
 void Layer_Manager::addListeners()
 {
-    ofAddListener(ofEvents().windowResized, this, &Layer_Manager::onWindowResized);
-
+    ofAddListener(canvas.canvasResized     , this, &Layer_Manager::onCanvasResized);
     ofAddListener(ofEvents().mouseMoved    , this, &Layer_Manager::onMouseMoved   );
     ofAddListener(ofEvents().mouseDragged  , this, &Layer_Manager::onMouseDragged );
     ofAddListener(ofEvents().mousePressed  , this, &Layer_Manager::onMousePressed );
@@ -88,8 +68,7 @@ void Layer_Manager::addListeners()
 
 void Layer_Manager::removeListeners()
 {
-    ofRemoveListener(ofEvents().windowResized, this, &Layer_Manager::onWindowResized);
-
+    ofRemoveListener(canvas.canvasResized     , this, &Layer_Manager::onCanvasResized);
     ofRemoveListener(ofEvents().mouseMoved    , this, &Layer_Manager::onMouseMoved   );
     ofRemoveListener(ofEvents().mouseDragged  , this, &Layer_Manager::onMouseDragged );
     ofRemoveListener(ofEvents().mousePressed  , this, &Layer_Manager::onMousePressed );
@@ -97,27 +76,14 @@ void Layer_Manager::removeListeners()
     ofRemoveListener(ofEvents().mouseScrolled , this, &Layer_Manager::onMouseScrolled);
     ofRemoveListener(ofEvents().mouseEntered  , this, &Layer_Manager::onMouseEntered );
     ofRemoveListener(ofEvents().mouseExited   , this, &Layer_Manager::onMouseExited  );
-
 }
 
-void Layer_Manager::setupFbo()
-{
-    fbo.allocate(ofGetWidth(), ofGetHeight());
-    clearFbo();    
-}
 
-void Layer_Manager::clearFbo() const
-{
-    fbo.clearAll();
-}
-
-void Layer_Manager::onWindowResized(ofResizeEventArgs & _args)
-{
-    setupFbo();
+void Layer_Manager::onCanvasResized(glm::vec2 & _size)
+{    
     for (auto & layer : layers) {
         layer->resize(ofGetWidth(), ofGetHeight());
     }
-    redrawAll();
 }
 
 void Layer_Manager::setActiveLayer(Layer_base* _layer)
@@ -173,31 +139,23 @@ void Layer_Manager::move_layer(Layer_base* _layer, DIRECTION _dir)
 
 void Layer_Manager::draw() const
 {
-    clearFbo();
-
-
-    // Do we need this?
-    fbo.begin();
-    ofBackground(backgroundColour);
-    fbo.end();
-
+    canvas.clear(); 
     bool forceRedraw = false;
     for (auto & layer : layers) {
         
         Static_base * s_layer = dynamic_cast<Static_base *>(layer);
         if (s_layer) {
-            forceRedraw |= s_layer->draw(fbo);
+            forceRedraw |= s_layer->draw(canvas.getFbo());
         }
         else {
             Filter_base * f_layer = dynamic_cast<Filter_base *>(layer);
             if (f_layer) {
 
-                forceRedraw |= f_layer->draw(fbo, forceRedraw);
+                forceRedraw |= f_layer->draw(canvas.getFbo(), forceRedraw);
             }
         }
     }
-
-    fbo.draw(0,0);
+    canvas.draw();
 }
 
 void Layer_Manager::drawGui()
@@ -245,40 +203,6 @@ void Layer_Manager::save() const
 
 void Layer_Manager::internalSave() const
 {
-    ofPixels pixels;
-    fbo.getTexture().readToPixels(pixels);
-    ofImage image(pixels);
+    ofImage image(canvas.getPixels());
     image.save(savePath, OF_IMAGE_QUALITY_BEST);
 }
-
-void Layer_Manager::quadSetup()
-{
-    base_shader = Shader_lib::get_passthrough_shader();
-
-    baseQuad.addVertex(glm::vec3(0));
-	baseQuad.addVertex(glm::vec3(0));
-	baseQuad.addVertex(glm::vec3(0));
-	baseQuad.addVertex(glm::vec3(0));
-			
-	baseQuad.addTexCoord(glm::vec2(0.0, 0.0));
-	baseQuad.addTexCoord(glm::vec2(1.0, 0.0));
-	baseQuad.addTexCoord(glm::vec2(1.0, 1.0));
-	baseQuad.addTexCoord(glm::vec2(0.0, 1.0));
-
-    baseQuad.addIndex(0);
-    baseQuad.addIndex(1);
-    baseQuad.addIndex(2);
-
-    baseQuad.addIndex(2);
-    baseQuad.addIndex(3);
-    baseQuad.addIndex(0);
-}
-
-void Layer_Manager::setQuad(const ofTexture & _baseTex) const
-{
-    baseQuad.setVertex(0, glm::vec3( 0                  , 0                   , 0 ));
-	baseQuad.setVertex(1, glm::vec3( _baseTex.getWidth(), 0                   , 0 ));
-	baseQuad.setVertex(2, glm::vec3( _baseTex.getWidth(), _baseTex.getHeight(), 0 ));
-	baseQuad.setVertex(3, glm::vec3( 0                  , _baseTex.getHeight(), 0 ));
-}
-

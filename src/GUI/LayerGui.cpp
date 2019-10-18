@@ -6,9 +6,8 @@ LayerGui::LayerGui()
     ImGui::CreateContext();
     setupFonts();
 
-    gui.setup();
-
     theme = new GuiTheme();
+    gui.setup();
     gui.setTheme(theme);
 }
 
@@ -62,7 +61,6 @@ void LayerGui::draw(Layer_Manager * manager) const
     drawLayerMenu(manager);
     drawProjectMenu(manager);
     ImGui::PopFont();
-
     gui.end();
 }
 
@@ -170,6 +168,12 @@ void LayerGui::drawProjectMenu(Layer_Manager * manager) const
 
 }
 
+void LayerGui::drawCanvasSettings(Canvas & cnavas) const
+{
+
+
+}
+
 void LayerGui::drawActiveLayerMenu(Layer_Manager * manager) const
 {
     Layer_base * layer = manager->active_layer;
@@ -200,30 +204,37 @@ void LayerGui::drawMainMenuBar(Layer_Manager * manager) const
     {
         if (ImGui::BeginMenu("File"))
         {
-            const char T_OPEN[]    = ICON_MDI_FOLDER           " Open Project";
-            const char T_SAVE[]    = ICON_MDI_CONTENT_SAVE     " Save";
+            const char T_OPEN[] = ICON_MDI_FOLDER           " Open Project";
+            const char T_SAVE[] = ICON_MDI_CONTENT_SAVE     " Save";
             const char T_SAVE_AS[] = ICON_MDI_CONTENT_SAVE_ALL " Save As...";
 
-            if (ImGui::MenuItem(T_OPEN   , "Ctrl+O")) { manager->projectManager().loadProject();   }
+            if (ImGui::MenuItem(T_OPEN, "Ctrl+O")) { manager->projectManager().loadProject(); }
             ImGui::Separator();
-            if (ImGui::MenuItem(T_SAVE   , "Ctrl+S")) { manager->save();   }
-            if (ImGui::MenuItem(T_SAVE_AS          )) { manager->saveAs(); }
+            if (ImGui::MenuItem(T_SAVE, "Ctrl+S")) { manager->save(); }
+            if (ImGui::MenuItem(T_SAVE_AS)) { manager->saveAs(); }
             ImGui::EndMenu();
         }
 
 
         if (ImGui::BeginMenu("Settings"))
         {
-            if (ImGui::BeginMenu("Background"))
+
+            if (ImGui::BeginMenu("Canvas Settings"))
             {
-                static float* col = manager->getBackgroundColor();
+                auto canvas = manager->canvas;
 
-                ImGuiColorEditFlags flags = ImGuiColorEditFlags_None;
-                flags |= ImGuiColorEditFlags_NoInputs;
-                flags |= ImGuiColorEditFlags_NoOptions;
+                //static int dummy_i = 0;
+                //ImGui::Combo("Combo", &dummy_i, "Delete\0Delete harder\0");
 
-                if (ImGui::ColorEdit4("Background Color", (float*)&col), flags) {
-                    manager->setBackgroundColor((float*)&col);
+                auto tmpVar = canvas.p_autoResize.get();
+                ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+                if (ImGui::Checkbox("Always fit to Window", &tmpVar))
+                    canvas.p_autoResize.set(tmpVar);
+                ImGui::PopStyleVar();
+
+                if (!tmpVar) {
+                    ImGui::Text("All those beautiful files will be deleted.\nThis operation cannot be undone!\n\n");
+                    ImGui::Separator();
                 }
 
                 ImGui::EndMenu();
@@ -244,5 +255,6 @@ void LayerGui::drawMainMenuBar(Layer_Manager * manager) const
 
         menuBarHeight = ImGui::GetWindowSize().y;
         ImGui::EndMainMenuBar();
+
     }
 }

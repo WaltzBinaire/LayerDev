@@ -4,6 +4,7 @@
 #include "GUI/ImGuiHelpers.h"
 
 #include "Layer_Manager.h"
+#include "Canvas.h"
 #include "Layers/layer_base.h"
 
 #define TEXT_SIZE 20.0
@@ -32,6 +33,7 @@ private:
     void drawActiveLayerMenu(Layer_Manager * manager) const;
     void drawLayerMenu(Layer_Manager * manager)       const;
     void drawProjectMenu(Layer_Manager * manager)     const;
+    void drawCanvasSettings(Canvas & cnavas)          const;
     
     mutable ofxImGui::Gui gui;
     GuiTheme* theme;

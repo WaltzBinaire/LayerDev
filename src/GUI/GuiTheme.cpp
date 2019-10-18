@@ -50,7 +50,7 @@ void GuiTheme::setup()
     style->Colors[ImGuiCol_ScrollbarGrab]        = ImVec4(menuLight     , 0.60f);
     style->Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(menuLight     , 0.80f);
     style->Colors[ImGuiCol_ScrollbarGrabActive]  = ImVec4(menuLight     , 1.00f);
-    style->Colors[ImGuiCol_CheckMark]            = ImVec4(menuBackground, 1.00f);
+    style->Colors[ImGuiCol_CheckMark]            = ImVec4(menuLight     , 1.00f);
     style->Colors[ImGuiCol_SliderGrab]           = ImVec4(menuBackground, 1.00f);
     style->Colors[ImGuiCol_SliderGrabActive]     = ImVec4(menuBackground, 1.00f);
     style->Colors[ImGuiCol_Button]               = ImVec4(menuBackground, 1.00f);
