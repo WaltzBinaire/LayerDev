@@ -9,6 +9,7 @@ public:
 
 protected:
     virtual void onDraw(const ofTexture & _baseTex) const override;
+    virtual void onDrawGui() override;
     virtual void onSetupParams() override;
 
     virtual void setupShader() override;

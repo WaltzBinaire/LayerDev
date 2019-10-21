@@ -1,4 +1,5 @@
 #include "Layers\layer_alpha_replace_chanel.h"
+#include "GUI/SingleLayerGui.h"
 
 REGISTER_TYPE(Layer_alpha_replace_channel)
 
@@ -8,13 +9,19 @@ void Layer_alpha_replace_channel::onDraw(const ofTexture & _baseTex) const
     Layer_filter_shader::onDraw(_baseTex);
 }
 
+void Layer_alpha_replace_channel::onDrawGui()
+{
+    SingleLayerGui::specialisedDrawGui<Layer_alpha_replace_channel>(this); 
+
+}
+
 void Layer_alpha_replace_channel::onSetupParams()
 {
     Layer_filter_alpha_replace::onSetupParams();
 
     p_invert.set("Invert", false);
-    p_threshold.set("Threshhold", glm::vec2(0.5),  glm::vec2(0.0),  glm::vec2(1.0));
-    p_blurPasses.set("Blur Passed", 4, 1, 10);
+    p_threshold.set("Threshold", glm::vec2(0.5),  glm::vec2(0.0),  glm::vec2(1.0));
+    p_blurPasses.set("Blur Passes", 4, 1, 10);
     p_color.set("Channel Mix", glm::vec4(0.5), glm::vec4(0), glm::vec4(1));
 
     params.add(

@@ -14,6 +14,7 @@ public:
     template<> static void specialisedDrawGui( Layer_filter_chromatic_aberation * layer);
     template<> static void specialisedDrawGui( Layer_collage * layer);
     template<> static void specialisedDrawGui( Layer_collage_generative * layer);
+    template<> static void specialisedDrawGui( Layer_alpha_replace_channel * layer);
 
 private:
 
@@ -24,6 +25,7 @@ private:
     static void AngleSlider(ofParameter<float>& parameter);
     static void Slider(ofParameter<float>& parameter);
     static void Slider(ofParameter<int>& parameter);
+    static void ColorPicker(ofParameter<glm::vec4>& parameter);
     static void SliderVec2(ofParameter<glm::vec2>& parameter);
     static void Dropdown(ofParameter<int>& parameter, std::vector<std::string> labels);
 
@@ -82,4 +84,20 @@ void SingleLayerGui::specialisedDrawGui(Layer_collage_generative * layer)
     Dropdown(p_mode, Layer_collage_generative::getModeNames());
     Slider(p_number);
     Button(p_generate);
+}
+
+
+template<>
+void SingleLayerGui::specialisedDrawGui(Layer_alpha_replace_channel * layer)
+{
+    ofParameter<bool> & p_load        = layer->params.get("Load").cast<bool>();   
+    ofParameter<bool> & p_invert      = layer->params.get("Invert").cast<bool>();   
+    ofParameter<int>  & p_blurPasses  = layer->params.get("Blur Passes").cast<int>();  
+    ofParameter<glm::vec2>& p_thresh      = layer->params.get("Threshold").cast<glm::vec2>();  
+    ofParameter<glm::vec4>& p_channelMix = layer->params.get("Channel Mix").cast<glm::vec4>();  
+
+    LoadButton(p_load);
+    SliderVec2(p_thresh);
+    Slider(p_blurPasses);
+    ColorPicker(p_channelMix);
 }

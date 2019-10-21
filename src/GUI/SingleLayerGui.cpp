@@ -79,6 +79,15 @@ void SingleLayerGui::Slider(ofParameter<int>& parameter)
 	}
 }
 
+void SingleLayerGui::ColorPicker(ofParameter<glm::vec4>& parameter)
+{
+    auto tmpRef = parameter.get();
+    if (ImGui::ColorEdit4(parameter.getName().c_str(), &tmpRef.r))
+	{
+		parameter.set(tmpRef);
+	}
+}
+
 
 //--------------------------------------------------------------
 void SingleLayerGui::SliderVec2(ofParameter<glm::vec2>& parameter)

@@ -10,8 +10,8 @@ public:
 protected:
 
     virtual void onSetupParams() override;
-    virtual void onActivate()    override ;
-    virtual void onDeactivate()  override ;
+    virtual void onActivate()    override;
+    virtual void onDeactivate()  override;
 
     virtual ofTexture & getAlphaTexture() const = 0;
 
