@@ -33,7 +33,6 @@ private:
     void drawActiveLayerMenu(Layer_Manager * manager) const;
     void drawLayerMenu(Layer_Manager * manager)       const;
     void drawProjectMenu(Layer_Manager * manager)     const;
-    void drawCanvasSettings(Canvas & cnavas)          const;
     
     mutable ofxImGui::Gui gui;
     GuiTheme* theme;
@@ -43,6 +42,8 @@ private:
     ImFont * font_bold;
 
     mutable float menuBarHeight;
+
+    bool canvasSettingsInit;
 
 };
 

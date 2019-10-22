@@ -16,13 +16,12 @@ public:
         
     void draw() const;
 
-    void setBackgroundColor(float _backgroundColor[4]);
     void setBackgroundColor(const ofColor _backgroundColor);
 
     float*  getBackgroundColorArray()  const;
-    ofColor getBackgroundColor() const;
+    ofColor getBackgroundColor()       const;
 
-    ofPixels getPixels() const;
+    ofPixels getPixels()   const;
     pingPongFbo & getFbo() const {
         return fbo;
     };
@@ -31,10 +30,14 @@ public:
     float getHeight() { return size.y;} ;
 
     ofEvent<glm::vec2> canvasResized;
+    ofEvent<bool> backgroundChanged;
 
     static const ofColor defaultBackground;
     ofParameter<bool> p_autoResize;
 private:
+
+    Canvas(Canvas const&)  = delete;
+    void operator=(Canvas const&)  = delete;
 
     void setupFbo();
     void setupParams();

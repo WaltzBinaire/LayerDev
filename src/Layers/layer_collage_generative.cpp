@@ -54,7 +54,7 @@ void Layer_collage_generative::onDrawGui()
     SingleLayerGui::specialisedDrawGui<Layer_collage_generative>(this); 
 }
 
-void Layer_collage_generative::generate_random()
+void Layer_collage_generative::generate_lines()
 {
     int w  = floor(size.x / p_number);
     int h  = size.y;
@@ -77,7 +77,7 @@ void Layer_collage_generative::generate_random()
     }
 }
 
-void Layer_collage_generative::generate_lines()
+void Layer_collage_generative::generate_random()
 {
     for (int i = 0; i < p_number; i++) {
         int index = i % image_paths.size();

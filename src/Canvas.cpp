@@ -24,9 +24,13 @@ void Canvas::setup()
 
 void Canvas::resize(float width, float height)
 {
-    size = glm::vec2(width, height);
-    setupFbo();
-    canvasResized.notify(size);
+    glm::vec2 _size = glm::vec2(width, height);
+
+    if (size != _size) {
+        size = _size;
+        setupFbo();
+        canvasResized.notify(size);
+    }
 }
 
 float * Canvas::getBackgroundColorArray() const {
@@ -53,26 +57,35 @@ ofPixels Canvas::getPixels() const
 
 void Canvas::draw() const
 {
+
     fbo.draw(
         position.x, 
         position.y,
         size.x * scale,
         size.y * scale
     );
+
+    ofPushStyle();
+    ofNoFill();  
+
+    if(backgroundColor.getBrightness() > 0.5) ofSetColor(ofColor::black); 
+    else ofSetColor(ofColor::white); 
+    
+    ofDrawRectangle(
+        position.x, 
+        position.y,
+        size.x * scale,
+        size.y * scale);
+
+    ofPopStyle();
 }
 
-void Canvas::setBackgroundColor(float _backgroundColor[4]) {
-    backgroundColor = ofColor(
-        _backgroundColor[0] * 255.0,
-        _backgroundColor[1] * 255.0,
-        _backgroundColor[2] * 255.0,
-        _backgroundColor[3] * 255.0
-    );
-}
 
 void Canvas::setBackgroundColor(const ofColor _backgroundColor)
 {
-    backgroundColor = ofColor(_backgroundColor);
+    backgroundColor = _backgroundColor;
+    static bool changed = true;
+    backgroundChanged.notify(changed);
 }
 
 void Canvas::setupFbo()

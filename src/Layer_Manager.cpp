@@ -57,6 +57,7 @@ void Layer_Manager::redrawAll()
 void Layer_Manager::addListeners()
 {
     ofAddListener(canvas.canvasResized     , this, &Layer_Manager::onCanvasResized);
+    ofAddListener(canvas.backgroundChanged , this, &Layer_Manager::onBackgroundChanged);
     ofAddListener(ofEvents().mouseMoved    , this, &Layer_Manager::onMouseMoved   );
     ofAddListener(ofEvents().mouseDragged  , this, &Layer_Manager::onMouseDragged );
     ofAddListener(ofEvents().mousePressed  , this, &Layer_Manager::onMousePressed );
@@ -69,6 +70,7 @@ void Layer_Manager::addListeners()
 void Layer_Manager::removeListeners()
 {
     ofRemoveListener(canvas.canvasResized     , this, &Layer_Manager::onCanvasResized);
+    ofRemoveListener(canvas.backgroundChanged , this, &Layer_Manager::onBackgroundChanged);
     ofRemoveListener(ofEvents().mouseMoved    , this, &Layer_Manager::onMouseMoved   );
     ofRemoveListener(ofEvents().mouseDragged  , this, &Layer_Manager::onMouseDragged );
     ofRemoveListener(ofEvents().mousePressed  , this, &Layer_Manager::onMousePressed );
@@ -85,12 +87,22 @@ void Layer_Manager::onCanvasResized(glm::vec2 & _size)
         layer->resize(ofGetWidth(), ofGetHeight());
     }
 }
+void Layer_Manager::onBackgroundChanged(bool & _var)
+{    
+    redrawAll();
+}
 
 void Layer_Manager::setActiveLayer(Layer_base* _layer)
 {
     if(active_layer != nullptr) active_layer->deactivate();
-    active_layer = _layer;
-    active_layer->activate();
+    if (active_layer != _layer) {
+        active_layer = _layer;
+        active_layer->activate();
+    }
+    else {
+        active_layer = nullptr;
+    }
+
 }
 
 deque<Layer_base*>::iterator Layer_Manager::findLayer(Layer_base * _layer)

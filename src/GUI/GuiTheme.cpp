@@ -71,5 +71,5 @@ void GuiTheme::setup()
     style->Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(menuBackground, 1.00f);
     style->Colors[ImGuiCol_TextSelectedBg]       = ImVec4(menuBackground, 1.00f);
     style->Colors[ImGuiCol_PopupBg]              = ImVec4(menuBackground, 1.00f);
-    style->Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(menuBackground, 1.00f);
+    style->Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(menuBackground, 0.10f);
 }

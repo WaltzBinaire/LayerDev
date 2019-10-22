@@ -4,16 +4,18 @@ const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_rel_
 {
     {RESOURCE_TYPE::RAW      , "Assets/Raw"       },
     {RESOURCE_TYPE::SEGMENTED, "Assets/Segmented" },
-    {RESOURCE_TYPE::TARGET   , "Assets/Targets"   }
+    {RESOURCE_TYPE::TARGET   , "Assets/Targets"   },
+    {RESOURCE_TYPE::COLLAGE  , "Assets/Collage"   }
 };
 
-const char* ProjectResource::resource_name_c[] = {"Instagram", "Segmented", "Target"};
+const char* ProjectResource::resource_name_c[] = {"Instagram", "Segmented", "Target", "Collage"};
 
 const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_names
 {
     {RESOURCE_TYPE::RAW      , resource_name_c[0] },
     {RESOURCE_TYPE::SEGMENTED, resource_name_c[1] },
-    {RESOURCE_TYPE::TARGET   , resource_name_c[2] }
+    {RESOURCE_TYPE::TARGET   , resource_name_c[2] },
+    {RESOURCE_TYPE::COLLAGE  , resource_name_c[3] }
 };
 
 ProjectResource::~ProjectResource()
@@ -51,6 +53,7 @@ bool ProjectResource::setup(const string & _path)
         {
         case ProjectResource::RESOURCE_TYPE::RAW:
         case ProjectResource::RESOURCE_TYPE::SEGMENTED:
+        case ProjectResource::RESOURCE_TYPE::TARGET:
             loadThumbnails();
         default:
             break;
@@ -74,10 +77,10 @@ vector<string> ProjectResource::get_allowed_exts()
     case RESOURCE_TYPE::SEGMENTED:
     case RESOURCE_TYPE::TARGET:
         return LayerUtils::img_exts;
-        break;
+    case RESOURCE_TYPE::COLLAGE:
+        return vector<string> { "" };
     default:
         return vector<string> { "" };
-        break;
     }
 }
 

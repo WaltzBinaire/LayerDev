@@ -56,6 +56,7 @@ private:
     void internalSave() const;
 
     void onCanvasResized(glm::vec2 & _size);
+    void onBackgroundChanged(bool & _var);
 
     deque<Layer_base*>::iterator findLayer(Layer_base* _layer);
     void setActiveLayer(Layer_base* _layer);

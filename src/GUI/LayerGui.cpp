@@ -168,11 +168,6 @@ void LayerGui::drawProjectMenu(Layer_Manager * manager) const
 
 }
 
-void LayerGui::drawCanvasSettings(Canvas & cnavas) const
-{
-
-
-}
 
 void LayerGui::drawActiveLayerMenu(Layer_Manager * manager) const
 {
@@ -219,27 +214,72 @@ void LayerGui::drawMainMenuBar(Layer_Manager * manager) const
         if (ImGui::BeginMenu("Settings"))
         {
 
-            if (ImGui::BeginMenu("Canvas Settings"))
+            if (ImGui::Button("Canvas Settings")) {
+                canvasSettingsInit = true;
+                ImGui::OpenPopup("Canvas Settings");
+            }
+
+            if (ImGui::BeginPopupModal("Canvas Settings", NULL, ImGuiWindowFlags_AlwaysAutoResize))
             {
-                auto canvas = manager->canvas;
+                Canvas& canvas = manager->getCanvas();
 
-                //static int dummy_i = 0;
-                //ImGui::Combo("Combo", &dummy_i, "Delete\0Delete harder\0");
-
-                auto tmpVar = canvas.p_autoResize.get();
+                // Auto resize
+                static bool autoResize;
+                static bool tmpaAutoResize = canvas.p_autoResize.get();
                 ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-                if (ImGui::Checkbox("Always fit to Window", &tmpVar))
-                    canvas.p_autoResize.set(tmpVar);
-                ImGui::PopStyleVar();
 
-                if (!tmpVar) {
-                    ImGui::Text("All those beautiful files will be deleted.\nThis operation cannot be undone!\n\n");
-                    ImGui::Separator();
+                if (ImGui::Checkbox("Always fit to Window", &tmpaAutoResize)) {
+                    autoResize = tmpaAutoResize;
                 }
 
-                ImGui::EndMenu();
+                // Resizing
+                static glm::vec2 size = glm::vec2(canvas.getWidth(), canvas.getHeight());
+                static char bufw[6] = ""; 
+                static char bufh[6] = "";
+                if (canvasSettingsInit) {
+
+                    static string w = ofToString(size.x);
+                    static string h = ofToString(size.y);
+
+                    copy(w.begin(), w.end(), bufw);
+                    copy(h.begin(), h.end(), bufh);
+                }
+
+                if (!tmpaAutoResize) {
+                    if( ImGui::InputText("Width ", bufw, 6, ImGuiInputTextFlags_CharsDecimal)) size.x = floor(ofToFloat(bufw));
+                    if (ImGui::InputText("Height", bufh, 6, ImGuiInputTextFlags_CharsDecimal)) size.y = floor(ofToFloat(bufh));
+                }
+
+                // Background colour
+                static ImVec4 tmpColor = canvas.getBackgroundColor();
+                ImGui::ColorEdit4("Background", (float*)&tmpColor, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
+
+
+
+                if (ImGui::Button("OK", ImVec2(120,0))) { 
+                    canvas.setBackgroundColor(
+                        ofColor(
+                            tmpColor.x * 255,
+                            tmpColor.y * 255,
+                            tmpColor.z * 255,
+                            tmpColor.w * 255
+                        )
+                    );
+
+                    canvas.resize(size);
+                    canvas.p_autoResize.set(autoResize);
+                    ImGui::CloseCurrentPopup();               
+                }
+
+                ImGui::SetItemDefaultFocus();
+                ImGui::SameLine();
+                if (ImGui::Button("Cancel", ImVec2(120,0))) { ImGui::CloseCurrentPopup(); }
+
+                canvasSettingsInit = false;
+                ImGui::EndPopup();
             }
             ImGui::EndMenu();
+
         }
 
 
