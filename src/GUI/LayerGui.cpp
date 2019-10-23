@@ -5,6 +5,8 @@ LayerGui::LayerGui()
     ImGui::CreateContext();
     setupFonts();
 
+    monitor.start();
+
     theme = new GuiTheme();
     gui.setup();
     gui.setTheme(theme);
@@ -57,6 +59,7 @@ void LayerGui::draw(Layer_Manager * manager) const
     ImGui::PushFont(font_normal);
     drawMainMenuBar(manager);
     drawActiveLayerMenu(manager);
+    drawInfoWindow(manager);
     drawLayerMenu(manager);
     drawProjectMenu(manager);
     ImGui::PopFont();
@@ -65,8 +68,6 @@ void LayerGui::draw(Layer_Manager * manager) const
 
 void LayerGui::drawLayerMenu(Layer_Manager * manager) const
 {
-    static int width = 350;
-
     static ImGuiWindowFlags sidebarFlags = 
         ImGuiWindowFlags_None     |
         ImGuiWindowFlags_NoResize |
@@ -74,7 +75,7 @@ void LayerGui::drawLayerMenu(Layer_Manager * manager) const
         ImGuiWindowFlags_NoCollapse;
 
     ImGui::SetNextWindowPos( ImVec2(0    , menuBarHeight)                , ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(width, (ofGetHeight() - menuBarHeight) * 0.66), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(leftWidth, (ofGetHeight() - menuBarHeight) * 0.66), ImGuiCond_Always);
 
 
     if (ImGui::Begin("Layers", NULL, sidebarFlags)) {
@@ -114,8 +115,6 @@ void LayerGui::drawProjectMenu(Layer_Manager * manager) const
     ProjectManager & projectManager = manager->projectManager();
 
     if (projectManager.isLoaded()) {
-        static int width = 450;
-
         static ImGuiWindowFlags projectWindowFlags = 
             ImGuiWindowFlags_None     |
             ImGuiWindowFlags_NoResize |
@@ -123,8 +122,8 @@ void LayerGui::drawProjectMenu(Layer_Manager * manager) const
             ImGuiWindowFlags_AlwaysVerticalScrollbar |
             ImGuiWindowFlags_NoCollapse;
 
-        ImGui::SetNextWindowPos( ImVec2(ofGetWidth() -  width, menuBarHeight), ImGuiCond_Always);
-        ImGui::SetNextWindowSize(ImVec2(width, ofGetHeight() - menuBarHeight), ImGuiCond_Always);
+        ImGui::SetNextWindowPos( ImVec2(ofGetWidth() -  rightWidth, menuBarHeight), ImGuiCond_Always);
+        ImGui::SetNextWindowSize(ImVec2(rightWidth, ofGetHeight() - menuBarHeight), ImGuiCond_Always);
 
         if (ImGui::Begin("Project", NULL, projectWindowFlags)) {
             using RESOURCE_TYPE = ProjectResource::RESOURCE_TYPE;
@@ -176,7 +175,6 @@ void LayerGui::drawActiveLayerMenu(Layer_Manager * manager) const
     Layer_base * layer = manager->active_layer;
     if (layer == nullptr) return;
 
-    static int width = 350;
 
     static ImGuiWindowFlags sidebarFlags = 
         ImGuiWindowFlags_None     |
@@ -185,7 +183,7 @@ void LayerGui::drawActiveLayerMenu(Layer_Manager * manager) const
         ImGuiWindowFlags_NoCollapse;
 
     ImGui::SetNextWindowPos( ImVec2(0.0 ,  menuBarHeight + (ofGetHeight() - menuBarHeight) * 0.66 ) , ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(width, (ofGetHeight() - menuBarHeight) * 0.33), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(leftWidth, (ofGetHeight() - menuBarHeight) * 0.33), ImGuiCond_Always);
 
 
 
@@ -193,6 +191,36 @@ void LayerGui::drawActiveLayerMenu(Layer_Manager * manager) const
             manager->active_layer->drawGui();
     }
     ImGui::End();
+}
+
+void LayerGui::drawInfoWindow(Layer_Manager * manager) const
+{
+    static ImGuiWindowFlags infoWindowFlags = 
+        ImGuiWindowFlags_None     |
+        ImGuiWindowFlags_NoCollapse;
+
+        ImGui::SetNextWindowPos( ImVec2(leftWidth,  menuBarHeight ) , ImGuiCond_Always);
+    if (ImGui::Begin("Info", NULL, infoWindowFlags)) {
+
+        struct Funcs
+        {
+            static float QueueGetter(void* data, int i) { 
+                return (*((deque<float>*)data))[i]; 
+            }
+        };
+
+        ImGui::PlotLines("CPU",   Funcs::QueueGetter, (void*)&(monitor.getProcessCpuBuffer())          , monitor.getBufferSize(), 0, NULL, 0.0, 100);
+        ImGui::PlotLines("FPS",   Funcs::QueueGetter, (void*)&(monitor.getFpsBuffer())                 , monitor.getBufferSize(), 0, NULL, 0.0, 120);
+        ImGui::PlotLines("RAM",   Funcs::QueueGetter, (void*)&(monitor.getProcessPysicalMemoryBuffer()), monitor.getBufferSize(), 0, NULL, 0.0, monitor.getTotalPysicalMemory());
+        ImGui::PlotLines("CACHE", Funcs::QueueGetter, (void*)&(monitor.getProcessVirtualMemoryBuffer()), monitor.getBufferSize(), 0, NULL, 0.0, monitor.getTotalVirtualMemory());
+
+    }
+    ImGui::End();
+
+}
+
+void UpdateMonitor() {
+
 }
 
 void LayerGui::drawMainMenuBar(Layer_Manager * manager) const

@@ -65,10 +65,10 @@ void GuiTheme::setup()
     style->Colors[ImGuiCol_ResizeGrip]           = ImVec4(menuBackground, 1.00f);
     style->Colors[ImGuiCol_ResizeGripHovered]    = ImVec4(menuBackground, 1.00f);
     style->Colors[ImGuiCol_ResizeGripActive]     = ImVec4(menuBackground, 1.00f);
-    style->Colors[ImGuiCol_PlotLines]            = ImVec4(menuBackground, 1.00f);
-    style->Colors[ImGuiCol_PlotLinesHovered]     = ImVec4(menuBackground, 1.00f);
-    style->Colors[ImGuiCol_PlotHistogram]        = ImVec4(menuBackground, 1.00f);
-    style->Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(menuBackground, 1.00f);
+    style->Colors[ImGuiCol_PlotLines]            = ImVec4(menuLight     , 0.80f);
+    style->Colors[ImGuiCol_PlotLinesHovered]     = ImVec4(menuLight     , 1.00f);
+    style->Colors[ImGuiCol_PlotHistogram]        = ImVec4(menuLight     , 0.80f);
+    style->Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(menuLight     , 1.00f);
     style->Colors[ImGuiCol_TextSelectedBg]       = ImVec4(menuBackground, 1.00f);
     style->Colors[ImGuiCol_PopupBg]              = ImVec4(menuBackground, 1.00f);
     style->Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(menuBackground, 0.10f);

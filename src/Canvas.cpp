@@ -24,6 +24,8 @@ void Canvas::setup()
 
 void Canvas::resize(float width, float height)
 {
+    if (width <= 0 || height <= 0) return;
+
     glm::vec2 _size = glm::vec2(width, height);
 
     if (size != _size) {

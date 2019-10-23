@@ -7,6 +7,8 @@
 #include "Canvas.h"
 #include "Layers/layer_base.h"
 
+#include "ofxMonitor.h"
+
 #define TEXT_SIZE 20.0
 
 class LayerGui
@@ -38,19 +40,26 @@ private:
 
     void drawMainMenuBar(Layer_Manager * manager)     const;
     void drawActiveLayerMenu(Layer_Manager * manager) const;
+    void drawInfoWindow(Layer_Manager * manager)     const;
     void drawLayerMenu(Layer_Manager * manager)       const;
     void drawProjectMenu(Layer_Manager * manager)     const;
     
+
     mutable ofxImGui::Gui gui;
     GuiTheme* theme;
-
 
     ImFont * font_normal;
     ImFont * font_bold;
 
-    mutable float menuBarHeight;
 
+    ofxMonitor monitor;
+
+    // Internal
+    mutable float menuBarHeight;
     mutable bool canvasSettingsInit;
+
+    int leftWidth = 350;
+    int rightWidth = 350;
 
 };
 
