@@ -1,8 +1,9 @@
 #include "Layers\layer_fliter_mpeg_glitch.h"
+#include "GUI/SingleLayerGui.h"
 
-REGISTER_TYPE(layer_fliter_mpeg_glitch, MPEG Glitch)
+REGISTER_TYPE(Layer_filter_mpeg_glitch, MPEG Glitch)
 
-void layer_fliter_mpeg_glitch::onSetup()
+void Layer_filter_mpeg_glitch::onSetup()
 {
     Layer_filter_shader::onSetup();
 
@@ -19,29 +20,32 @@ void layer_fliter_mpeg_glitch::onSetup()
     noiseTex.loadData(noisePixels);    
 }
 
-void layer_fliter_mpeg_glitch::onUpdate()
+void Layer_filter_mpeg_glitch::onUpdate()
 {
     if (!p_pause) redraw();
 }
 
-void layer_fliter_mpeg_glitch::onSetupParams()
+void Layer_filter_mpeg_glitch::onDrawGui()
+{
+    SingleLayerGui::specialisedDrawGui<Layer_filter_mpeg_glitch>(this); 
+}
+
+void Layer_filter_mpeg_glitch::onSetupParams()
 {
     p_blockSize.set("Block Size", 16, 8, 64);
-    p_pause.set("Pause"  , false);
 
     params.add(
-        p_blockSize,
-        p_pause
+        p_blockSize
     );
 
 }
 
-void layer_fliter_mpeg_glitch::setupShader()
+void Layer_filter_mpeg_glitch::setupShader()
 {
     shader = Shader_lib::get_mpeg_glitch_shader();
 }
 
-void layer_fliter_mpeg_glitch::setUniforms(const ofTexture & _baseTex) const
+void Layer_filter_mpeg_glitch::setUniforms(const ofTexture & _baseTex) const
 {
     shader->setUniformTexture("u_imageTex", _baseTex, 0);
     shader->setUniformTexture("u_noiseTex", noiseTex, 1);

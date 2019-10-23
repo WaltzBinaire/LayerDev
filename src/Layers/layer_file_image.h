@@ -7,7 +7,6 @@ class Layer_file_image : public Layer_file
 public:
     Layer_file_image(string name, int instance, Layer_Manager * _layer_manager) : Layer_file(name, instance, _layer_manager) {};
 
-    virtual const string get_display_name() const override { return "Image"; }
     virtual void handle_file(const string & _path) override;
 
 protected:

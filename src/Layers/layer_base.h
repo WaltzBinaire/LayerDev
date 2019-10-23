@@ -53,7 +53,7 @@ public:
     void resize( int width, int height);
 
     const string& get_name() const { return name + ofToString(instance); }
-    virtual const string get_display_name() const { return name; }
+    const string get_display_name() const { return name; }
 
     ofParameterGroup params;
 
@@ -83,6 +83,8 @@ protected:
     ofParameter<bool> p_loadMask;
     ofParameter<bool> p_mask;
     ofParameter<bool> p_invertMask;
+    ofParameter<bool> p_pause;
+
 
     ofEventListener l_paramsChanged;
     ofEventListener l_debugRedraw;

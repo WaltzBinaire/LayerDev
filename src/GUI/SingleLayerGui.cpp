@@ -11,9 +11,22 @@ void SingleLayerGui::baseDrawGui(Layer_base * layer)
     ofParameter<bool> & loadMask   = layer->params.get("Load Mask"  ).cast<bool>();    
     ofParameter<bool> & mask       = layer->params.get("Mask"       ).cast<bool>();
     ofParameter<bool> & invertMask = layer->params.get("Invert Mask").cast<bool>();
+    ofParameter<bool> & pause      = layer->params.get("Pause").cast<bool>();
 
     ImGui::Text(layer->get_display_name().c_str());
 
+    if (pause.get()) {
+        if (ImGui::Button(ICON_MDI_PLAY)) {
+            pause.set(false);
+        }
+    }
+    else {
+        if (ImGui::Button(ICON_MDI_PAUSE)) {
+            pause.set(true);
+        }
+    }
+
+    ImGui::SameLine();
     if (ImGui::Button(ICON_MDI_SYNC)) {
         reset.set(true);
     }

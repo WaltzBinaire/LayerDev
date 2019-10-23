@@ -10,11 +10,18 @@ public:
 
 
     template<class T> static void specialisedDrawGui( T * layer);
+
     template<> static void specialisedDrawGui( Layer_file * layer);
     template<> static void specialisedDrawGui( Layer_filter_chromatic_aberation * layer);
+    template<> static void specialisedDrawGui( Layer_alpha_replace_channel * layer);
+
     template<> static void specialisedDrawGui( Layer_collage * layer);
     template<> static void specialisedDrawGui( Layer_collage_generative * layer);
-    template<> static void specialisedDrawGui( Layer_alpha_replace_channel * layer);
+
+
+    template<> static void specialisedDrawGui( Layer_filter_mpeg_glitch * layer);
+    template<> static void specialisedDrawGui( Layer_filter_distort * layer);
+
 
 private:
 
@@ -84,7 +91,6 @@ void SingleLayerGui::specialisedDrawGui(Layer_collage_generative * layer)
     Button(p_generate);
 }
 
-
 template<>
 void SingleLayerGui::specialisedDrawGui(Layer_alpha_replace_channel * layer)
 {
@@ -98,4 +104,17 @@ void SingleLayerGui::specialisedDrawGui(Layer_alpha_replace_channel * layer)
     SliderVec2(p_thresh);
     Slider(p_blurPasses);
     ColorPicker(p_channelMix);
+}
+
+template<>
+void SingleLayerGui::specialisedDrawGui(Layer_filter_mpeg_glitch * layer)
+{
+    ofParameter<int> & p_blockSize  = layer->params.get("Block Size").cast<int>();   
+    Slider(p_blockSize);
+}
+
+template<>
+void SingleLayerGui::specialisedDrawGui(Layer_filter_distort * layer)
+{
+
 }

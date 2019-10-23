@@ -35,6 +35,7 @@ void Layer_base::setup(int  _width, int _height) {
     p_mask.set(      "Mask"       , false);
     p_invertMask.set("Invert Mask", false);
     
+    p_pause.set("Pause"  , false);
     
     params.add(
         p_reset,
@@ -42,7 +43,8 @@ void Layer_base::setup(int  _width, int _height) {
         p_debugRedraw,
         p_loadMask,
         p_mask,
-        p_invertMask
+        p_invertMask,
+        p_pause
     );
 
     l_paramsChanged = params.parameterChangedE().newListener([&](ofAbstractParameter &) {return this->redraw(); }, OF_EVENT_ORDER_BEFORE_APP);

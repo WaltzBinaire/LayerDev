@@ -85,7 +85,7 @@ void Layer_Manager::onProjectLoaded(bool & _val)
 
 void Layer_Manager::addPortraitLayer(bool _activate)
 {
-    const string layer_name = "Layer_file_image";
+    const string layer_name = "Image";
 
     auto targets = projectManager().getResource(RESOURCE_TYPE::TARGET);
 
@@ -101,7 +101,7 @@ void Layer_Manager::addPortraitLayer(bool _activate)
 }
 void Layer_Manager::addCollageLayer(bool _activate)
 {
-    const string layer_name = "Layer_collage_generative";
+    const string layer_name = "Generative Collage";
 
     auto targets = projectManager().getResource(RESOURCE_TYPE::SEGMENTED);
 

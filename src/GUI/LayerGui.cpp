@@ -284,7 +284,7 @@ void LayerGui::drawMainMenuBar(Layer_Manager * manager) const
         }
 
 
-        if (ImGui::BeginMenu("Add"))
+        if (ImGui::BeginMenu("Layers"))
         {
             for (auto & type : manager->layer_types) {
                 if (ImGui::MenuItem(type.c_str())) {
@@ -292,11 +292,18 @@ void LayerGui::drawMainMenuBar(Layer_Manager * manager) const
                 }
             }
 
-            for (auto & specialLayer : manager->specialLayers) {
-                if (ImGui::MenuItem(specialLayer.first.c_str())) {
-                    (specialLayer.second)(true);
+            if (manager->specialLayers.size() > 0) {
+                if (ImGui::BeginMenu("Presets"))
+                {
+                    for (auto & specialLayer : manager->specialLayers) {
+                        if (ImGui::MenuItem(specialLayer.first.c_str())) {
+                            (specialLayer.second)(true);
+                        }
+                    }
+                    ImGui::EndMenu();
                 }
             }
+
 
             ImGui::EndMenu();
         }
