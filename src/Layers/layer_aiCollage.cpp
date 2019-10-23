@@ -1,4 +1,6 @@
 #include "Layers\layer_aiCollage.h"
+#include "GUI/SingleLayerGui.h"
+
 
 REGISTER_TYPE(Layer_file_aiCollage, AI Collage)
 
@@ -56,6 +58,12 @@ void Layer_file_aiCollage::onDraw() const
         glm::vec2 size = scale * glm::vec2(m_collage.getWidth(), m_collage.getHeight());
         m_collage.draw(position - size * 0.5, size.x, size.y);
     }
+}
+
+void Layer_file_aiCollage::onDrawGui()
+{
+    Layer_file::onDrawGui();    
+    SingleLayerGui::specialisedDrawGui<Layer_file_aiCollage>(this); 
 }
 
 void Layer_file_aiCollage::onUpdate()

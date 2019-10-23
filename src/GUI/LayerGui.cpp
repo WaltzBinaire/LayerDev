@@ -1,5 +1,4 @@
 #include "LayerGui.h"
-#include "IconsMaterialDesignIcons.h"
 
 LayerGui::LayerGui()
 {

@@ -20,7 +20,6 @@ protected:
 private:
 
     ofParameter<int>  p_blockSize;
-    ofParameter<bool> p_pause;
 
     const int noiseTexSize = 64;
 

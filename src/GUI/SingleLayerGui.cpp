@@ -1,7 +1,6 @@
 #include "SingleLayerGui.h"
-#include "IconsMaterialDesignIcons.h"
 
-
+using namespace ImGuiHelpers;
 
 void SingleLayerGui::baseDrawGui(Layer_base * layer)
 {          
@@ -15,159 +14,19 @@ void SingleLayerGui::baseDrawGui(Layer_base * layer)
 
     ImGui::Text(layer->get_display_name().c_str());
 
-    if (pause.get()) {
-        if (ImGui::Button(ICON_MDI_PLAY)) {
-            pause.set(false);
-        }
-    }
-    else {
-        if (ImGui::Button(ICON_MDI_PAUSE)) {
-            pause.set(true);
-        }
-    }
-
+    IconToggle(pause,  ICON_MDI_PAUSE, ICON_MDI_PLAY);
     ImGui::SameLine();
-    if (ImGui::Button(ICON_MDI_SYNC)) {
-        reset.set(true);
-    }
-
+    IconButton(reset,  ICON_MDI_SYNC);
     ImGui::SameLine();
-    if (disable.get()) {
-        if (ImGui::Button(ICON_MDI_EYE_OFF)) {
-            disable.set(false);
-        }
-    }
-    else {
-        if (ImGui::Button(ICON_MDI_EYE)) {
-            disable.set(true);
-        }
-    }
-
+    IconToggle(disable, ICON_MDI_EYE_OFF, ICON_MDI_EYE);
     ImGui::SameLine();
-    if (ImGui::Button(ICON_MDI_BRUSH)) {     
-        redraw.set(true);
-    }
+    IconButton(redraw, ICON_MDI_BRUSH);
 
     // Mask
-
-    if (ImGui::Button(ICON_MDI_WALLPAPER)) {     
-        loadMask.set(true);
-    }
+    IconButton(loadMask, ICON_MDI_WALLPAPER);
     ImGui::SameLine();
-    if (mask.get()) {
-        if (ImGui::Button(ICON_MDI_SELECTION)) {
-            mask.set(false);
-        }
-    }
-    else {
-        if (ImGui::Button(ICON_MDI_SELECT_OFF)) {
-            mask.set(true);
-        }
-    }
+    IconToggle(mask, ICON_MDI_SELECTION, ICON_MDI_SELECT_OFF);
     ImGui::SameLine();
-    if (invertMask.get()) {
-        if (ImGui::Button(ICON_MDI_INVERT_COLORS_OFF)) {
-            invertMask.set(false);
-        }
-    }
-    else {
-        if (ImGui::Button(ICON_MDI_INVERT_COLORS)) {
-            invertMask.set(true);
-        }
-    }
-}
+    IconToggle(invertMask, ICON_MDI_INVERT_COLORS_OFF, ICON_MDI_INVERT_COLORS);
 
-void SingleLayerGui::LoadButton(ofParameter<bool> & load)
-{
-    if (ImGui::Button("Load File")) {
-        load.set(true);
-    };
-}
-
-
-void SingleLayerGui::Button(ofParameter<bool> & load)
-{
-    if (ImGui::Button(load.getName().c_str())) {
-        load.set(true);
-    };
-}
-
-//--------------------------------------------------------------
-void SingleLayerGui::AngleSlider(ofParameter<float>& parameter)
-{
-	auto tmpRef = parameter.get();
-	if (ImGui::SliderAngle(parameter.getName().c_str(), &tmpRef, parameter.getMin(), parameter.getMax()))
-	{
-		parameter.set(tmpRef);
-	}
-}
-
-//--------------------------------------------------------------
-void SingleLayerGui::Slider(ofParameter<float>& parameter)
-{
-	auto tmpRef = parameter.get();
-	if (ImGui::SliderFloat(parameter.getName().c_str(), &tmpRef, parameter.getMin(), parameter.getMax()))
-	{
-		parameter.set(tmpRef);
-	}
-}
-
-
-//--------------------------------------------------------------
-void SingleLayerGui::Slider(ofParameter<int>& parameter)
-{
-	auto tmpRef = parameter.get();
-	if (ImGui::SliderInt(parameter.getName().c_str(), &tmpRef, parameter.getMin(), parameter.getMax()))
-	{
-		parameter.set(tmpRef);
-	}
-}
-
-void SingleLayerGui::ColorPicker(ofParameter<glm::vec4>& parameter)
-{
-    auto tmpRef = parameter.get();
-    if (ImGui::ColorEdit4(parameter.getName().c_str(), &tmpRef.r))
-	{
-		parameter.set(tmpRef);
-	}
-}
-
-
-//--------------------------------------------------------------
-void SingleLayerGui::SliderVec2(ofParameter<glm::vec2>& parameter)
-{
-	auto tmpRef = parameter.get();
-	if (ImGui::SliderFloat2(parameter.getName().c_str(), glm::value_ptr(tmpRef), parameter.getMin().x, parameter.getMax().x))
-	{
-		parameter.set(tmpRef);
-	}
-}
-
-//--------------------------------------------------------------
-void SingleLayerGui::Dropdown(ofParameter<int>& parameter, std::vector<std::string> labels)
-{
-	auto result = false;
-	auto tmpRef = parameter.get();
-	if (ImGui::BeginCombo(parameter.getName().c_str(), labels.at(parameter.get()).c_str()))
-	{
-		for (int i = 0; i < labels.size(); ++i)
-		{
-			bool selected = (i == tmpRef);
-			if (ImGui::Selectable(labels[i].c_str(), selected))
-			{
-				tmpRef = i;
-				result = true;
-			}
-			if (selected)
-			{
-				ImGui::SetItemDefaultFocus();
-			}
-		}
-
-		ImGui::EndCombo();
-	}
-	if (result)
-	{
-		parameter.set(tmpRef);
-	}
 }

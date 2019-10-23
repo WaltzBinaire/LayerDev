@@ -1,6 +1,10 @@
 #pragma once
 #include "Layers/layer.h"
 #include "ofxImGui.h"
+#include "ImGuiHelpers.h"
+
+using namespace ImGuiHelpers;
+
 
 class SingleLayerGui
 {
@@ -12,13 +16,12 @@ public:
     template<class T> static void specialisedDrawGui( T * layer);
 
     template<> static void specialisedDrawGui( Layer_file * layer);
-    template<> static void specialisedDrawGui( Layer_filter_chromatic_aberation * layer);
-    template<> static void specialisedDrawGui( Layer_alpha_replace_channel * layer);
-
     template<> static void specialisedDrawGui( Layer_collage * layer);
     template<> static void specialisedDrawGui( Layer_collage_generative * layer);
+    template<> static void specialisedDrawGui( Layer_file_aiCollage * layer);
 
-
+    template<> static void specialisedDrawGui( Layer_filter_chromatic_aberation * layer);
+    template<> static void specialisedDrawGui( Layer_alpha_replace_channel * layer);
     template<> static void specialisedDrawGui( Layer_filter_mpeg_glitch * layer);
     template<> static void specialisedDrawGui( Layer_filter_distort * layer);
 
@@ -26,16 +29,6 @@ public:
 private:
 
     static void baseDrawGui( Layer_base * layer);
-
-    static void LoadButton(ofParameter<bool> & load);
-    static void Button(ofParameter<bool> & load);
-    static void AngleSlider(ofParameter<float>& parameter);
-    static void Slider(ofParameter<float>& parameter);
-    static void Slider(ofParameter<int>& parameter);
-    static void ColorPicker(ofParameter<glm::vec4>& parameter);
-    static void SliderVec2(ofParameter<glm::vec2>& parameter);
-    static void Dropdown(ofParameter<int>& parameter, std::vector<std::string> labels);
-
 };
 
 template<class T, enable_if_t<is_base_of<Layer_base,T>::value>*> 
@@ -116,5 +109,65 @@ void SingleLayerGui::specialisedDrawGui(Layer_filter_mpeg_glitch * layer)
 template<>
 void SingleLayerGui::specialisedDrawGui(Layer_filter_distort * layer)
 {
+    ofParameter<float> & p_blur   =  layer->params.get("Blur").cast<float>();
+    ofParameter<float> & p_size   =  layer->params.get("Size").cast<float>();
+    ofParameter<int>   & p_shape  =  layer->params.get("Shape").cast<int>();
+
+    Dropdown(p_shape, Layer_filter_distort::getModeNames());
+
+    Slider(p_blur);
+    Slider(p_size);
+}
+
+
+template<>
+void SingleLayerGui::specialisedDrawGui(Layer_file_aiCollage * layer)
+{
+
+    ofParameter<int> & p_mode = layer->params.get("Mode").cast<int>();
+
+    ofParameterGroup & collageParams = layer->params.getGroup("Collage Settings");
+
+    //ofParameter<float>     & p_areaWeight      = collageParams.get("Area Weight").cast<float>();
+    ofParameter<bool>      & p_ShowTarget      = collageParams.get("Show Target").cast<bool>();
+    //ofParameter<bool>      & p_ShowBackground  = collageParams.get("Blur").cast<bool>();
+    ofParameter<bool>      & p_ShowBase        = collageParams.get("Show Base").cast<bool>();
+    ofParameter<bool>      & p_ShowSource      = collageParams.get("Show Source").cast<bool>();
+    //ofParameter<bool>      & p_Debug           = collageParams.get("Blur").cast<bool>();
+    //ofParameter<bool>      & p_Replace         = collageParams.get("Blur").cast<bool>();
+    ofParameter<int>       & p_depth           = collageParams.get("Depth").cast<int>();
+    ofParameter<int>       & p_maxPatches      = collageParams.get("Max Patches").cast<int>();
+    ofParameter<glm::vec2> & p_alphaRange      = collageParams.get("Alpha").cast<glm::vec2>();
+
+    Dropdown(p_mode, Layer_file_aiCollage::getModeNames());
+
+    if (ImGui::Button(ICON_MDI_SORT)) {
+        layer->Sort();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button(ICON_MDI_SORT_VARIANT)) {         
+        layer->SortInternal();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button(ICON_MDI_SHUFFLE_VARIANT)) {
+        layer->Shuffle();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button(ICON_MDI_SHUFFLE)) {      
+        layer->ShuffleInternal();
+    }
+
+    Checkbox(p_ShowTarget);
+    Checkbox(p_ShowBase);
+    Checkbox(p_ShowSource);
+
+    Slider(p_depth);
+    Slider(p_maxPatches);
+
+    SliderVec2(p_alphaRange);
+
+
+
+
 
 }

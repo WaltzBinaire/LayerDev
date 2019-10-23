@@ -22,7 +22,9 @@ void Layer_filter_mpeg_glitch::onSetup()
 
 void Layer_filter_mpeg_glitch::onUpdate()
 {
-    if (!p_pause) redraw();
+    if (!p_pause) {
+        redraw();
+    }
 }
 
 void Layer_filter_mpeg_glitch::onDrawGui()

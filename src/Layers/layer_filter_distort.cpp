@@ -1,5 +1,5 @@
 #include "Layers\layer_filter_distort.h"
-
+#include "GUI/SingleLayerGui.h"
 
 REGISTER_TYPE(Layer_filter_distort, Glitch Distort)
 
@@ -7,6 +7,11 @@ void Layer_filter_distort::onDraw(const ofTexture & _baseTex) const
 {
     drawBrush(_baseTex);
     Layer_filter_shader::onDraw(_baseTex);
+}
+
+void Layer_filter_distort::onDrawGui()
+{
+    SingleLayerGui::specialisedDrawGui<Layer_filter_distort>(this); 
 }
 
 void Layer_filter_distort::onSetup()
@@ -31,9 +36,9 @@ void Layer_filter_distort::onUpdate()
 
 void Layer_filter_distort::onSetupParams()
 {
-    p_blur.set("Blur", 0.5, 0.0, 1.0);
+    p_blur.set("Blur", 0.0, 0.0, 1.0);
     p_size.set("Size", 0.5, 0.0, 1.0);
-    p_shape.set("Shape"  , (int)SHAPE::CIRCLE, (int)SHAPE::CIRCLE, (int)SHAPE::END - 1);
+    p_shape.set("Shape"  , (int)SHAPE::CIRCLE, (int)SHAPE::CIRCLE, (int)SHAPE::RECTANGLE);
 
     params.add(
         p_size,
@@ -88,7 +93,6 @@ void Layer_filter_distort::onMouseReleased(ofMouseEventArgs & _args)
 
 void Layer_filter_distort::onMouseScrolled(ofMouseEventArgs & _args)
 {
-
     p_size += 0.05 * _args.scrollY;
     p_size = ofClamp(p_size, p_size.getMin(), p_size.getMax());
 }
@@ -136,7 +140,7 @@ void Layer_filter_distort::drawBrush(const ofTexture & _baseTex) const
     uv_draw_shader->setUniform2f("u_srtPos" , srtPos);
     uv_draw_shader->setUniform2f("u_pos"    , pos);
     uv_draw_shader->setUniform1f("u_size"   , p_size);
-    uv_draw_shader->setUniform1f("u_blur"   , p_blur);
+    uv_draw_shader->setUniform1f("u_blur"   , p_size * p_blur);
     uv_draw_shader->setUniform1i("u_shape"  , p_shape);
     uv_draw_shader->setUniform1i("u_drawing", (int)b_drawing);
     uv_draw_shader->setUniform1i("u_initialized", (int)b_brushFboInitialised);

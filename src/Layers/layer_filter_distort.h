@@ -12,11 +12,16 @@ public:
         CIRCLE    = 0,
         LINE      = 1,
         RECTANGLE = 2,
-        END
     };
+
+    static const vector<string> & getModeNames() {
+        static const vector<string> modeNames{ "Circle", "Line", "Square" };
+        return modeNames;
+    }
 
 protected:
     virtual void onDraw(const ofTexture & _baseTex) const override;
+    virtual void onDrawGui()     override ;
     virtual void onSetup()       override;
     virtual void onReset()       override;
     virtual void onUpdate()      override;

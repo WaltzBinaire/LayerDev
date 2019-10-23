@@ -65,5 +65,4 @@ void main()
 	}
     
     //outputColor = texture(u_noiseTex, uv_noise);
-
 }  
