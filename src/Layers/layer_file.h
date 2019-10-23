@@ -4,6 +4,7 @@
 class Layer_file : public Static_base
 {
 public:
+
     Layer_file(string name, Layer_Manager * _layer_manager) : Static_base(name, _layer_manager) {};
     
     
@@ -14,6 +15,10 @@ protected:
     virtual void onActivate()    override ;
     virtual void onDeactivate()  override ;
     virtual void onDrawGui()     override ;
+
+    virtual float getFileWidth()  const = 0;
+    virtual float getFileHeight() const = 0;
+
 
     virtual const vector<string> & get_allowed_exts() = 0;
 
@@ -30,5 +35,6 @@ protected:
     glm::vec2 position;
 
     bool b_placing;
+    glm::vec2 clickPosition, initPosition;
 };
 

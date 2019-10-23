@@ -67,6 +67,8 @@ void Layer_file::onLoadFile(bool & _loadFile)
 void Layer_file::onMousePressed(ofMouseEventArgs & args)
 {
     b_placing = !b_placing;
+    clickPosition = glm::vec2(args.x, args.y);
+    initPosition = position;
 }
 
 void Layer_file::onMouseScrolled(ofMouseEventArgs & args)
@@ -74,6 +76,7 @@ void Layer_file::onMouseScrolled(ofMouseEventArgs & args)
     if (b_placing) {
         scale += args.scrollY * 0.05;
         scale = max(0.1f, scale);
+        maskScale = scale * glm::vec2(getFileWidth() / getFileHeight(), 1.0);
         redraw();
     }
  
@@ -82,7 +85,9 @@ void Layer_file::onMouseScrolled(ofMouseEventArgs & args)
 void Layer_file::onMouseMoved(ofMouseEventArgs & args)
 {
     if (b_placing) {
-        position = glm::vec2(args.x, args.y);
+        position = initPosition + ( glm::vec2(args.x, args.y) - clickPosition);
+        maskOffset = position / size;
+        
         redraw();
     }
 }

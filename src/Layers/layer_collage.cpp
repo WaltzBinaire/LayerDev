@@ -42,6 +42,7 @@ void Layer_collage::onDraw() const
 
     collageShader->begin();
     collageShader->setUniform2f("u_alphaRange", p_alphaRange);
+
     for(const auto  & colImage : images) {
         
         collageShader->setUniformTexture("tex0", colImage.image.getTexture(), 0);

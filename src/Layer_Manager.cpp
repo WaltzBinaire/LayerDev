@@ -152,6 +152,9 @@ void Layer_Manager::move_layer(Layer_base* _layer, DIRECTION _dir)
 void Layer_Manager::draw() const
 {
     canvas.clear(); 
+
+    ofEnableBlendMode(ofBlendMode::OF_BLENDMODE_ALPHA);
+
     bool forceRedraw = false;
     for (auto & layer : layers) {
         

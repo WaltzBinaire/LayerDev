@@ -1,10 +1,13 @@
 #include "Layers\layer_base.h"
 #include "GUI\SingleLayerGui.h"
+#include "Utils\LayerUtils.h"
 
 Layer_base::Layer_base(string _name, Layer_Manager * layer_manager) :
     name(_name),
     b_active(false),
-    layer_manager(layer_manager)
+    layer_manager(layer_manager),
+    maskOffset(0),
+    maskScale(1.0)
 {
     quadSetup();
 }
@@ -21,13 +24,24 @@ void Layer_base::setup(int  _width, int _height) {
     onSetup();
 
     p_reset.addListener(this, &Layer_base::onResetInternal);
+    
     p_reset.set("Reset", false);
     p_disable.set("Disable", false);
-    p_debugRedraw.set("Redraw", false);
+    p_debugRedraw.set("Redraw", false);   
+
+    p_loadMask.addListener(this, &Layer_base::onLoadMask);
+    p_loadMask.set(  "Load Mask"  , false);
+    p_mask.set(      "Mask"       , false);
+    p_invertMask.set("Invert Mask", false);
+    
+    
     params.add(
         p_reset,
         p_disable,
-        p_debugRedraw
+        p_debugRedraw,
+        p_loadMask,
+        p_mask,
+        p_invertMask
     );
 
     l_paramsChanged = params.parameterChangedE().newListener([&](ofAbstractParameter &) {return this->redraw(); }, OF_EVENT_ORDER_BEFORE_APP);
@@ -95,6 +109,28 @@ void Layer_base::clearFbo() const
     fbo.end();
 }
 
+void Layer_base::onLoadMask(bool & _val)
+{
+    if (_val) {
+        LayerUtils::loadFileDialogue(LayerUtils::img_exts, this, &Layer_base::handle_mask);
+    }
+    _val = false;
+}
+
+void Layer_base::handle_mask(const string & _path)
+{
+    ofImage img;
+    img.setUseTexture(false);
+
+    if (!img.load(_path)) {
+        ofLogWarning(name) << "Could not open image.";
+    }
+    else {
+        mask.loadData(img.getPixels());
+        ofLogVerbose(name) << "Image loaded.";
+    };
+}
+
 void Layer_base::onResetInternal(bool & b_reset) {
     if (b_reset) {
         reset();
@@ -108,10 +144,15 @@ bool Static_base::draw(pingPongFbo & mainFbo, bool _forceRedraw) const
         return needsRedraw();
     }
     else if (needsRedraw() || _forceRedraw) {
+
+        onRender();
+
         fbo.begin();
         ofClear(0);
         onDraw();
         fbo.end();
+
+        onMask();
 
         mainFbo.begin();
         fbo.draw(0, 0);
@@ -133,12 +174,16 @@ bool Filter_base::draw(pingPongFbo & mainFbo, bool _forceRedraw) const
     } else if (needsRedraw() || _forceRedraw) {
         mainFbo.swap();
 
+        onRender(mainFbo.getBackTexture());
+
         fbo.begin();
         ofClear(0);
         onDraw(mainFbo.getBackTexture());
         fbo.end();
 
         setRedraw(false);
+
+        onMask();
         
         mainFbo.begin();
         fbo.draw(0, 0);
@@ -156,7 +201,7 @@ bool Filter_base::draw(pingPongFbo & mainFbo, bool _forceRedraw) const
 
 void Layer_base::quadSetup()
 {
-    base_shader = Shader_lib::get_passthrough_shader();
+    mask_shader = Shader_lib::get_mask_shader();
 
     baseQuad.addVertex(glm::vec3(0));
 	baseQuad.addVertex(glm::vec3(0));
@@ -185,11 +230,33 @@ void Layer_base::setQuad(const ofTexture & _baseTex) const
 	baseQuad.setVertex(3, glm::vec3( 0                  , _baseTex.getHeight(), 0 ));
 }
 
-void Layer_base::drawTexture(const ofTexture & _baseTex) const
+void Layer_base::drawMasked() const
 {
-    setQuad(_baseTex);
-    base_shader->begin();
-    _baseTex.bind();
+
+
+    setQuad(fbo.getTexture());
+    fbo.swap();
+    fbo.clear();
+    fbo.begin();
+    mask_shader->begin();
+    
+    mask_shader->setUniformTexture("u_imageTex", fbo.getBackTexture(), 0);
+    mask_shader->setUniformTexture("u_alphaTex", mask                , 1);
+    mask_shader->setUniform1i("u_invert", (int)p_invertMask );
+    mask_shader->setUniform2f("u_resolution",  size );
+    mask_shader->setUniform2f("u_maskOffset",  maskOffset );
+    mask_shader->setUniform2f("u_maskScale",   maskScale );
+
+
     baseQuad.draw();
-    base_shader->end();
+    mask_shader->end();
+    fbo.end();
+}
+
+void Layer_base::onMask() const
+{
+    if (p_mask && mask.isAllocated())
+    {
+        drawMasked();
+    }
 }

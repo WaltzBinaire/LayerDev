@@ -1,5 +1,7 @@
 #include "Layers\layer_alpha_replace_face.h"
 
+#ifdef NDEBUG
+
 REGISTER_TYPE(Layer_alpha_replace_face)
 
 void Layer_alpha_replace_face::onSetup()
@@ -85,3 +87,5 @@ void Layer_alpha_replace_face::updateFace(const ofTexture & _baseTex) const
 
 
 }
+
+#endif // !NDEBUG

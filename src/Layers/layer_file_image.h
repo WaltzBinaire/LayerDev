@@ -14,6 +14,10 @@ protected:
     virtual void onDraw() const override;
     virtual void onReset() override;
 
+    
+    virtual float getFileWidth()  const { return img.getWidth(); };
+    virtual float getFileHeight() const { return img.getHeight(); };
+
     virtual const vector<string> & get_allowed_exts() { return LayerUtils::img_exts; }
     virtual void handle_file(const string & _path) override;
 

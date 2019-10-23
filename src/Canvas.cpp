@@ -57,6 +57,7 @@ ofPixels Canvas::getPixels() const
 
 void Canvas::draw() const
 {
+    fitToScreen();
 
     fbo.draw(
         position.x, 
@@ -100,7 +101,21 @@ void Canvas::setupParams()
     p_autoResize.set("Auto Resize", true);
 }
 
-void Canvas::clear() 
+void Canvas::fitToScreen() const
+{
+    float sw = ofGetWidth()  / getWidth();
+    float sh = ofGetHeight() / getHeight();
+
+    scale = min( 1.0f, min(sw, sh));
+
+    position = glm::vec2(
+        (ofGetWidth()  * 0.5) - (0.5  * scale * getWidth()  ),
+        (ofGetHeight() * 0.5) - (0.5  * scale * getHeight())
+    );
+
+}
+
+void Canvas::clear()
 {
     fbo.clearAll();
     fbo.begin();

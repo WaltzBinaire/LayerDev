@@ -5,9 +5,12 @@
 
 void SingleLayerGui::baseDrawGui(Layer_base * layer)
 {          
-    ofParameter<bool> & disable = layer->params.get("Disable").cast<bool>();    
-    ofParameter<bool> & reset   = layer->params.get("Reset").cast<bool>();
-    ofParameter<bool> & redraw  = layer->params.get("Redraw").cast<bool>();
+    ofParameter<bool> & disable    = layer->params.get("Disable"    ).cast<bool>();    
+    ofParameter<bool> & reset      = layer->params.get("Reset"      ).cast<bool>();
+    ofParameter<bool> & redraw     = layer->params.get("Redraw"     ).cast<bool>();
+    ofParameter<bool> & loadMask   = layer->params.get("Load Mask"  ).cast<bool>();    
+    ofParameter<bool> & mask       = layer->params.get("Mask"       ).cast<bool>();
+    ofParameter<bool> & invertMask = layer->params.get("Invert Mask").cast<bool>();
 
     ImGui::Text(layer->get_display_name().c_str());
 
@@ -30,6 +33,34 @@ void SingleLayerGui::baseDrawGui(Layer_base * layer)
     ImGui::SameLine();
     if (ImGui::Button(ICON_MDI_BRUSH)) {     
         redraw.set(true);
+    }
+
+    // Mask
+
+    if (ImGui::Button(ICON_MDI_WALLPAPER)) {     
+        loadMask.set(true);
+    }
+    ImGui::SameLine();
+    if (mask.get()) {
+        if (ImGui::Button(ICON_MDI_SELECTION)) {
+            mask.set(false);
+        }
+    }
+    else {
+        if (ImGui::Button(ICON_MDI_SELECT_OFF)) {
+            mask.set(true);
+        }
+    }
+    ImGui::SameLine();
+    if (invertMask.get()) {
+        if (ImGui::Button(ICON_MDI_INVERT_COLORS_OFF)) {
+            invertMask.set(false);
+        }
+    }
+    else {
+        if (ImGui::Button(ICON_MDI_INVERT_COLORS)) {
+            invertMask.set(true);
+        }
     }
 }
 

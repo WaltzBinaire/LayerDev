@@ -68,4 +68,6 @@ namespace LayerUtils {
             "GIF"
     };
 
+    static const vector<string> collage_exts  { "svg", "SVG" };
+
 }

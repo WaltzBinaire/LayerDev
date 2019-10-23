@@ -41,8 +41,6 @@ template<class T>
 void SingleLayerGui::specialisedDrawGui( T * layer)
 {
     ofLogWarning(__FUNCTION__) << "No specialised template defined for " << layer->get_display_name();
-
-
 }
 
 template<>

@@ -151,14 +151,17 @@ void LayerGui::drawProjectMenu(Layer_Manager * manager) const
 
                 int numPerLine = floor(ImGui::GetWindowWidth() / THUMBNAIL_SIZE);
 
-                int i = 0;
+                int it = 0;
                 for (int i = 0; i < thumbnails.size(); i++)
                 {
-                    ImTextureID tex_id = getTextureId(thumbnails[i]);
-                    ImGui::Image(tex_id, ImVec2(THUMBNAIL_SIZE, THUMBNAIL_SIZE));
+                    ImTextureID tex_id;
+                    
+                    if (getTextureId(thumbnails[i], tex_id) ){
+                        ImGui::Image(tex_id, ImVec2(THUMBNAIL_SIZE, THUMBNAIL_SIZE));
 
-                    if (i % numPerLine == numPerLine - 1) continue;
-                    ImGui::SameLine();
+                        if (it++ % numPerLine == numPerLine - 1) continue;
+                        ImGui::SameLine();
+                    }
                 }
             }
 
@@ -226,7 +229,6 @@ void LayerGui::drawMainMenuBar(Layer_Manager * manager) const
                 // Auto resize
                 static bool autoResize;
                 static bool tmpaAutoResize = canvas.p_autoResize.get();
-                ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
 
                 if (ImGui::Checkbox("Always fit to Window", &tmpaAutoResize)) {
                     autoResize = tmpaAutoResize;
@@ -279,7 +281,6 @@ void LayerGui::drawMainMenuBar(Layer_Manager * manager) const
                 ImGui::EndPopup();
             }
             ImGui::EndMenu();
-
         }
 
 

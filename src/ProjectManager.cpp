@@ -8,7 +8,11 @@ const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_rel_
     {RESOURCE_TYPE::COLLAGE  , "Assets/Collage"   }
 };
 
-const char* ProjectResource::resource_name_c[] = {"Instagram", "Segmented", "Target", "Collage"};
+const char* ProjectResource::resource_name_c[] = {
+    "Instagram",
+    "Segmented",
+    "Portrait",
+    "Collage"};
 
 const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_names
 {
@@ -38,6 +42,7 @@ const vector<ofTexture>& ProjectResource::getThumbnails() const
                 thumbnail_textures.push_back(img->getTexture());
             }
         }
+        return thumbnail_textures;
     }
 }
 
@@ -78,7 +83,7 @@ vector<string> ProjectResource::get_allowed_exts()
     case RESOURCE_TYPE::TARGET:
         return LayerUtils::img_exts;
     case RESOURCE_TYPE::COLLAGE:
-        return vector<string> { "" };
+        return LayerUtils::collage_exts;
     default:
         return vector<string> { "" };
     }

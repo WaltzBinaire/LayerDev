@@ -58,8 +58,7 @@ public:
     ofParameterGroup params;
 
 protected:
-    void clearFbo() const;;    
-    void drawTexture(const ofTexture & _baseTex)const;
+    void clearFbo() const;  
 
     virtual void onSetup()         {};
     virtual void onSetupParams()   {};
@@ -71,6 +70,8 @@ protected:
     virtual void onDestroy()       {};
     virtual void onResize()        {};
 
+    virtual void onMask()    const;
+
     string name;
     Layer_Manager * layer_manager;
     bool b_active;
@@ -78,14 +79,24 @@ protected:
     ofParameter<bool> p_reset;
     ofParameter<bool> p_disable;
     ofParameter<bool> p_debugRedraw;
+    ofParameter<bool> p_loadMask;
+    ofParameter<bool> p_mask;
+    ofParameter<bool> p_invertMask;
 
     ofEventListener l_paramsChanged;
     ofEventListener l_debugRedraw;
 
     glm::vec2 size;
-    mutable ofFbo fbo;
+    mutable pingPongFbo fbo;
+
+    mutable ofTexture mask;
+    glm::vec2 maskOffset;
+    glm::vec2 maskScale;
 
 private:
+    void onLoadMask(bool & _val);
+    void handle_mask(const string & _path);
+
     mutable bool b_redraw;
 
     static map<string, Layer_factory*>* GetFactoryDirectory() {        
@@ -94,11 +105,15 @@ private:
     }
     void onResetInternal(bool & b_reset);
     void setupFbo(int w, int h);  
+
+    
+    void drawMasked() const;
+
     void quadSetup();
     void setQuad(const ofTexture & _baseTex) const;
     
     
-    shared_ptr<AutoShader> base_shader;
+    shared_ptr<AutoShader> mask_shader;
     mutable ofMesh baseQuad;
 };
 
@@ -109,7 +124,7 @@ public:
     bool draw(pingPongFbo & mainFbo, bool _forceRedraw = false) const override;
 
 protected:
-    virtual void onDraw() const {};
+    virtual void onDraw()   const {};
     virtual void onRender() const {};
 };
 

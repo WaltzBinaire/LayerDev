@@ -12,6 +12,8 @@ public:
     void resize(float width, float height);
     void resize(glm::vec2 size) { resize(size.x, size.y); };
 
+    void fitToScreen() const;
+
     void clear();
         
     void draw() const;
@@ -26,8 +28,8 @@ public:
         return fbo;
     };
 
-    float getWidth()  { return size.x;} ;
-    float getHeight() { return size.y;} ;
+    float getWidth()   const { return size.x;} ;
+    float getHeight()  const { return size.y;} ;
 
     ofEvent<glm::vec2> canvasResized;
     ofEvent<bool> backgroundChanged;
@@ -53,8 +55,8 @@ private:
 
     // Drawing
     mutable pingPongFbo fbo;
-    glm::vec2 position;
-    float scale;
+    mutable glm::vec2 position;
+    mutable float scale;
 
 
 };

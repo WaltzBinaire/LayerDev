@@ -5,9 +5,8 @@ REGISTER_TYPE(Layer_file_image)
 void Layer_file_image::onDraw() const
 {
     if (img.isAllocated()) {
-        glm::vec2 size = scale * glm::vec2(img.getWidth(), img.getHeight());
+        glm::vec2 size = scale * glm::vec2(getFileWidth(), getFileHeight());
         ofPushStyle();
-        ofEnableBlendMode(OF_BLENDMODE_ADD);
         img.draw( position - size * 0.5, size.x, size.y);
         ofPopStyle();
     }

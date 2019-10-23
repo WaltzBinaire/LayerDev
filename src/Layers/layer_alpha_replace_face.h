@@ -1,6 +1,8 @@
 #pragma once
 #include "Layers\layer_filter_alpha_replace.h"
 
+#ifdef NDEBUG
+
 #include "ofxFaceTracker2.h"
 
 class Layer_alpha_replace_face : public Layer_filter_alpha_replace
@@ -31,3 +33,5 @@ private:
     mutable ofPixels pixels;
 };
 
+
+#endif // !NDEBUG

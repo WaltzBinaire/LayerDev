@@ -19,8 +19,15 @@ public:
     bool mouseOverGui() const { return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow); }
 
 
-    static  ImTextureID getTextureId(const ofTexture & _tex) {
-        return (ImTextureID)(uintptr_t)(_tex.texData.textureID);
+    static  bool getTextureId(const ofTexture & _tex, ImTextureID & _texID) {
+        if (_tex.isAllocated()) {
+            _texID = (ImTextureID)(uintptr_t)(_tex.texData.textureID);
+            return true;
+        }
+        else {
+            return false;
+        }
+        
     }
 
 private:
@@ -43,7 +50,7 @@ private:
 
     mutable float menuBarHeight;
 
-    bool canvasSettingsInit;
+    mutable bool canvasSettingsInit;
 
 };
 
