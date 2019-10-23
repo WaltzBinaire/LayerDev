@@ -1,7 +1,7 @@
 #include "Layers\layer_alpha_replace_chanel.h"
 #include "GUI/SingleLayerGui.h"
 
-REGISTER_TYPE(Layer_alpha_replace_channel)
+REGISTER_TYPE(Layer_alpha_replace_channel, Channel Apha)
 
 void Layer_alpha_replace_channel::onDraw(const ofTexture & _baseTex) const
 {

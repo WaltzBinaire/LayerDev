@@ -34,11 +34,12 @@ public:
     void saveAs() const;
     void save() const;
 
-    void add_layer(string name, bool _activate = true);
+    Layer_base *  add_layer(string name, bool _activate = true);
     
     vector<string> get_layer_names();
-
     void redrawAll();
+
+    map<string, std::function<void(bool)>> specialLayers;
 
 private:
 
@@ -49,6 +50,10 @@ private:
     void onMouseScrolled( ofMouseEventArgs & _args) { if(!b_mouseOverGui) canvasMouseScrolled.notify(this, _args); }
     void onMouseEntered ( ofMouseEventArgs & _args) { if(!b_mouseOverGui) canvasMouseEntered.notify(this, _args);  }
     void onMouseExited  ( ofMouseEventArgs & _args) { if(!b_mouseOverGui) canvasMouseExited.notify(this, _args);   }
+
+    void onProjectLoaded(bool & _val);
+    void addPortraitLayer(bool _activate);
+    void addCollageLayer(bool _activate);
 
     void addListeners();
     void removeListeners();

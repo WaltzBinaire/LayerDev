@@ -5,9 +5,10 @@
 class Layer_file_image : public Layer_file
 {
 public:
-    Layer_file_image(string name, Layer_Manager * _layer_manager) : Layer_file(name, _layer_manager) {};
+    Layer_file_image(string name, int instance, Layer_Manager * _layer_manager) : Layer_file(name, instance, _layer_manager) {};
 
     virtual const string get_display_name() const override { return "Image"; }
+    virtual void handle_file(const string & _path) override;
 
 protected:
 
@@ -19,7 +20,6 @@ protected:
     virtual float getFileHeight() const { return img.getHeight(); };
 
     virtual const vector<string> & get_allowed_exts() { return LayerUtils::img_exts; }
-    virtual void handle_file(const string & _path) override;
 
     ofImage img;
 

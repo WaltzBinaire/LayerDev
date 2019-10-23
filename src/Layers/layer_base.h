@@ -12,7 +12,7 @@ class Layer_factory;
 class Layer_base
 {
 public:
-    Layer_base(string _name, Layer_Manager * _layer_manager);
+    Layer_base(string _name, int _instance, Layer_Manager * _layer_manager);
     virtual ~Layer_base();
 
     void setup(int _height, int width);
@@ -52,8 +52,8 @@ public:
 
     void resize( int width, int height);
 
-    const string& get_name() const { return name; }
-    virtual const string get_display_name() const { return get_name(); }
+    const string& get_name() const { return name + ofToString(instance); }
+    virtual const string get_display_name() const { return name; }
 
     ofParameterGroup params;
 
@@ -73,6 +73,7 @@ protected:
     virtual void onMask()    const;
 
     string name;
+    int instance;
     Layer_Manager * layer_manager;
     bool b_active;
 
@@ -120,7 +121,7 @@ private:
 class Static_base : public Layer_base
 {
 public:
-    Static_base(string name, Layer_Manager * layer_manager )  : Layer_base(name, layer_manager) {};
+    Static_base(string name, int instance, Layer_Manager * layer_manager )  : Layer_base(name, instance, layer_manager) {};
     bool draw(pingPongFbo & mainFbo, bool _forceRedraw = false) const override;
 
 protected:
@@ -131,7 +132,7 @@ protected:
 class Filter_base  : public Layer_base
 {
 public:
-    Filter_base(string name, Layer_Manager * layer_manager) : Layer_base(name, layer_manager) { redraw(); };
+    Filter_base(string name, int instance, Layer_Manager * layer_manager) : Layer_base(name, instance, layer_manager) { redraw(); };
     bool draw(pingPongFbo & mainFbo, bool _forceRedraw = false) const override;
 protected:
     virtual void onDraw(const ofTexture & _baseTex) const {};
@@ -144,20 +145,22 @@ class Layer_factory
 public:
     virtual Layer_base *create(Layer_Manager * _layer_manager) = 0;
 protected:
-    string name;
-    int    number;
+    string class_name;
+    string display_name;
+    int    instance;
 };
 
-#define REGISTER_TYPE(klass) \
+#define REGISTER_TYPE(klass, name) \
     class klass##_factory : public Layer_factory { \
     public: \
         klass##_factory() \
         { \
-            Layer_base::registerType(#klass, this); \
-            name = #klass; \
+            Layer_base::registerType(#name, this); \
+            class_name   = #klass; \
+            display_name = #name; \
         } \
         virtual Layer_base *create(Layer_Manager * _layer_manager) { \
-            return new klass( name + "_" + ofToString(number++ ), _layer_manager); \
+            return new klass( display_name, instance++ , _layer_manager); \
         } \
     }; \
     static klass##_factory global_##klass##_factory;

@@ -2,8 +2,9 @@
 #include "GUI\SingleLayerGui.h"
 #include "Utils\LayerUtils.h"
 
-Layer_base::Layer_base(string _name, Layer_Manager * layer_manager) :
+Layer_base::Layer_base(string _name, int _instance, Layer_Manager * layer_manager) :
     name(_name),
+    instance(_instance),
     b_active(false),
     layer_manager(layer_manager),
     maskOffset(0),

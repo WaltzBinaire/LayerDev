@@ -1,7 +1,7 @@
 #include "Layers\layer_collage_generative.h"
 #include "GUI/SingleLayerGui.h"
 
-REGISTER_TYPE(Layer_collage_generative)
+REGISTER_TYPE(Layer_collage_generative, Generative Collage)
 
 void Layer_collage_generative::onSetupParams()
 {
@@ -66,7 +66,7 @@ void Layer_collage_generative::generate_lines()
         float scale = size.x / newImage.getHeight();
         newImage.resize(  scale * newImage.getWidth(), scale * newImage.getHeight());
 
-        int x        = floor(ofRandom(0.0, newImage.getWidth() - w));
+        int x  = floor(ofRandom(0.0, newImage.getWidth() - w));
         int y  = 0.0;
 
         newImage.crop(x, y, w, h);

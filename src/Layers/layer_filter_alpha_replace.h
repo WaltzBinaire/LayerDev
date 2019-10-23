@@ -3,7 +3,7 @@
 
 class Layer_filter_alpha_replace : public Layer_filter_shader {
 public:
-    Layer_filter_alpha_replace(string name, Layer_Manager * _layer_manager) : Layer_filter_shader(name, _layer_manager) {};
+    Layer_filter_alpha_replace(string name, int instance, Layer_Manager * _layer_manager) : Layer_filter_shader(name, instance, _layer_manager) {};
     
     void handle_file(const string & _path);
 

@@ -291,6 +291,13 @@ void LayerGui::drawMainMenuBar(Layer_Manager * manager) const
                     manager->add_layer(type, true);
                 }
             }
+
+            for (auto & specialLayer : manager->specialLayers) {
+                if (ImGui::MenuItem(specialLayer.first.c_str())) {
+                    (specialLayer.second)(true);
+                }
+            }
+
             ImGui::EndMenu();
         }
 

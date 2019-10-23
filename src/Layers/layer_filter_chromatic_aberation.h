@@ -4,7 +4,7 @@
 class Layer_filter_chromatic_aberation : public Layer_filter_shader
 {
 public:
-    Layer_filter_chromatic_aberation(string name, Layer_Manager * _layer_manager) : Layer_filter_shader(name, _layer_manager) {};
+    Layer_filter_chromatic_aberation(string name, int instance, Layer_Manager * _layer_manager) : Layer_filter_shader(name, instance, _layer_manager) {};
 
     virtual const string get_display_name() const override { return "Chromatic Aberation"; }
 

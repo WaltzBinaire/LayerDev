@@ -5,7 +5,7 @@
 class Layer_filter_shader : public Filter_base
 {
 public:
-    Layer_filter_shader(string name, Layer_Manager * _layer_manager) : Filter_base(name, _layer_manager) {};
+    Layer_filter_shader(string name, int instance, Layer_Manager * _layer_manager) : Filter_base(name, instance, _layer_manager) {};
 
 protected:
     virtual void onDraw(const ofTexture & _baseTex) const override;

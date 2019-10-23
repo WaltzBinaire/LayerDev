@@ -7,7 +7,7 @@ class Layer_file_aiCollage : public Layer_file
 public:
     enum class MODE { NONE, EDITING, PLACING};
 
-    Layer_file_aiCollage(string name, Layer_Manager * _layer_manager) : Layer_file(name, _layer_manager) {};
+    Layer_file_aiCollage(string name, int instance, Layer_Manager * _layer_manager) : Layer_file(name, instance, _layer_manager) {};
 
     virtual const string get_display_name() const override { return "Collage"; }
 

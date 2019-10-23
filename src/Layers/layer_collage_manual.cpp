@@ -1,6 +1,6 @@
 #include "Layers\layer_collage_manual.h"
 
-REGISTER_TYPE(Layer_collage_manual)
+REGISTER_TYPE(Layer_collage_manual, Manual Collage)
 
 void Layer_collage_manual::onActivate()
 {
@@ -43,11 +43,6 @@ void Layer_collage_manual::onFileDragEvent(ofDragInfo & _fileInfo)
 //--------------------------------------------------------------
 void Layer_collage_manual::onMouseMoved(ofMouseEventArgs & _args)
 {
-    //float angle = glm::angle(
-    //    glm::vec2(ofGetMouseX(), ofGetMouseY()),
-    //    active_image->center
-    //);
-
     if (mode == Mode::EDITING) {
         active_image->center = glm::vec2(_args.x, _args.y);
 

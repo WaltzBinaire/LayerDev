@@ -5,7 +5,8 @@
 class Layer_collage_manual : public Layer_collage
 {
 public:
-    Layer_collage_manual(string name, Layer_Manager * _layer_manager) : Layer_collage(name,  _layer_manager) {}
+    Layer_collage_manual(string name, int instance, Layer_Manager * _layer_manager)
+        : Layer_collage(name, instance, _layer_manager) {}
 
 protected:
 

@@ -1,6 +1,6 @@
 #include "Layers\layer_fliter_mpeg_glitch.h"
 
-REGISTER_TYPE(layer_fliter_mpeg_glitch)
+REGISTER_TYPE(layer_fliter_mpeg_glitch, MPEG Glitch)
 
 void layer_fliter_mpeg_glitch::onSetup()
 {

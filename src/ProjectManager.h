@@ -18,6 +18,14 @@ public:
     int getNumFiles() const { return thumbnail_images.size(); };
     int getNumLoadedFiles() const { return thumbnail_textures.size(); };
 
+    string getFilePath(int i) const { 
+        if (i < dir.size()) return dir[i].path();
+        else return "";
+    }
+    string getDirectoryPath() const { 
+        return dir.path();
+    }
+
     bool setup(const string & _path);
 
     vector<string> get_allowed_exts();
@@ -59,6 +67,8 @@ class ProjectManager
 
         ProjectManager(ProjectManager const&)  = delete;
         void operator=(ProjectManager const&)  = delete;
+
+        ofEvent<bool> onLoaded;
 
     private:
 

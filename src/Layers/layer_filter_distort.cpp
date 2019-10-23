@@ -1,7 +1,7 @@
 #include "Layers\layer_filter_distort.h"
 
 
-REGISTER_TYPE(Layer_filter_distort)
+REGISTER_TYPE(Layer_filter_distort, Glitch Distort)
 
 void Layer_filter_distort::onDraw(const ofTexture & _baseTex) const
 {

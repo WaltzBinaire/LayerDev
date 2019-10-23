@@ -1,7 +1,7 @@
 #include "Layers\layer_filter_chromatic_aberation.h"
 #include "GUI/SingleLayerGui.h"
 
-REGISTER_TYPE(Layer_filter_chromatic_aberation)
+REGISTER_TYPE(Layer_filter_chromatic_aberation, Chromatic Aberation)
 
 void Layer_filter_chromatic_aberation::onDrawGui(){
     SingleLayerGui::specialisedDrawGui<Layer_filter_chromatic_aberation>(this); 

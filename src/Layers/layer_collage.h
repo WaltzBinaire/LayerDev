@@ -23,10 +23,10 @@ class Layer_collage : public Static_base
 {
 public:
 
-    Layer_collage(string _name, Layer_Manager * _layer_manager)  : Static_base(_name, _layer_manager) {};
+    Layer_collage(string name, int instance, Layer_Manager * _layer_manager)  : Static_base(name, instance, _layer_manager) {};
 
     void onAlphaRangeChanged(glm::vec2 & _val);
-
+    void populate_images(const string & _path);
 protected:
 
     enum class Mode {
@@ -45,7 +45,7 @@ protected:
 
     void onFileDragEvent(ofDragInfo & _fileInfo);
     void onLoadFolder(bool & _loadFolder);
-    void populate_images(const string & _path);
+
 
     void setupQuad();
     void setQuad(const CollageImage &colImage) const;

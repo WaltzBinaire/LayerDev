@@ -5,7 +5,7 @@ class Layer_file : public Static_base
 {
 public:
 
-    Layer_file(string name, Layer_Manager * _layer_manager) : Static_base(name, _layer_manager) {};
+    Layer_file(string name, int instance, Layer_Manager * _layer_manager) : Static_base(name, instance, _layer_manager) {};
     
     
     virtual void handle_file(const string & _path) = 0;

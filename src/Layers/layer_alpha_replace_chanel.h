@@ -4,8 +4,8 @@
 class Layer_alpha_replace_channel : public  Layer_filter_alpha_replace
 {
 public:
-    Layer_alpha_replace_channel(string name, Layer_Manager * _layer_manager)
-        : Layer_filter_alpha_replace(name, _layer_manager) {};
+    Layer_alpha_replace_channel(string name, int instance, Layer_Manager * _layer_manager)
+        : Layer_filter_alpha_replace(name, instance, _layer_manager) {};
 
 protected:
     virtual void onDraw(const ofTexture & _baseTex) const override;

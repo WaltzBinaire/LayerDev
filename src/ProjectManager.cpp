@@ -146,4 +146,5 @@ void ProjectManager::loadProject(const string & _root_path)
         b_isLoaded = true;
     }
 
+    onLoaded.notify(b_isLoaded);
 }

@@ -2,7 +2,7 @@
 
 #ifdef NDEBUG
 
-REGISTER_TYPE(Layer_alpha_replace_face)
+REGISTER_TYPE(Layer_alpha_replace_face, Face Replace)
 
 void Layer_alpha_replace_face::onSetup()
 {

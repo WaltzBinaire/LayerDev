@@ -2,6 +2,10 @@
 #include "Layers/layer_base.h"
 #include "GUI/LayerGui.h"
 
+#include "Layers\layer_file_image.h"
+#include "Layers\layer_collage_generative.h"
+
+using RESOURCE_TYPE = ProjectResource::RESOURCE_TYPE ;
 
 Layer_Manager::Layer_Manager()
 {
@@ -26,7 +30,7 @@ Layer_Manager::~Layer_Manager()
     }
 }
 
-void Layer_Manager::add_layer(string name, bool _activate)
+Layer_base * Layer_Manager::add_layer(string name, bool _activate)
 {
     if (std::find(layer_types.begin(), layer_types.end(), name) == layer_types.end()) {
         ofLogWarning() << name << " is not an available layer type";
@@ -39,6 +43,8 @@ void Layer_Manager::add_layer(string name, bool _activate)
     if (_activate) {
         setActiveLayer(layer);
     }
+
+    return layer;
 }
 
 vector<string> Layer_Manager::get_layer_names()
@@ -54,6 +60,65 @@ void Layer_Manager::redrawAll()
 }
 
 
+void Layer_Manager::onProjectLoaded(bool & _val)
+{
+
+    specialLayers.clear();
+    if (!_val)  return;
+
+    // Add Portrait Layer
+    if (projectManager().getResource(RESOURCE_TYPE::TARGET) != nullptr) {
+        std::function<void(bool)> func = [=](bool _activate) {
+            this->addPortraitLayer(_activate);
+        };
+        specialLayers.insert_or_assign("Portrait", func);
+    }
+
+    // Add Collage Layer
+    if (projectManager().getResource(RESOURCE_TYPE::SEGMENTED) != nullptr) {
+        std::function<void(bool)> func = [=](bool _activate) {
+            this->addCollageLayer(_activate);
+        };
+        specialLayers.insert_or_assign("Collage", func);
+    }
+}
+
+void Layer_Manager::addPortraitLayer(bool _activate)
+{
+    const string layer_name = "Layer_file_image";
+
+    auto targets = projectManager().getResource(RESOURCE_TYPE::TARGET);
+
+    auto layer_type = find(layer_types.begin(), layer_types.end(), layer_name);
+    if (layer_type != layer_types.end()) {
+        Layer_base * layer = add_layer(layer_name, _activate);
+        Layer_file_image * img_layer = dynamic_cast<Layer_file_image *>(layer);
+
+        if (img_layer == nullptr) delete_layer(layer);
+
+        img_layer->handle_file(targets->getFilePath(0));
+    }
+}
+void Layer_Manager::addCollageLayer(bool _activate)
+{
+    const string layer_name = "Layer_collage_generative";
+
+    auto targets = projectManager().getResource(RESOURCE_TYPE::SEGMENTED);
+
+    auto layer_type = find(layer_types.begin(), layer_types.end(), layer_name);
+    if (layer_type != layer_types.end()) {
+        Layer_base * layer = add_layer(layer_name, _activate);
+        Layer_collage_generative * img_layer = dynamic_cast<Layer_collage_generative *>(layer);
+
+        if (img_layer == nullptr) {
+            delete_layer(layer);
+            return;
+        }
+
+        img_layer->populate_images(targets->getDirectoryPath());
+    }
+}
+
 void Layer_Manager::addListeners()
 {
     ofAddListener(canvas.canvasResized     , this, &Layer_Manager::onCanvasResized);
@@ -65,6 +130,7 @@ void Layer_Manager::addListeners()
     ofAddListener(ofEvents().mouseScrolled , this, &Layer_Manager::onMouseScrolled);
     ofAddListener(ofEvents().mouseEntered  , this, &Layer_Manager::onMouseEntered );
     ofAddListener(ofEvents().mouseExited   , this, &Layer_Manager::onMouseExited  );
+    ofAddListener(projectManager().onLoaded, this, &Layer_Manager::onProjectLoaded);
 }
 
 void Layer_Manager::removeListeners()
@@ -78,6 +144,7 @@ void Layer_Manager::removeListeners()
     ofRemoveListener(ofEvents().mouseScrolled , this, &Layer_Manager::onMouseScrolled);
     ofRemoveListener(ofEvents().mouseEntered  , this, &Layer_Manager::onMouseEntered );
     ofRemoveListener(ofEvents().mouseExited   , this, &Layer_Manager::onMouseExited  );
+    ofRemoveListener(projectManager().onLoaded, this, &Layer_Manager::onProjectLoaded);
 }
 
 

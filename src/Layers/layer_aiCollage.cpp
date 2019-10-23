@@ -1,6 +1,6 @@
 #include "Layers\layer_aiCollage.h"
 
-REGISTER_TYPE(Layer_file_aiCollage)
+REGISTER_TYPE(Layer_file_aiCollage, AI Collage)
 
 vector<string> Layer_file_aiCollage::allowed_exts{
     "svg"
