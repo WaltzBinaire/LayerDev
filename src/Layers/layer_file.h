@@ -16,6 +16,8 @@ protected:
     virtual void onDeactivate()  override ;
     virtual void onDrawGui()     override ;
 
+    virtual void handle_mask(const string & _path) override ;
+
     virtual float getFileWidth()  const = 0;
     virtual float getFileHeight() const = 0;
 

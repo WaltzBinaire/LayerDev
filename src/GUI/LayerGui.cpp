@@ -353,6 +353,8 @@ void LayerGui::drawProjectMenu(ImVec2 pos, ImVec2 size)
         if (ImGui::Begin("Project", NULL, projectWindowFlags)) {
             using RESOURCE_TYPE = ProjectResource::RESOURCE_TYPE;
 
+            if (ImGui::Button("Clear")) projectManager.clear();
+
             ImGui::Text(projectManager.getName().c_str());
 
             static int current_resource_type = -1;

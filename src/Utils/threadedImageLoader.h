@@ -9,9 +9,10 @@ public:
 	void loadFromDisk(ofImage& image, string filename);
 	void loadFromDisk(ofImage& image, string filename, int resize);
 
-
+    void forceStop();
 
 private:
+    void close();
 	void update(ofEventArgs & a);
     virtual void threadedFunction();
     

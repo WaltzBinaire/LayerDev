@@ -59,6 +59,7 @@ public:
 
 protected:
     void clearFbo() const;  
+    void clearMaskFbo() const;  
 
     virtual void onSetup()         {};
     virtual void onSetupParams()   {};
@@ -71,6 +72,8 @@ protected:
     virtual void onResize()        {};
 
     virtual void onMask()    const;
+
+    virtual void handle_mask(const string & _path);
 
     string name;
     int instance;
@@ -91,14 +94,11 @@ protected:
 
     glm::vec2 size;
     mutable pingPongFbo fbo;
-
-    mutable ofTexture mask;
-    glm::vec2 maskOffset;
-    glm::vec2 maskScale;
+    mutable ofFbo maskFbo;
 
 private:
     void onLoadMask(bool & _val);
-    void handle_mask(const string & _path);
+
 
     mutable bool b_redraw;
 
@@ -117,6 +117,7 @@ private:
     
     
     shared_ptr<AutoShader> mask_shader;
+    ofEventListener l_onShaderLoad;
     mutable ofMesh baseQuad;
 };
 

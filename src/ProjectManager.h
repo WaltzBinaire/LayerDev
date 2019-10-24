@@ -57,6 +57,7 @@ class ProjectManager
         static ProjectManager& getInstance();
 
         void loadProject();
+        void clear();
 
         bool isLoaded() const { return b_isLoaded; };
 

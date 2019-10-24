@@ -6,9 +6,7 @@ Layer_base::Layer_base(string _name, int _instance, Layer_Manager * layer_manage
     name(_name),
     instance(_instance),
     b_active(false),
-    layer_manager(layer_manager),
-    maskOffset(0),
-    maskScale(1.0)
+    layer_manager(layer_manager)
 {
     quadSetup();
 }
@@ -21,6 +19,8 @@ Layer_base::~Layer_base()
 void Layer_base::setup(int  _width, int _height) {
     size = glm::vec2(_width, _height);
     setupFbo(size.x, size.y);
+
+    l_onShaderLoad = mask_shader->onLoad.newListener( [&](bool &) {return this->redraw(); });
 
     onSetup();
 
@@ -82,6 +82,7 @@ vector<string> Layer_base::get_layer_names()
 
 void Layer_base::setupFbo(int w, int h)
 {  
+    // Art fbo
     ofFboSettings settings;
     settings.numColorbuffers    = 1;   // one buff per fbo
     settings.width              = w;
@@ -95,6 +96,21 @@ void Layer_base::setupFbo(int w, int h)
     settings.textureTarget      = GL_TEXTURE_2D;
     fbo.allocate(settings);
     clearFbo();
+
+    // Mask fbo
+    ofFboSettings maskSettings;
+    settings.numColorbuffers    = 1;   // one buff per fbo
+    settings.width              = w;
+    settings.height             = h;
+    settings.internalformat     = GL_RGBA;
+    settings.wrapModeHorizontal = true;
+    settings.wrapModeVertical   = true;
+    settings.numSamples         = 0;
+    settings.useDepth           = false;
+    settings.useStencil         = false;
+    settings.textureTarget      = GL_TEXTURE_2D;
+    maskFbo.allocate(settings);
+
 }
 
 void Layer_base::resize(int _width, int _height )
@@ -112,6 +128,14 @@ void Layer_base::clearFbo() const
     fbo.end();
 }
 
+void Layer_base::clearMaskFbo() const
+{
+    maskFbo.begin();
+    ofClear(0);
+    ofBackground(1.0);
+    maskFbo.end();
+}
+
 void Layer_base::onLoadMask(bool & _val)
 {
     if (_val) {
@@ -123,14 +147,14 @@ void Layer_base::onLoadMask(bool & _val)
 void Layer_base::handle_mask(const string & _path)
 {
     ofImage img;
-    img.setUseTexture(false);
-
     if (!img.load(_path)) {
-        ofLogWarning(name) << "Could not open image.";
+        ofLogWarning(name) << "Could not open mask.";
     }
     else {
-        mask.loadData(img.getPixels());
-        ofLogVerbose(name) << "Image loaded.";
+        maskFbo.begin();
+        img.draw(0, 0, maskFbo.getWidth(), maskFbo.getHeight());
+        maskFbo.end();
+        ofLogVerbose(name) << "Mask loaded.";
     };
 }
 
@@ -236,7 +260,6 @@ void Layer_base::setQuad(const ofTexture & _baseTex) const
 void Layer_base::drawMasked() const
 {
 
-
     setQuad(fbo.getTexture());
     fbo.swap();
     fbo.clear();
@@ -244,12 +267,8 @@ void Layer_base::drawMasked() const
     mask_shader->begin();
     
     mask_shader->setUniformTexture("u_imageTex", fbo.getBackTexture(), 0);
-    mask_shader->setUniformTexture("u_alphaTex", mask                , 1);
+    mask_shader->setUniformTexture("u_alphaTex", maskFbo.getTexture(), 1);
     mask_shader->setUniform1i("u_invert", (int)p_invertMask );
-    mask_shader->setUniform2f("u_resolution",  size );
-    mask_shader->setUniform2f("u_maskOffset",  maskOffset );
-    mask_shader->setUniform2f("u_maskScale",   maskScale );
-
 
     baseQuad.draw();
     mask_shader->end();
@@ -258,7 +277,7 @@ void Layer_base::drawMasked() const
 
 void Layer_base::onMask() const
 {
-    if (p_mask && mask.isAllocated())
+    if (p_mask)
     {
         drawMasked();
     }

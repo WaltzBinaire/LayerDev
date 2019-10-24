@@ -11,10 +11,7 @@ threadedImageLoader::threadedImageLoader(){
 }
 
 threadedImageLoader::~threadedImageLoader(){
-	images_to_load_from_disk.close();
-	images_to_update.close();
-	waitForThread(true);
-    ofRemoveListener(ofEvents().update, this, &threadedImageLoader::update);
+
 }
 
 // Load an image from disk.
@@ -44,6 +41,11 @@ void threadedImageLoader::loadFromDisk(ofImage & image, string filename, int res
 	images_to_load_from_disk.send(entry);
 }
 
+void threadedImageLoader::forceStop()
+{
+    close();
+}
+
 
 // Reads from the queue and loads new images.
 //--------------------------------------------------------------
@@ -51,6 +53,9 @@ void threadedImageLoader::threadedFunction() {
 	setThreadName("threadedImageLoader " + ofToString(thread.get_id()));
 	ofImageLoaderEntry entry;
 	while( images_to_load_from_disk.receive(entry) ) {
+
+        if (!isThreadRunning()) close();
+
 		if(entry.image->load(entry.filename) )  {
 			images_to_update.send(entry);
 		}else{
@@ -60,6 +65,14 @@ void threadedImageLoader::threadedFunction() {
 	ofLogVerbose("threadedImageLoader") << "finishing thread on closed queue";
 }
 
+
+void threadedImageLoader::close()
+{
+    images_to_load_from_disk.close();
+	images_to_update.close();
+	waitForThread(true);
+    ofRemoveListener(ofEvents().update, this, &threadedImageLoader::update);
+}
 
 // Check the update queue and update the texture
 //--------------------------------------------------------------

@@ -24,6 +24,9 @@ const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_name
 
 ProjectResource::~ProjectResource()
 {
+    ofLogNotice(__FUNCTION__) << "Remove resource";
+    imageLoader.forceStop();
+    
     for (ofImage* & img : thumbnail_images) {
         delete(img);
     }
@@ -111,6 +114,14 @@ void ProjectManager::loadProject()
     LayerUtils::loadFolderDialogue(this, &ProjectManager::loadProject);
 }
 
+void ProjectManager::clear()
+{
+    b_isLoaded = false;
+    thumbnails.clear();
+    resources.clear();
+    name = "";
+}
+
 const shared_ptr<ProjectResource> ProjectManager::getResource(RESOURCE_TYPE _rt) const
 {
     auto resource = resources.find(_rt);
@@ -125,9 +136,9 @@ const shared_ptr<ProjectResource> ProjectManager::getResource(RESOURCE_TYPE _rt)
 
 void ProjectManager::loadProject(const string & _root_path)
 {
-    b_isLoaded = false;
-    root_path = _root_path;
+    clear();
 
+    root_path = _root_path;
     name = ofFilePath::getEnclosingDirectory(root_path);
 
     for (auto & resource_path : ProjectResource::resource_rel_paths) {

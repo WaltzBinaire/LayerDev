@@ -7,6 +7,28 @@ void Layer_file::onDrawGui()
     SingleLayerGui::specialisedDrawGui<Layer_file>(this); 
 }
 
+void Layer_file::handle_mask(const string & _path)
+{
+    ofImage img;
+    if (!img.load(_path)) {
+        ofLogWarning(name) << "Could not open mask.";
+    }
+    else {
+        maskFbo.begin();
+
+        img.draw(
+            position.x - 0.5 * scale * getFileWidth(), 
+            position.y - 0.5 * scale * getFileHeight(), 
+            scale * getFileWidth(), 
+            scale * getFileHeight()
+        );
+
+
+        maskFbo.end();
+        ofLogVerbose(name) << "Mask loaded.";
+    };
+}
+
 void Layer_file::onSetupParams()
 {
     p_loadFolder.set("Load", false);
@@ -76,18 +98,14 @@ void Layer_file::onMouseScrolled(ofMouseEventArgs & args)
     if (b_placing) {
         scale += args.scrollY * 0.05;
         scale = max(0.1f, scale);
-        maskScale = scale * glm::vec2(getFileWidth() / getFileHeight(), 1.0);
         redraw();
-    }
- 
+    } 
 }
 
 void Layer_file::onMouseMoved(ofMouseEventArgs & args)
 {
     if (b_placing) {
         position = initPosition + ( glm::vec2(args.x, args.y) - clickPosition);
-        maskOffset = position / size;
-        
         redraw();
     }
 }
