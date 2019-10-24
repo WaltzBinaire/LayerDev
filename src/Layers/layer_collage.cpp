@@ -44,10 +44,11 @@ void Layer_collage::onDraw() const
     collageShader->setUniform2f("u_alphaRange", p_alphaRange);
 
     for(const auto  & colImage : images) {
-        
-        collageShader->setUniformTexture("tex0", colImage.image.getTexture(), 0);
-        setQuad(colImage);
-        drawQuad.draw();
+        if (colImage->isSetup()) {
+            collageShader->setUniformTexture("tex0", colImage->getTexture(), 0);
+            setQuad(*colImage);
+            drawQuad.draw();
+        }
     }
 
     collageShader->end();
@@ -72,11 +73,45 @@ void Layer_collage::onUpdate()
         break;
     }
 
+    if ( patchInfo.nSetup != images.size() ) {
+        updatePatches();
+    }
+}
+
+void Layer_collage::updatePatches()
+{
+    patchInfo.reset();
+
+    vector<shared_ptr<CollagePatch>> needSetup;
+
+    for (auto & colImage : images) {
+        patchInfo.nTotal++;
+        if (colImage->needsSetup()) {
+            patchInfo.nNeedsSetup++;
+            needSetup.push_back(colImage);
+        }
+        else if (colImage->isSetup()) {
+            patchInfo.nSetup++;
+        }
+        else {
+            patchInfo.nLoading++;
+        }
+    }
+    ofLogNotice() << patchInfo.nNeedsSetup;
+
+    if (patchInfo.nNeedsSetup > 0) redraw();
+
+    for (auto colImage : needSetup) {
+        setupPatch(*colImage, patchInfo.nSetup );
+        patchInfo.nNeedsSetup--;
+        patchInfo.nSetup++;
+    }
 }
 
 //--------------------------------------------------------------
 void Layer_collage::onReset()
 {
+    patchInfo.reset();
     images.clear();
     image_paths.clear();
 }
@@ -163,19 +198,16 @@ void Layer_collage::setupQuad()
 }
 
 //--------------------------------------------------------------
-void Layer_collage::setQuad(const CollageImage &colImage) const
+void Layer_collage::setQuad(const CollagePatch &colImage) const
 {
-    glm::vec2 imageSize = glm::vec2(colImage.image.getWidth(), colImage.image.getHeight());
-    glm::vec2 size  = imageSize * colImage.scale;
-    glm::vec2 pos   = colImage.center - size * 0.5;
+    glm::vec2 imageSize = glm::vec2(colImage.getImageWidth(), colImage.getImageHeight());
+    glm::vec2 size  = imageSize * colImage.getScale();
+    glm::vec2 pos   = colImage.getCenter() - size * 0.5;
     
-    const ofImage & image = colImage.image;
-
     glm::vec3 pos_00 = glm::vec3(pos.x, pos.y, 0);
     glm::vec3 pos_10 = glm::vec3(pos.x + size.x, pos.y, 0);
     glm::vec3 pos_11 = glm::vec3(pos.x + size.x, pos.y + size.y, 0);
     glm::vec3 pos_01 = glm::vec3(pos.x, pos.y + size.y, 0);
-
 
     drawQuad.setVertex(0, pos_00);
     drawQuad.setVertex(1, pos_10);

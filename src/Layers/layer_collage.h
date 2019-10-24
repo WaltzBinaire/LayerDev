@@ -5,18 +5,53 @@
 #include "Utils/LayerUtils.h"
 
 
-struct CollageImage {
+class CollagePatch {
+public:
+    CollagePatch() :
+        center(0.0),
+        angle(0.0),
+        scale(1.0),
+        b_positionSet(false)
+    {
+        ofLogNotice() << "COnstructor";
+    }
+
+    ~CollagePatch() {}
+
+    ofImage & getImageReference() { return image;  }
+    const ofTexture & getTexture() const { return image.getTexture(); }
+
+    float getImageWidth() const { return  image.getWidth();}
+    float getImageHeight() const { return image.getHeight();}
+
+    float getScale()  const { return scale; }
+    glm::vec2 getCenter() const { return center; }
+    float getAngle() const  { return angle; }
+
+    bool isSetup()    const { 
+        return image.isUsingTexture() && b_positionSet;  
+    }
+    bool needsSetup() const {
+        return !b_positionSet && image.isUsingTexture(); 
+    }
+
+    void setup(glm::vec2 _center, float _scale, float _angle) {
+        ofLogNotice() << "Setting up";
+        center  = _center;
+        angle   = _angle;
+        scale   = _scale;
+        b_positionSet = true;
+    }
+
+    CollagePatch(const CollagePatch&) = delete;
+    CollagePatch& operator=(const CollagePatch&) = delete;
+
+private:
     ofImage image;
     glm::vec2 center;
     float angle;
     float scale;
-
-    CollageImage(ofImage & _image, glm::vec2 _center) :
-        image(_image),
-        center(_center),
-        scale(1.0),
-        angle(0.0)
-    {}
+    bool b_positionSet;
 };
 
 class Layer_collage : public Static_base
@@ -41,31 +76,53 @@ protected:
     virtual void onDraw()  const override ;
     virtual void onDrawGui()     override ;
     virtual void onUpdate()      override ;
+
     virtual void onReset()       override ;    
+
+    virtual void setupPatch(CollagePatch & _patch, int _idx) = 0;
+
+    void updatePatches();
 
     void onFileDragEvent(ofDragInfo & _fileInfo);
     void onLoadFolder(bool & _loadFolder);
 
 
     void setupQuad();
-    void setQuad(const CollageImage &colImage) const;
+    void setQuad(const CollagePatch &colImage) const;
 
     void setMode(Mode _mode);
 
     virtual void onModeViewing() {};
     virtual void onModeEditing() {};
 
+    Mode mode;
+
     ofParameter<glm::vec2> p_alphaRange;
     ofParameter<bool>      p_loadFolder;
 
     vector<string> image_paths;
+    vector<shared_ptr<CollagePatch>> images;
 
-    Mode mode;
-    
-    vector<CollageImage> images;
-    vector<CollageImage>::iterator active_image;
+    struct {
+        int nSetup;
+        int nNeedsSetup;
+        int nLoading;
+        int nTotal;
 
-    shared_ptr<AutoShader> collageShader;
+        void reset() {
+            nSetup      = 0;
+            nNeedsSetup = 0;
+            nLoading    = 0;
+            nTotal      = 0;
+        }
+    } patchInfo;
+
+private:
+
+
+    vector<CollagePatch>::iterator active_image;
+
+    mutable shared_ptr<AutoShader> collageShader;
     mutable ofMesh   drawQuad;
 
 

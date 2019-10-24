@@ -324,7 +324,9 @@ void LayerGui::drawInfoWindow(ImVec2 pos, ImVec2 size)
             break;
         case PROJECT:
         default:
-            ImGui::Text("Canvas info");
+            Canvas& canvas = manager->getCanvas();
+            string canvasDimensions = "Canvas: " + ofToString(canvas.getWidth()) + "x" + ofToString(canvas.getHeight());
+            ImGui::Text(canvasDimensions.c_str());
             break;
         }
 

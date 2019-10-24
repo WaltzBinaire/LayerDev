@@ -10,17 +10,21 @@ void SingleLayerGui::baseDrawGui(Layer_base * layer)
     ofParameter<bool> & loadMask   = layer->params.get("Load Mask"  ).cast<bool>();    
     ofParameter<bool> & mask       = layer->params.get("Mask"       ).cast<bool>();
     ofParameter<bool> & invertMask = layer->params.get("Invert Mask").cast<bool>();
-    ofParameter<bool> & pause      = layer->params.get("Pause").cast<bool>();
+    ofParameter<bool> & pause      = layer->params.get("Pause"      ).cast<bool>();
 
     ImGui::Text(layer->get_display_name().c_str());
 
-    IconToggle(pause,  ICON_MDI_PAUSE, ICON_MDI_PLAY);
+    IconToggle(pause,   ICON_MDI_PAUSE, ICON_MDI_PLAY);
     ImGui::SameLine();
-    IconButton(reset,  ICON_MDI_SYNC);
+    IconButton(reset,   ICON_MDI_SYNC);
     ImGui::SameLine();
     IconToggle(disable, ICON_MDI_EYE_OFF, ICON_MDI_EYE);
     ImGui::SameLine();
-    IconButton(redraw, ICON_MDI_BRUSH);
+    IconButton(redraw,  ICON_MDI_BRUSH);
+    ImGui::SameLine();
+
+    static string ArtSaveLabel = ofToString(ICON_MDI_CONTENT_SAVE) + "##ArtworkSave";
+    if (ImGui::Button( ArtSaveLabel.c_str() )) layer->saveLayer();
 
     // Mask
     IconButton(loadMask, ICON_MDI_WALLPAPER);
@@ -28,5 +32,8 @@ void SingleLayerGui::baseDrawGui(Layer_base * layer)
     IconToggle(mask, ICON_MDI_SELECTION, ICON_MDI_SELECT_OFF);
     ImGui::SameLine();
     IconToggle(invertMask, ICON_MDI_INVERT_COLORS_OFF, ICON_MDI_INVERT_COLORS);
+    ImGui::SameLine();
 
+    static string MaskSaveLabel = ofToString(ICON_MDI_CONTENT_SAVE) + "##MaskSave";
+    if (ImGui::Button( MaskSaveLabel.c_str() )) layer->saveMask();
 }

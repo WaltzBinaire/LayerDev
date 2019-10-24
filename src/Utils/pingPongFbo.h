@@ -24,7 +24,7 @@ public:
         return fbos[0].isAllocated() && fbos[1].isAllocated();
     }
 
-    void allocate(ofFboSettings _settings){
+    void allocate(ofFboSettings _settings) {
         fbos[0].allocate(_settings);
         fbos[1].allocate(_settings);
         flag = false;
@@ -37,8 +37,8 @@ public:
     ofFbo& get() { return fbos[flag]; }
     ofFbo& getBack() { return fbos[!flag]; }
         
-    ofTexture& getTexture() { return fbos[flag].getTexture(); }
-    ofTexture& getBackTexture() { return fbos[!flag].getTexture(); }
+    ofTexture& getTexture()     const { return fbos[flag].getTexture(); }
+    ofTexture& getBackTexture() const { return fbos[!flag].getTexture(); }
 
     void bind()   { fbos[flag].bind();   }
     void unbind() { fbos[flag].unbind(); }
@@ -58,7 +58,7 @@ public:
     void drawBack(float x, float y)                         { fbos[!flag].draw(x,y); }
 
 private:
-    ofFbo fbos [2];
+    mutable ofFbo fbos [2];
     bool flag;
 
     void clear(ofFbo & _fbo) {

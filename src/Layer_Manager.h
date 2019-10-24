@@ -57,8 +57,6 @@ private:
 
     void addListeners();
     void removeListeners();
-    
-    void internalSave() const;
 
     void onCanvasResized(glm::vec2 & _size);
     void onBackgroundChanged(bool & _var);

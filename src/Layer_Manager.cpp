@@ -4,6 +4,7 @@
 
 #include "Layers\layer_file_image.h"
 #include "Layers\layer_collage_generative.h"
+#include "Utils/LayerUtils.h"
 
 using RESOURCE_TYPE = ProjectResource::RESOURCE_TYPE ;
 
@@ -255,20 +256,10 @@ void Layer_Manager::update()
 
 void Layer_Manager::saveAs() const
 {
-    auto result = ofSystemSaveDialog("image", "Save as..." );
-
-    if (result.bSuccess) {
-        string ext      = ofFilePath::getFileExt(result.filePath);
-        string baseName = ofFilePath::getBaseName(result.filePath);
-        string dir      = ofFilePath::getEnclosingDirectory(result.filePath);
-
-        if (ext == "jpg" || ext == "png") {
-            savePath = result.filePath;
-        }
-        else {
-            savePath = ofFilePath::join(dir, baseName + ".png");
-        }
-        internalSave();
+    string newPath;
+    if (LayerUtils::saveImageDialogue(newPath)) {
+        savePath = newPath;
+        LayerUtils::saveImage(savePath, canvas.getPixels());
     }
 }
 
@@ -278,13 +269,6 @@ void Layer_Manager::save() const
         saveAs();
     } 
     else {
-        internalSave();
-    }
-    
-}
-
-void Layer_Manager::internalSave() const
-{
-    ofImage image(canvas.getPixels());
-    image.save(savePath, OF_IMAGE_QUALITY_BEST);
+        LayerUtils::saveImage(savePath, canvas.getPixels());
+    }    
 }

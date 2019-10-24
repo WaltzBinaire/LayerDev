@@ -58,6 +58,23 @@ void Layer_base::drawGui()
     onDrawGui();
 }
 
+void Layer_base::saveLayer()
+{
+    string newPath;
+    if (LayerUtils::saveImageDialogue(newPath)) {
+        LayerUtils::saveImage(newPath, fbo);
+    }
+}
+
+void Layer_base::saveMask()
+{
+    ofLogNotice() << "Here";
+    string newPath;
+    if (LayerUtils::saveImageDialogue(newPath)) {
+        LayerUtils::saveImage(newPath, maskFbo);
+    }
+}
+
 void Layer_base::registerType(const string & name, Layer_factory * factory)
 {
     (Layer_base::GetFactoryDirectory())->insert_or_assign(name, factory);

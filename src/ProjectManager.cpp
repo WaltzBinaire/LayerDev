@@ -24,7 +24,6 @@ const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_name
 
 ProjectResource::~ProjectResource()
 {
-    ofLogNotice(__FUNCTION__) << "Remove resource";
     imageLoader.forceStop();
     
     for (ofImage* & img : thumbnail_images) {
@@ -99,6 +98,7 @@ void ProjectResource::loadThumbnails()
         imageLoader.loadFromDisk(*thumbnail_images.back(), file.path(), THUMBNAIL_SIZE);
     }
 }
+
 
 //---------------------------------------------------------------------------------------
 

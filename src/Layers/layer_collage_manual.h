@@ -13,6 +13,8 @@ protected:
     virtual void onActivate()    override ;
     virtual void onDeactivate()  override ;
     
+    virtual void setupPatch(CollagePatch & _patch, int _idx) override;
+
     void onFileDragEvent(ofDragInfo & _fileInfo);
 
     void onMouseMoved(ofMouseEventArgs & _args);

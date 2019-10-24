@@ -15,10 +15,17 @@ public:
     Layer_base(string _name, int _instance, Layer_Manager * _layer_manager);
     virtual ~Layer_base();
 
+    
+    Layer_base(const Layer_base&) = delete;
+    Layer_base& operator=(const Layer_base&) = delete;
+
     void setup(int _height, int width);
 
     virtual bool draw(pingPongFbo & mainFbo, bool _forceRedraw = false) const = 0;
     void drawGui();
+
+    void saveLayer();
+    void saveMask();
 
     static void registerType(const string& name, Layer_factory *factory);
     static Layer_base *create(const string &name, Layer_Manager * _layer_manager);

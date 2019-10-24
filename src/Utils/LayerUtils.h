@@ -1,5 +1,6 @@
 #pragma once
 #include "ofMain.h"
+#include "Utils\pingPongFbo.h"
 #include "ProjectManager.h"
 
 namespace LayerUtils {
@@ -70,4 +71,12 @@ namespace LayerUtils {
 
     static const vector<string> collage_exts  { "svg", "SVG" };
 
+
+    bool saveImageDialogue(string & path);
+
+    bool saveImage(const string path, const ofImage      & image  );
+    bool saveImage(const string path, const ofTexture    & texture);
+    bool saveImage(const string path, const ofPixels     & pixels );
+    bool saveImage(const string path, const ofFbo        & fbo    );
+    bool saveImage(const string path, const pingPongFbo  & fbo    );
 }

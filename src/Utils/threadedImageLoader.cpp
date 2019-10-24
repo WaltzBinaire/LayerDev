@@ -17,13 +17,13 @@ threadedImageLoader::~threadedImageLoader(){
 // Load an image from disk.
 //--------------------------------------------------------------
 void threadedImageLoader::loadFromDisk(ofImage& image, string filename) {
-	nextID++;
+		   
+    nextID++;
 	ofImageLoaderEntry entry(image);
 	entry.filename = filename;
 	entry.image->setUseTexture(false);
 	entry.name = filename;
 	entry.b_resize = false;
-    
 	images_to_load_from_disk.send(entry);
 }
 
@@ -36,8 +36,6 @@ void threadedImageLoader::loadFromDisk(ofImage & image, string filename, int res
 	entry.name = filename;
 	entry.b_resize = true;
 	entry.size = resize;
-    
-    
 	images_to_load_from_disk.send(entry);
 }
 
@@ -100,7 +98,6 @@ void threadedImageLoader::update(ofEventArgs & a){
 
             entry.image->resize(size.x, size.y);
         }
-
 		entry.image->setUseTexture(true);
 		entry.image->update();
 	}
