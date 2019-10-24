@@ -17,7 +17,7 @@ public:
     LayerGui();
     ~LayerGui();
 
-    void draw(Layer_Manager * manager) const;
+    void draw(Layer_Manager * manager);
     bool mouseOverGui() const { return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow); }
 
 
@@ -38,28 +38,24 @@ private:
     ImFont * setupFont(ImGuiIO & io, const string & path, const string & icon_path);
 
 
-    void drawMainMenuBar(Layer_Manager * manager)     const;
-    void drawActiveLayerMenu(Layer_Manager * manager) const;
-    void drawInfoWindow(Layer_Manager * manager)     const;
-    void drawLayerMenu(Layer_Manager * manager)       const;
-    void drawProjectMenu(Layer_Manager * manager)     const;
+    float drawMainMenuBar()     ;
+    void drawActiveLayerMenu(ImVec2 pos, ImVec2 size) ;
+    void drawInfoWindow(ImVec2 pos, ImVec2 size)      ;
+    void drawLayerMenu(ImVec2 pos, ImVec2 size)       ;
+    void drawProjectMenu(ImVec2 pos, ImVec2 size)     ;
     
 
-    mutable ofxImGui::Gui gui;
+    ofxImGui::Gui gui;
     GuiTheme* theme;
 
     ImFont * font_normal;
     ImFont * font_bold;
-
-
+    
     ofxMonitor monitor;
+    Layer_Manager * manager;
 
     // Internal
-    mutable float menuBarHeight;
-    mutable bool canvasSettingsInit;
-
-    int leftWidth = 350;
-    int rightWidth = 350;
+    bool canvasSettingsInit;
 
 };
 

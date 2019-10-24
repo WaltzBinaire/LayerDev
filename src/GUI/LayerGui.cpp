@@ -53,178 +53,48 @@ LayerGui::~LayerGui()
 {
 }
 
-void LayerGui::draw(Layer_Manager * manager) const
+void LayerGui::draw(Layer_Manager * manager)
 {
+    this->manager = manager;
+
     gui.begin();
     ImGui::PushFont(font_normal);
-    drawMainMenuBar(manager);
-    drawActiveLayerMenu(manager);
-    drawInfoWindow(manager);
-    drawLayerMenu(manager);
-    drawProjectMenu(manager);
+
+    float menuBarHeight   = drawMainMenuBar();
+    float remainingHeight = (ofGetHeight() - menuBarHeight);
+
+    static float leftWidth     = 350;
+    static float rightWidth    = 350;
+    float rightPosX     = ofGetWidth() - rightWidth;
+    
+    ImVec2 pos_L1 (0    , menuBarHeight);
+    ImVec2 size_L1(leftWidth, remainingHeight * 0.66);
+
+    ImVec2 pos_L2 = pos_L1 + ImVec2( 0.0,  size_L1.y);
+    ImVec2 size_L2(leftWidth, remainingHeight * 0.34);
+
+    drawLayerMenu(pos_L1, size_L1);
+    drawActiveLayerMenu(pos_L2, size_L2);
+
+    ImVec2 pos_R1 (rightPosX , menuBarHeight);
+    ImVec2 size_R1(rightWidth, 200);
+    
+
+    ImVec2 pos_R2 = pos_R1 + ImVec2( 0.0,  size_R1.y);
+    ImVec2 size_R2(leftWidth, remainingHeight - size_R1.y );
+
+    drawInfoWindow(pos_R1, size_R1);
+    drawProjectMenu(pos_R2, size_R2);
     ImGui::PopFont();
     gui.end();
 }
 
-void LayerGui::drawLayerMenu(Layer_Manager * manager) const
+//---------------------------------------------------------
+// MENU BAR
+//---------------------------------------------------------
+float LayerGui::drawMainMenuBar()
 {
-    static ImGuiWindowFlags sidebarFlags = 
-        ImGuiWindowFlags_None     |
-        ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoMove   |
-        ImGuiWindowFlags_NoCollapse;
-
-    ImGui::SetNextWindowPos( ImVec2(0    , menuBarHeight)                , ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(leftWidth, (ofGetHeight() - menuBarHeight) * 0.66), ImGuiCond_Always);
-
-
-    if (ImGui::Begin("Layers", NULL, sidebarFlags)) {
-
-        for (auto itr = manager->layers.rbegin(); itr != manager->layers.rend(); ++itr) {
-            Layer_base* layer = (*itr);
-            string label = layer->get_display_name();
-            string id_label = "##" + label;
-
-            if (layer == manager->active_layer) label += "*";
-
-            if (ImGui::Button(label.c_str(), ImVec2(200, 0))) {
-                manager->setActiveLayer(layer);
-            }
-            ImGui::SameLine();
-            if (ImGui::Button((ICON_MDI_ARROW_UP_BOLD + id_label).c_str())) {
-                manager->move_layer(layer, Layer_Manager::UP);
-                break;
-            }
-            ImGui::SameLine();
-            if (ImGui::Button((ICON_MDI_ARROW_DOWN_BOLD + id_label).c_str())) {
-                manager->move_layer(layer, Layer_Manager::DOWN);
-                break;
-            }
-            ImGui::SameLine();
-            if (ImGui::Button((ICON_MDI_TRASH_CAN + id_label).c_str())) {
-                manager->delete_layer(layer);
-                break;
-            }
-        }
-        ImGui::End();
-    }
-}
-
-void LayerGui::drawProjectMenu(Layer_Manager * manager) const
-{
-    ProjectManager & projectManager = manager->projectManager();
-
-    if (projectManager.isLoaded()) {
-        static ImGuiWindowFlags projectWindowFlags = 
-            ImGuiWindowFlags_None     |
-            ImGuiWindowFlags_NoResize |
-            ImGuiWindowFlags_NoMove   |
-            ImGuiWindowFlags_AlwaysVerticalScrollbar |
-            ImGuiWindowFlags_NoCollapse;
-
-        ImGui::SetNextWindowPos( ImVec2(ofGetWidth() -  rightWidth, menuBarHeight), ImGuiCond_Always);
-        ImGui::SetNextWindowSize(ImVec2(rightWidth, ofGetHeight() - menuBarHeight), ImGuiCond_Always);
-
-        if (ImGui::Begin("Project", NULL, projectWindowFlags)) {
-            using RESOURCE_TYPE = ProjectResource::RESOURCE_TYPE;
-
-            ImGui::Text(projectManager.getName().c_str());
-
-            static int current_resource_type = -1;
-
-            ImGui::PushItemWidth(-1);
-            ImGui::ListBox("Resource Folders", &current_resource_type, ProjectResource::resource_name_c, 3);
-            ImGui::PopItemWidth();
-
-
-            auto resource = projectManager.getResource((RESOURCE_TYPE)current_resource_type);
-
-            if (resource != nullptr) {
-
-                ostringstream str;
-                str << resource->getNumLoadedFiles() << "/" << resource->getNumFiles();
-                ImGui::Text(str.str().c_str());
-
-                const vector<ofTexture> & thumbnails = resource->getThumbnails();
-
-                int numPerLine = floor(ImGui::GetWindowWidth() / THUMBNAIL_SIZE);
-
-                int it = 0;
-                for (int i = 0; i < thumbnails.size(); i++)
-                {
-                    ImTextureID tex_id;
-                    
-                    if (getTextureId(thumbnails[i], tex_id) ){
-                        ImGui::Image(tex_id, ImVec2(THUMBNAIL_SIZE, THUMBNAIL_SIZE));
-
-                        if (it++ % numPerLine == numPerLine - 1) continue;
-                        ImGui::SameLine();
-                    }
-                }
-            }
-
-            ImGui::End();
-        }
-    }
-
-}
-
-
-void LayerGui::drawActiveLayerMenu(Layer_Manager * manager) const
-{
-    Layer_base * layer = manager->active_layer;
-    if (layer == nullptr) return;
-
-
-    static ImGuiWindowFlags sidebarFlags = 
-        ImGuiWindowFlags_None     |
-        ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoMove   |
-        ImGuiWindowFlags_NoCollapse;
-
-    ImGui::SetNextWindowPos( ImVec2(0.0 ,  menuBarHeight + (ofGetHeight() - menuBarHeight) * 0.66 ) , ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(leftWidth, (ofGetHeight() - menuBarHeight) * 0.33), ImGuiCond_Always);
-
-
-
-    if (ImGui::Begin("Layer Settings", NULL, sidebarFlags)) {
-            manager->active_layer->drawGui();
-    }
-    ImGui::End();
-}
-
-void LayerGui::drawInfoWindow(Layer_Manager * manager) const
-{
-    static ImGuiWindowFlags infoWindowFlags = 
-        ImGuiWindowFlags_None     |
-        ImGuiWindowFlags_NoCollapse;
-
-        ImGui::SetNextWindowPos( ImVec2(leftWidth,  menuBarHeight ) , ImGuiCond_Always);
-    if (ImGui::Begin("Info", NULL, infoWindowFlags)) {
-
-        struct Funcs
-        {
-            static float QueueGetter(void* data, int i) { 
-                return (*((deque<float>*)data))[i]; 
-            }
-        };
-
-        ImGui::PlotLines("CPU",   Funcs::QueueGetter, (void*)&(monitor.getProcessCpuBuffer())          , monitor.getBufferSize(), 0, NULL, 0.0, 100);
-        ImGui::PlotLines("FPS",   Funcs::QueueGetter, (void*)&(monitor.getFpsBuffer())                 , monitor.getBufferSize(), 0, NULL, 0.0, 120);
-        ImGui::PlotLines("RAM",   Funcs::QueueGetter, (void*)&(monitor.getProcessPysicalMemoryBuffer()), monitor.getBufferSize(), 0, NULL, 0.0, monitor.getTotalPysicalMemory());
-        ImGui::PlotLines("CACHE", Funcs::QueueGetter, (void*)&(monitor.getProcessVirtualMemoryBuffer()), monitor.getBufferSize(), 0, NULL, 0.0, monitor.getTotalVirtualMemory());
-
-    }
-    ImGui::End();
-
-}
-
-void UpdateMonitor() {
-
-}
-
-void LayerGui::drawMainMenuBar(Layer_Manager * manager) const
-{
+    static float menuBarHeight;
     if (ImGui::BeginMainMenuBar())
     {
         if (ImGui::BeginMenu("File"))
@@ -334,9 +204,195 @@ void LayerGui::drawMainMenuBar(Layer_Manager * manager) const
 
             ImGui::EndMenu();
         }
-
         menuBarHeight = ImGui::GetWindowSize().y;
         ImGui::EndMainMenuBar();
+    }
+    return menuBarHeight;
+}
+//---------------------------------------------------------
+// LAYERS MENU
+//---------------------------------------------------------
+void LayerGui::drawLayerMenu(ImVec2 pos, ImVec2 size)
+{
+    static ImGuiWindowFlags sidebarFlags = 
+        ImGuiWindowFlags_None     |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove   |
+        ImGuiWindowFlags_NoCollapse;
 
+    ImGui::SetNextWindowPos( pos , ImGuiCond_Always);
+    ImGui::SetNextWindowSize(size, ImGuiCond_Always);
+
+    if (ImGui::Begin("Layers", NULL, sidebarFlags)) {
+
+        for (auto itr = manager->layers.rbegin(); itr != manager->layers.rend(); ++itr) {
+            Layer_base* layer = (*itr);
+            string label = layer->get_display_name();
+            string id_label = "##" + label;
+
+            if (layer == manager->active_layer) label += "*";
+
+            if (ImGui::Button(label.c_str(), ImVec2(200, 0))) {
+                manager->setActiveLayer(layer);
+            }
+            ImGui::SameLine();
+            if (ImGui::Button((ICON_MDI_ARROW_UP_BOLD + id_label).c_str())) {
+                manager->move_layer(layer, Layer_Manager::UP);
+                break;
+            }
+            ImGui::SameLine();
+            if (ImGui::Button((ICON_MDI_ARROW_DOWN_BOLD + id_label).c_str())) {
+                manager->move_layer(layer, Layer_Manager::DOWN);
+                break;
+            }
+            ImGui::SameLine();
+            if (ImGui::Button((ICON_MDI_TRASH_CAN + id_label).c_str())) {
+                manager->delete_layer(layer);
+                break;
+            }
+        }
+        ImGui::End();
     }
 }
+//---------------------------------------------------------
+// ACTIVE LAYER SETTINGS
+//---------------------------------------------------------
+void LayerGui::drawActiveLayerMenu(ImVec2 pos, ImVec2 size) 
+{
+    Layer_base * layer = manager->active_layer;
+    if (layer == nullptr) return;
+
+    static ImGuiWindowFlags sidebarFlags = 
+        ImGuiWindowFlags_None     |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove   |
+        ImGuiWindowFlags_NoCollapse;
+
+    ImGui::SetNextWindowPos( pos , ImGuiCond_Always);
+    ImGui::SetNextWindowSize(size, ImGuiCond_Always);
+
+    if (ImGui::Begin("Layer Settings", NULL, sidebarFlags)) {
+            manager->active_layer->drawGui();
+    }
+    ImGui::End();
+}
+
+//---------------------------------------------------------
+// INFO
+//---------------------------------------------------------
+void LayerGui::drawInfoWindow(ImVec2 pos, ImVec2 size)
+{
+    static ImGuiWindowFlags infoWindowFlags = 
+            ImGuiWindowFlags_None     |
+            ImGuiWindowFlags_NoResize |
+            ImGuiWindowFlags_NoMove   |
+            ImGuiWindowFlags_NoCollapse;
+
+    ImGui::SetNextWindowPos( pos , ImGuiCond_Always);
+    ImGui::SetNextWindowSize(size, ImGuiCond_Always);
+
+    if (ImGui::Begin("Info", NULL, infoWindowFlags)) {
+
+        static enum InfoType { PROJECT, CPU, FPS, RAM, CACHE} infoType = InfoType::PROJECT;
+        struct Funcs
+        {
+            static float QueueGetter(void* data, int i) { 
+                return (*((deque<float>*)data))[i]; 
+            }
+        };        
+
+        if (ImGui::Button("Project")) infoType = InfoType::PROJECT; ImGui::SameLine();
+        if (ImGui::Button("CPU"))     infoType = InfoType::CPU;     ImGui::SameLine();
+        if (ImGui::Button("FPS"))     infoType = InfoType::FPS;     ImGui::SameLine();
+        if (ImGui::Button("RAM"))     infoType = InfoType::RAM;     ImGui::SameLine();
+        if (ImGui::Button("Cache"))   infoType = InfoType::CACHE;
+
+        static ImVec2 plotSize(0, 100);
+        switch (infoType)
+        {
+        case CPU:
+            ImGui::PlotLines("CPU",   Funcs::QueueGetter, (void*)&(monitor.getProcessCpuBuffer())          , monitor.getBufferSize(), 0, NULL, 0.0, 100, plotSize);
+            break;
+        case FPS:
+            ImGui::PlotLines("FPS",   Funcs::QueueGetter, (void*)&(monitor.getFpsBuffer())                 , monitor.getBufferSize(), 0, NULL, 0.0, 120, plotSize);
+            break;
+        case RAM:
+            ImGui::PlotLines("RAM",   Funcs::QueueGetter, (void*)&(monitor.getProcessPysicalMemoryBuffer()), monitor.getBufferSize(), 0, NULL, 0.0, monitor.getTotalPysicalMemory(), plotSize);
+            break;
+        case CACHE:
+            ImGui::PlotLines("CACHE", Funcs::QueueGetter, (void*)&(monitor.getProcessVirtualMemoryBuffer()), monitor.getBufferSize(), 0, NULL, 0.0, monitor.getTotalVirtualMemory(), plotSize);
+            break;
+        case PROJECT:
+        default:
+            ImGui::Text("Canvas info");
+            break;
+        }
+
+ 
+    }
+    ImGui::End();
+
+}
+//---------------------------------------------------------
+// PROJECT VIEWER
+//---------------------------------------------------------
+void LayerGui::drawProjectMenu(ImVec2 pos, ImVec2 size)
+{
+    ProjectManager & projectManager = manager->projectManager();
+
+    if (projectManager.isLoaded()) {
+        static ImGuiWindowFlags projectWindowFlags = 
+            ImGuiWindowFlags_None     |
+            ImGuiWindowFlags_NoResize |
+            ImGuiWindowFlags_NoMove   |
+            ImGuiWindowFlags_NoCollapse;
+
+        ImGui::SetNextWindowPos( pos , ImGuiCond_Always);
+        ImGui::SetNextWindowSize(size, ImGuiCond_Always);
+
+        if (ImGui::Begin("Project", NULL, projectWindowFlags)) {
+            using RESOURCE_TYPE = ProjectResource::RESOURCE_TYPE;
+
+            ImGui::Text(projectManager.getName().c_str());
+
+            static int current_resource_type = -1;
+
+            ImGui::PushItemWidth(-1);
+            ImGui::ListBox("Resource Folders", &current_resource_type, ProjectResource::resource_name_c, 3);
+            ImGui::PopItemWidth();
+
+
+            auto resource = projectManager.getResource((RESOURCE_TYPE)current_resource_type);
+
+            ImGui::BeginChild("Images##", ImVec2(0, 0), false);
+            if (resource != nullptr) {
+
+                ostringstream str;
+                str << resource->getNumLoadedFiles() << "/" << resource->getNumFiles();
+                ImGui::Text(str.str().c_str());
+
+                const vector<ofTexture> & thumbnails = resource->getThumbnails();
+
+                int numPerLine = floor(ImGui::GetWindowWidth() / THUMBNAIL_SIZE);
+
+                int it = 0;
+                for (int i = 0; i < thumbnails.size(); i++)
+                {
+                    ImTextureID tex_id;
+                    
+                    if (getTextureId(thumbnails[i], tex_id) ){
+                        ImGui::Image(tex_id, ImVec2(THUMBNAIL_SIZE, THUMBNAIL_SIZE));
+
+                        if (it++ % numPerLine == numPerLine - 1) continue;
+                        ImGui::SameLine();
+                    }
+                }
+            }
+            ImGui::EndChild();
+
+            ImGui::End();
+        }
+    }
+
+}
+
