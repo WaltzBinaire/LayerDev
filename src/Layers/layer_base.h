@@ -23,12 +23,16 @@ public:
 
     virtual bool draw(pingPongFbo & mainFbo, bool _forceRedraw = false) const = 0;
     void drawGui();
+    void drawOverlay(ofFbo & overlayFbo);
 
     void saveLayer();
     void saveMask();
 
     static void registerType(const string& name, Layer_factory *factory);
     static Layer_base *create(const string &name, Layer_Manager * _layer_manager);
+
+    static bool isFilter(const string &name);
+
     static vector<string> get_layer_names();
 
     void update() { onUpdate(); };
@@ -60,7 +64,11 @@ public:
     void resize( int width, int height);
 
     const string& get_name() const { return name + ofToString(instance); }
-    const string get_display_name() const { return name; }
+    const string get_display_name() const { 
+        if(customName == "" ) return name; 
+        else                  return customName;
+    }
+    void set_display_name(const string & newName) {  customName = newName; }
 
     ofParameterGroup params;
 
@@ -71,6 +79,7 @@ protected:
     virtual void onSetup()         {};
     virtual void onSetupParams()   {};
     virtual void onDrawGui()       {};
+    virtual void onDrawOverlay()   {};
     virtual void onUpdate()        {};
     virtual void onReset()         {};    
     virtual void onActivate()      {};
@@ -82,7 +91,7 @@ protected:
 
     virtual void handle_mask(const string & _path);
 
-    string name;
+    string name, customName;
     int instance;
     Layer_Manager * layer_manager;
     bool b_active;
@@ -91,6 +100,8 @@ protected:
     ofParameter<bool> p_disable;
     ofParameter<bool> p_debugRedraw;
     ofParameter<bool> p_loadMask;
+    ofParameter<bool> p_clearMask;
+    ofParameter<bool> p_showMask;
     ofParameter<bool> p_mask;
     ofParameter<bool> p_invertMask;
     ofParameter<bool> p_pause;
@@ -105,6 +116,7 @@ protected:
 
 private:
     void onLoadMask(bool & _val);
+    void onClearMask(bool & _val);
 
 
     mutable bool b_redraw;
@@ -154,6 +166,7 @@ class Layer_factory
 {
 public:
     virtual Layer_base *create(Layer_Manager * _layer_manager) = 0;
+    virtual bool isFilter() = 0;
 protected:
     string class_name;
     string display_name;
@@ -171,6 +184,9 @@ protected:
         } \
         virtual Layer_base *create(Layer_Manager * _layer_manager) { \
             return new klass( display_name, instance++ , _layer_manager); \
+        } \
+        virtual bool isFilter() { \
+            return std::is_base_of<Filter_base, klass>::value; \
         } \
     }; \
     static klass##_factory global_##klass##_factory;

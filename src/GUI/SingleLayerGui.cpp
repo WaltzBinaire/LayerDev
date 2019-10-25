@@ -8,6 +8,8 @@ void SingleLayerGui::baseDrawGui(Layer_base * layer)
     ofParameter<bool> & reset      = layer->params.get("Reset"      ).cast<bool>();
     ofParameter<bool> & redraw     = layer->params.get("Redraw"     ).cast<bool>();
     ofParameter<bool> & loadMask   = layer->params.get("Load Mask"  ).cast<bool>();    
+    ofParameter<bool> & clearMask  = layer->params.get("Clear Mask" ).cast<bool>();    
+    ofParameter<bool> & showMask  = layer->params.get("Show Mask" ).cast<bool>();    
     ofParameter<bool> & mask       = layer->params.get("Mask"       ).cast<bool>();
     ofParameter<bool> & invertMask = layer->params.get("Invert Mask").cast<bool>();
     ofParameter<bool> & pause      = layer->params.get("Pause"      ).cast<bool>();
@@ -29,9 +31,13 @@ void SingleLayerGui::baseDrawGui(Layer_base * layer)
     // Mask
     IconButton(loadMask, ICON_MDI_WALLPAPER);
     ImGui::SameLine();
+    IconButton(clearMask, ICON_MDI_BLOCK_HELPER);
+    ImGui::SameLine();
     IconToggle(mask, ICON_MDI_SELECTION, ICON_MDI_SELECT_OFF);
     ImGui::SameLine();
     IconToggle(invertMask, ICON_MDI_INVERT_COLORS_OFF, ICON_MDI_INVERT_COLORS);
+    ImGui::SameLine();
+    IconToggle(showMask, ICON_MDI_EYE_OFF_OUTLINE, ICON_MDI_EYE_OUTLINE);
     ImGui::SameLine();
 
     static string MaskSaveLabel = ofToString(ICON_MDI_CONTENT_SAVE) + "##MaskSave";

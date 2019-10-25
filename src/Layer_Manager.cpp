@@ -1,9 +1,6 @@
 #include "Layer_Manager.h"
-#include "Layers/layer_base.h"
+#include "Layers/layer.h"
 #include "GUI/LayerGui.h"
-
-#include "Layers\layer_file_image.h"
-#include "Layers\layer_collage_generative.h"
 #include "Utils/LayerUtils.h"
 
 using RESOURCE_TYPE = ProjectResource::RESOURCE_TYPE ;
@@ -86,18 +83,24 @@ void Layer_Manager::onProjectLoaded(bool & _val)
 
 void Layer_Manager::addPortraitLayer(bool _activate)
 {
-    const string layer_name = "Image";
+    const string layer_name = "Mask Image";
 
     auto targets = projectManager().getResource(RESOURCE_TYPE::TARGET);
+    auto masks   = projectManager().getResource(RESOURCE_TYPE::MASKS);
 
     auto layer_type = find(layer_types.begin(), layer_types.end(), layer_name);
     if (layer_type != layer_types.end()) {
         Layer_base * layer = add_layer(layer_name, _activate);
-        Layer_file_image * img_layer = dynamic_cast<Layer_file_image *>(layer);
+        Layer_image_advanced * img_layer = dynamic_cast<Layer_image_advanced *>(layer);
 
-        if (img_layer == nullptr) delete_layer(layer);
-
-        img_layer->handle_file(targets->getFilePath(0));
+        if (img_layer == nullptr) {
+            delete_layer(layer);
+        }
+        else {
+            img_layer->set_display_name("Portrait");
+            img_layer->handle_file( targets->getFilePath(0));
+            img_layer->loadBodyMask(masks->getFilePath(0));
+        }
     }
 }
 void Layer_Manager::addCollageLayer(bool _activate)
@@ -238,6 +241,11 @@ void Layer_Manager::draw() const
             }
         }
     }
+
+    if (active_layer != nullptr) {
+        active_layer->drawOverlay(canvas.getOverlayFbo());
+    }
+
     canvas.draw();
 }
 

@@ -8,6 +8,8 @@
 
 #include "Layers/layer_file.h"
 #include "Layers/layer_file_image.h"
+#include "Layers/layer_image_advanced.h"
+
 #include "Layers\layer_aiCollage.h"
 
 // Filter Layers

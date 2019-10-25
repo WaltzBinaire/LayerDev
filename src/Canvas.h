@@ -16,7 +16,7 @@ public:
 
     void clear();
         
-    void draw() const;
+    void draw(bool drawOverlay = true) const;
 
     void setBackgroundColor(const ofColor _backgroundColor);
 
@@ -26,6 +26,9 @@ public:
     ofPixels getPixels()   const;
     pingPongFbo & getFbo() const {
         return fbo;
+    };
+    ofFbo & getOverlayFbo() const {
+        return overlay;
     };
 
     float getWidth()   const { return size.x;} ;
@@ -55,6 +58,7 @@ private:
 
     // Drawing
     mutable pingPongFbo fbo;
+    mutable ofFbo       overlay;
     mutable glm::vec2 position;
     mutable float scale;
 

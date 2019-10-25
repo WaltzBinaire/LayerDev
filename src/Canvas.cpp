@@ -57,7 +57,7 @@ ofPixels Canvas::getPixels() const
 }
 
 
-void Canvas::draw() const
+void Canvas::draw(bool drawOverlay) const
 {
     fitToScreen();
 
@@ -71,9 +71,19 @@ void Canvas::draw() const
     ofPushStyle();
     ofNoFill();  
 
+    if (drawOverlay) {
+        overlay.draw(
+            position.x, 
+            position.y,
+            size.x * scale,
+            size.y * scale
+        );
+    }
+
+
     if(backgroundColor.getBrightness() > 0.5) ofSetColor(ofColor::black); 
     else ofSetColor(ofColor::white); 
-    
+
     ofDrawRectangle(
         position.x, 
         position.y,
@@ -82,7 +92,6 @@ void Canvas::draw() const
 
     ofPopStyle();
 }
-
 
 void Canvas::setBackgroundColor(const ofColor _backgroundColor)
 {
@@ -94,6 +103,7 @@ void Canvas::setBackgroundColor(const ofColor _backgroundColor)
 void Canvas::setupFbo()
 {
     fbo.allocate(size.x, size.y);
+    overlay.allocate(size.x, size.y);
     clear();    
 }
 
@@ -123,6 +133,10 @@ void Canvas::clear()
     fbo.begin();
     ofBackground(backgroundColor);
     fbo.end();
+
+    overlay.begin();
+    ofClear(0.0);
+    overlay.end();
 }
 
 void Canvas::onAutoResizeChanged(bool & _val)

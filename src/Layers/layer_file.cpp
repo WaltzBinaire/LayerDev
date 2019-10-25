@@ -7,28 +7,6 @@ void Layer_file::onDrawGui()
     SingleLayerGui::specialisedDrawGui<Layer_file>(this); 
 }
 
-void Layer_file::handle_mask(const string & _path)
-{
-    ofImage img;
-    if (!img.load(_path)) {
-        ofLogWarning(name) << "Could not open mask.";
-    }
-    else {
-        maskFbo.begin();
-
-        img.draw(
-            position.x - 0.5 * scale * getFileWidth(), 
-            position.y - 0.5 * scale * getFileHeight(), 
-            scale * getFileWidth(), 
-            scale * getFileHeight()
-        );
-
-
-        maskFbo.end();
-        ofLogVerbose(name) << "Mask loaded.";
-    };
-}
-
 void Layer_file::onSetupParams()
 {
     p_loadFolder.set("Load", false);

@@ -16,6 +16,7 @@ public:
     template<class T> static void specialisedDrawGui( T * layer);
 
     template<> static void specialisedDrawGui( Layer_file * layer);
+    template<> static void specialisedDrawGui( Layer_image_advanced * layer);
     template<> static void specialisedDrawGui( Layer_collage * layer);
     template<> static void specialisedDrawGui( Layer_collage_generative * layer);
     template<> static void specialisedDrawGui( Layer_file_aiCollage * layer);
@@ -165,9 +166,42 @@ void SingleLayerGui::specialisedDrawGui(Layer_file_aiCollage * layer)
     Slider(p_maxPatches);
 
     SliderVec2(p_alphaRange);
-
-
-
-
-
 }
+
+
+template<> 
+static void SingleLayerGui::specialisedDrawGui(Layer_image_advanced * layer) {
+    vector<string> masks = layer->getMasks();
+
+    for (auto & mask : masks) {
+        string label_id = "##" + mask;
+        bool isActive = layer->isActive(mask);
+        Mask::ADD_MODE mode = layer->getMaskMode(mask);
+
+        string name = label_id;
+        if (isActive) name += "*";
+        if (ImGui::Button(mask.c_str(), ImVec2(200, 0))) { 
+            layer->setActive(mask);
+        }
+
+
+        if (mode != Mask::ADD_MODE::ADD) {
+            ImGui::SameLine();
+            if (ImGui::Button((ICON_MDI_PLUS + label_id).c_str())) {
+                layer->setMaskMode(mask, Mask::ADD_MODE::ADD);
+            }
+        }
+        if (mode != Mask::ADD_MODE::SUBTRACT) {
+            ImGui::SameLine();
+            if (ImGui::Button((ICON_MDI_MINUS + label_id).c_str())) {
+                layer->setMaskMode(mask, Mask::ADD_MODE::SUBTRACT);
+            }
+        }
+        if (mode != Mask::ADD_MODE::DISABLE) {
+            ImGui::SameLine();
+            if (ImGui::Button((ICON_MDI_BLOCK_HELPER + label_id).c_str())) {
+                layer->setMaskMode(mask, Mask::ADD_MODE::DISABLE);
+            }
+        }
+    }
+};

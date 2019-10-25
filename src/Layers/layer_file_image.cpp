@@ -1,5 +1,6 @@
 #include "Layers\layer_file_image.h"
 
+
 REGISTER_TYPE(Layer_file_image, Image)
 
 void Layer_file_image::onDraw() const

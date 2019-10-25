@@ -1,4 +1,5 @@
 #include "LayerGui.h"
+#include "Layers\layer_base.h"
 
 LayerGui::LayerGui()
 {
@@ -183,11 +184,6 @@ float LayerGui::drawMainMenuBar()
 
         if (ImGui::BeginMenu("Layers"))
         {
-            for (auto & type : manager->layer_types) {
-                if (ImGui::MenuItem(type.c_str())) {
-                    manager->add_layer(type, true);
-                }
-            }
 
             if (manager->specialLayers.size() > 0) {
                 if (ImGui::BeginMenu("Presets"))
@@ -201,6 +197,26 @@ float LayerGui::drawMainMenuBar()
                 }
             }
 
+            if (ImGui::BeginMenu("Standard"))
+            {
+                for (auto & type : manager->layer_types) {
+                    if (Layer_base::isFilter(type)) continue;
+                    if (ImGui::MenuItem(type.c_str())) {
+                        manager->add_layer(type, true);
+                    }
+                }
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Filters"))
+            {
+                for (auto & type : manager->layer_types) {
+                    if (!Layer_base::isFilter(type)) continue;
+                    if (ImGui::MenuItem(type.c_str())) {
+                        manager->add_layer(type, true);
+                    }
+                }
+                ImGui::EndMenu();
+            }
 
             ImGui::EndMenu();
         }

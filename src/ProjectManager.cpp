@@ -5,21 +5,24 @@ const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_rel_
     {RESOURCE_TYPE::RAW      , "Assets/Raw"       },
     {RESOURCE_TYPE::SEGMENTED, "Assets/Segmented" },
     {RESOURCE_TYPE::TARGET   , "Assets/Targets"   },
-    {RESOURCE_TYPE::COLLAGE  , "Assets/Collage"   }
+    {RESOURCE_TYPE::COLLAGE  , "Assets/Collage"   },
+    {RESOURCE_TYPE::MASKS    , "Assets/Masks"     }
 };
 
 const char* ProjectResource::resource_name_c[] = {
     "Instagram",
     "Segmented",
-    "Portrait",
-    "Collage"};
+    "Portrait" ,
+    "Collage"  , 
+    "Masks"    ,};
 
 const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_names
 {
     {RESOURCE_TYPE::RAW      , resource_name_c[0] },
     {RESOURCE_TYPE::SEGMENTED, resource_name_c[1] },
     {RESOURCE_TYPE::TARGET   , resource_name_c[2] },
-    {RESOURCE_TYPE::COLLAGE  , resource_name_c[3] }
+    {RESOURCE_TYPE::COLLAGE  , resource_name_c[3] },
+    {RESOURCE_TYPE::MASKS    , resource_name_c[4] }
 };
 
 ProjectResource::~ProjectResource()
@@ -83,6 +86,7 @@ vector<string> ProjectResource::get_allowed_exts()
     case RESOURCE_TYPE::RAW:
     case RESOURCE_TYPE::SEGMENTED:
     case RESOURCE_TYPE::TARGET:
+    case RESOURCE_TYPE::MASKS:
         return LayerUtils::img_exts;
     case RESOURCE_TYPE::COLLAGE:
         return LayerUtils::collage_exts;

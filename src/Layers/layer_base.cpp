@@ -31,7 +31,10 @@ void Layer_base::setup(int  _width, int _height) {
     p_debugRedraw.set("Redraw", false);   
 
     p_loadMask.addListener(this, &Layer_base::onLoadMask);
+    p_clearMask.addListener(this, &Layer_base::onClearMask);
     p_loadMask.set(  "Load Mask"  , false);
+    p_clearMask.set( "Clear Mask" , false);
+    p_showMask.set(  "Show Mask"  , false);
     p_mask.set(      "Mask"       , false);
     p_invertMask.set("Invert Mask", false);
     
@@ -42,6 +45,8 @@ void Layer_base::setup(int  _width, int _height) {
         p_disable,
         p_debugRedraw,
         p_loadMask,
+        p_clearMask,
+        p_showMask,
         p_mask,
         p_invertMask,
         p_pause
@@ -58,6 +63,15 @@ void Layer_base::drawGui()
     onDrawGui();
 }
 
+void Layer_base::drawOverlay(ofFbo & overlayFbo)
+{
+    if (p_disable) return;
+    overlayFbo.begin();
+    if(p_showMask) maskFbo.draw(0, 0);
+    onDrawOverlay();
+    overlayFbo.end();
+}
+
 void Layer_base::saveLayer()
 {
     string newPath;
@@ -68,7 +82,6 @@ void Layer_base::saveLayer()
 
 void Layer_base::saveMask()
 {
-    ofLogNotice() << "Here";
     string newPath;
     if (LayerUtils::saveImageDialogue(newPath)) {
         LayerUtils::saveImage(newPath, maskFbo);
@@ -83,6 +96,14 @@ void Layer_base::registerType(const string & name, Layer_factory * factory)
 Layer_base * Layer_base::create(const string & name, Layer_Manager * _layer_manager )
 {
     return (Layer_base::GetFactoryDirectory())->at(name)->create(_layer_manager);
+}
+
+bool Layer_base::isFilter(const string & name)
+{
+    Layer_factory * factory = (Layer_base::GetFactoryDirectory())->at(name);
+
+    return factory->isFilter();
+
 }
 
 vector<string> Layer_base::get_layer_names()
@@ -149,7 +170,7 @@ void Layer_base::clearMaskFbo() const
 {
     maskFbo.begin();
     ofClear(0);
-    ofBackground(1.0);
+    ofBackground(255);
     maskFbo.end();
 }
 
@@ -157,6 +178,14 @@ void Layer_base::onLoadMask(bool & _val)
 {
     if (_val) {
         LayerUtils::loadFileDialogue(LayerUtils::img_exts, this, &Layer_base::handle_mask);
+    }
+    _val = false;
+}
+
+void Layer_base::onClearMask(bool & _val)
+{
+    if (_val) {
+        clearMaskFbo();
     }
     _val = false;
 }
