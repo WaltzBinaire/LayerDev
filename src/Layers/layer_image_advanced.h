@@ -7,13 +7,11 @@ public:
     enum class ADD_MODE {ADD, SUBTRACT, DISABLE };
 
     Mask() :
-        addMode(ADD_MODE::ADD),
+        addMode(ADD_MODE::DISABLE),
         b_isActive(false)
     { }
 
-    virtual void dummy() {};
-
-    void setup(int width, int height) { 
+    virtual void setup(int width, int height) { 
         fbo.allocate(width, height, GL_RGBA); 
         fbo.begin();
         ofClear(0);

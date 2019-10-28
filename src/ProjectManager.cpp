@@ -14,7 +14,8 @@ const char* ProjectResource::resource_name_c[] = {
     "Segmented",
     "Portrait" ,
     "Collage"  , 
-    "Masks"    ,};
+    "Masks"    
+};
 
 const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_names
 {
@@ -64,6 +65,7 @@ bool ProjectResource::setup(const string & _path)
         case ProjectResource::RESOURCE_TYPE::RAW:
         case ProjectResource::RESOURCE_TYPE::SEGMENTED:
         case ProjectResource::RESOURCE_TYPE::TARGET:
+        case ProjectResource::RESOURCE_TYPE::MASKS:
             loadThumbnails();
         default:
             break;
@@ -105,8 +107,6 @@ void ProjectResource::loadThumbnails()
 
 
 //---------------------------------------------------------------------------------------
-
-
 ProjectManager & ProjectManager::getInstance()
 {
     static ProjectManager instance;

@@ -22,7 +22,7 @@ void Layer_collage::onSetup()
 //--------------------------------------------------------------
 void Layer_collage::onSetupParams()
 {    
-    p_alphaRange.set("Alpha", glm::vec2(0.5, 0.8), glm::vec2(0.0), glm::vec2(1.0));
+    p_alphaRange.set("Alpha", glm::vec2(0.8, 0.85), glm::vec2(0.0), glm::vec2(1.0));
     p_alphaRange.addListener(this, &Layer_collage::onAlphaRangeChanged);
 
     p_loadFolder.set("Load", false);

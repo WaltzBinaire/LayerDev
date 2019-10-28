@@ -34,6 +34,16 @@ public:
     float getWidth()   const { return size.x;} ;
     float getHeight()  const { return size.y;} ;
 
+    static vector<pair<string, glm::vec2>> & getCanavasSizePresets() {
+        static vector<pair<string, glm::vec2>> canavasSizePresets{
+            {"Instagram Story" , {1080, 1920} },
+            {"Instagram Square", {1080, 1080} },
+            {"HD"              , {1280, 720 } },
+            {"4K"              , {3840, 2160} }
+        };
+        return canavasSizePresets;
+    }
+
     ofEvent<glm::vec2> canvasResized;
     ofEvent<bool> backgroundChanged;
 

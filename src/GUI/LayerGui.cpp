@@ -136,16 +136,43 @@ float LayerGui::drawMainMenuBar()
                 static glm::vec2 size = glm::vec2(canvas.getWidth(), canvas.getHeight());
                 static char bufw[6] = ""; 
                 static char bufh[6] = "";
-                if (canvasSettingsInit) {
-
-                    static string w = ofToString(size.x);
-                    static string h = ofToString(size.y);
-
-                    copy(w.begin(), w.end(), bufw);
-                    copy(h.begin(), h.end(), bufh);
-                }
 
                 if (!tmpaAutoResize) {
+                    auto labels     = canvas.getCanavasSizePresets();
+	                auto result     = false;
+	                int  iSelected  = 0;
+	                if (ImGui::BeginCombo("Preset Sizes", labels[iSelected].first.c_str()))
+	                {
+		                for (int i = 0; i < labels.size(); ++i)
+		                {
+			                bool selected = (i == iSelected);
+			                if (ImGui::Selectable(labels[i].first.c_str(), selected))
+			                {
+				                iSelected = i;
+				                result = true;
+			                }
+			                if (selected)
+			                {
+				                ImGui::SetItemDefaultFocus();
+			                }
+		                }
+
+		                ImGui::EndCombo();
+	                }
+	                if (result)
+	                {
+		                size = labels[iSelected].second;
+	                }
+
+                    if (canvasSettingsInit || result) {
+
+                        string w = ofToString(size.x);
+                        string h = ofToString(size.y);
+
+                        copy(w.begin(), w.end(), bufw);
+                        copy(h.begin(), h.end(), bufh);
+                    }
+
                     if( ImGui::InputText("Width ", bufw, 6, ImGuiInputTextFlags_CharsDecimal)) size.x = floor(ofToFloat(bufw));
                     if (ImGui::InputText("Height", bufh, 6, ImGuiInputTextFlags_CharsDecimal)) size.y = floor(ofToFloat(bufh));
                 }
@@ -378,7 +405,7 @@ void LayerGui::drawProjectMenu(ImVec2 pos, ImVec2 size)
             static int current_resource_type = -1;
 
             ImGui::PushItemWidth(-1);
-            ImGui::ListBox("Resource Folders", &current_resource_type, ProjectResource::resource_name_c, 3);
+            ImGui::ListBox("Resource Folders", &current_resource_type, ProjectResource::resource_name_c, 5);
             ImGui::PopItemWidth();
 
 

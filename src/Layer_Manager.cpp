@@ -217,6 +217,7 @@ void Layer_Manager::move_layer(Layer_base* _layer, DIRECTION _dir)
                 std::iter_swap(layer_itr, next);
             }
         }
+        _layer->redraw();
     }
 }
 

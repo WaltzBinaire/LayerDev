@@ -63,8 +63,10 @@ class ProjectManager
 
         const shared_ptr<ProjectResource> getResource(RESOURCE_TYPE _rt) const;
 
-        string getName() const { return name; };
-        string getPath() const { return root_path; };
+        string getName()       const { return name; };
+        string getPath()       const { return root_path; };
+        string getAssetsPath() const { return ofFilePath::join(root_path, "Assets"); };
+        string getOutputPath() const { return ofFilePath::join(root_path, "Output"); };
 
         ProjectManager(ProjectManager const&)  = delete;
         void operator=(ProjectManager const&)  = delete;
