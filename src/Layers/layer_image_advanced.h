@@ -25,18 +25,16 @@ public:
 
     ADD_MODE getAddMode() const { return addMode; }
 
-    bool isActive()       const { 
+    bool isDrawn()       const { 
         return fbo.isAllocated() && addMode != ADD_MODE::DISABLE; 
     }
 
     void setMode(ADD_MODE _mode) { addMode = _mode;    }
     void setActive(bool _active) { 
         b_isActive = _active; 
-        onSetActive.notify(b_isActive);
     }
-    bool isActive(bool _active)  { return b_isActive;   }
+    bool isActive()  { return b_isActive;   }
 
-    ofEvent<bool> onSetActive;
 
 protected:
     ofFbo fbo;
@@ -79,13 +77,15 @@ public:
             redraw();
         }
     }
-    void setActive(const string & _mask) {
+    void setActive(const string & _mask, bool _active) {
         for (auto & mask : masks) {
             if (mask.first == _mask) {
-                mask.second->setActive(true);
+                mask.second->setActive(_active);
+
+                if (_mask == "Custom Mask") onCustomMaskActive(_active);
             }
             else {
-                mask.second->setActive(true);
+                mask.second->setActive(false);
             }
         }
     }
@@ -140,7 +140,7 @@ private:
     ofxCv::ObjectFinder finder;
 
     // Custom Draw
-    float brushSize = 30;
+    float brushSize = 50;
     const float maxBrushSize = 200;
     const float minBrushSize = 10;
     glm::vec2 brushPosition;

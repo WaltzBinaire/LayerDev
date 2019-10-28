@@ -178,10 +178,10 @@ static void SingleLayerGui::specialisedDrawGui(Layer_image_advanced * layer) {
         bool isActive = layer->isActive(mask);
         Mask::ADD_MODE mode = layer->getMaskMode(mask);
 
-        string name = label_id;
+        string name = mask;
         if (isActive) name += "*";
-        if (ImGui::Button(mask.c_str(), ImVec2(200, 0))) { 
-            layer->setActive(mask);
+        if (ImGui::Button(name.c_str(), ImVec2(200, 0))) { 
+            layer->setActive(mask, !isActive);
         }
 
 

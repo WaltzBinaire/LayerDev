@@ -60,6 +60,13 @@ void Layer_file_aiCollage::onDraw() const
     }
 }
 
+void Layer_file_aiCollage::onDrawOverlay()
+{    if (m_collage.isLoaded()) {
+        glm::vec2 size = scale * glm::vec2(m_collage.getWidth(), m_collage.getHeight());
+        m_collage.drawOverlay(position - size * 0.5, size.x, size.y);
+    }
+}
+
 void Layer_file_aiCollage::onDrawGui()
 {
     Layer_file::onDrawGui();    
@@ -105,6 +112,14 @@ void Layer_file_aiCollage::addDefaultListeners()
 
 void Layer_file_aiCollage::addCollageListeners()
 {
+    m_collage.setCustomIntereactionEvents(
+        &layer_manager->canvasMousePressed,
+        &layer_manager->canvasMouseScrolled,
+        &ofEvents().keyPressed
+    );
+
+    ofAddListener(layer_manager->canvasMouseMoved, this, &Layer_file_aiCollage::onMouseMovedCollage);
+    m_collage.setInteractive(true);
 }
 
 void Layer_file_aiCollage::removeDefaultListeners()
@@ -114,6 +129,21 @@ void Layer_file_aiCollage::removeDefaultListeners()
 
 void Layer_file_aiCollage::removeCollageListeners()
 {
+    ofRemoveListener(layer_manager->canvasMouseMoved, this, &Layer_file_aiCollage::onMouseMovedCollage);
+    m_collage.setInteractive(false);
+}
+
+void Layer_file_aiCollage::onMouseMovedCollage(ofMouseEventArgs & _args)
+{
+    ofRectangle collageDrawRect( position - size * 0.5, size.x, size.y );
+
+    if (collageDrawRect.inside(_args.x, _args.y)) {
+        glm::vec2 adjustedMousePos = glm::vec2(
+            (_args.x - collageDrawRect.x) * getFileWidth()   / size.x,
+            (_args.y - collageDrawRect.y) * getFileHeight()  / size.y 
+        );
+        m_collage.updateCursor(adjustedMousePos);
+    }
 }
 
 void Layer_file_aiCollage::handle_file(const string & _path)

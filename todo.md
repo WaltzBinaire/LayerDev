@@ -1,18 +1,18 @@
 # To-do
 
-### Gernal
-- Animation output.
+### General
+ [ ] Animation output.
 
 ### Layer System
-- Sort out Fbo flipping.
--  Add grouping layers w. masks
+ [ ] Sort out Fbo flipping.
+ [ ] Add grouping layers w. masks
 
 ### GUI
-- Better "New layer" interface
+ [ ] Better "New layer" interface
 
 ### Static Layers
-- Add video layer
+ [ ] Add video layer
 
 
 ### Filter Layers
-- Add banding to Alpha replace
+ [ ] Add banding to Alpha replace

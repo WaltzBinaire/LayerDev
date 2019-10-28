@@ -46,7 +46,7 @@ void Layer_image_advanced::onRender() const
 
         for (auto & maskEl : masks) {
             Mask * mask = maskEl.second;
-            if (mask->isActive()) {
+            if (mask->isDrawn()) {
                 
                 QuadMask * quadMask = dynamic_cast<QuadMask *>(mask);
                 if (quadMask != nullptr) {
@@ -89,7 +89,6 @@ void Layer_image_advanced::setupFaceMask()
 void Layer_image_advanced::setupCustomMask()
 {
     customMask.setup(size.x, size.y);
-    ofAddListener(customMask.onSetActive, this, &Layer_image_advanced::onCustomMaskActive);
     masks.insert_or_assign("Custom Mask", &customMask);
 }
 
@@ -125,15 +124,29 @@ void Layer_image_advanced::onCustomMousePressed(ofMouseEventArgs & _args)
 
 void Layer_image_advanced::drawBrush(ofMouseEventArgs & _args)
 {
-    drawBrush(_args);
+    ofPushStyle();
+    ofLogNotice() << _args.button;
+
+    brushPosition = glm::vec2(_args.x, _args.y);
+    if (_args.button == 0) ofSetColor(ofColor::white);
+    else                   ofSetColor(ofColor::black);
+
+    customMask.begin();
+    ofDrawRectangle(
+        brushPosition.x - brushSize * 0.5,
+        brushPosition.y - brushSize * 0.5,
+        brushSize,
+        brushSize
+    );
+
+    customMask.end();
+    redraw();
+    ofPopStyle();
 }
 
 void Layer_image_advanced::onCustomMouseDragged(ofMouseEventArgs & _args)
 {
-    customMask.begin();
-    brushPosition = glm::vec2(_args.x, _args.y);
-
-    customMask.end();
+    drawBrush(_args);
 }
 
 void Layer_image_advanced::onCustomMouseScrolled(ofMouseEventArgs & _args)

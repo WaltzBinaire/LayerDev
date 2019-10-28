@@ -24,7 +24,8 @@ protected:
     virtual void onActivate()   override;
     virtual void onDeactivate() override;
     virtual void onRender()     const override;    
-    virtual void onDraw()       const override;    
+    virtual void onDraw()       const override;  
+    virtual void onDrawOverlay()  override;  
     virtual void onDrawGui()    override;
     virtual void onUpdate()     override;
     virtual void onReset()      override;
@@ -34,6 +35,8 @@ protected:
     void addCollageListeners();        
     void removeDefaultListeners();
     void removeCollageListeners();
+
+    void onMouseMovedCollage(ofMouseEventArgs & _args);
 
     virtual float getFileWidth()  const { return m_collage.getWidth(); };
     virtual float getFileHeight() const { return m_collage.getHeight(); };
