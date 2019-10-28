@@ -79,4 +79,48 @@ namespace LayerUtils {
     bool saveImage(const string path, const ofPixels     & pixels );
     bool saveImage(const string path, const ofFbo        & fbo    );
     bool saveImage(const string path, const pingPongFbo  & fbo    );
+
+
+    class UVQuad {
+    public:
+        static UVQuad & getInstance() {
+            static UVQuad quad;
+            
+            return quad;
+        }
+
+        void draw(float x, float y, float w, float h) {
+            mesh.setVertex(0, glm::vec3( x    , y    , 0 ));
+	        mesh.setVertex(1, glm::vec3( x + w, y    , 0 ));
+	        mesh.setVertex(2, glm::vec3( x + w, y + h, 0 ));
+	        mesh.setVertex(3, glm::vec3( x    , y + h, 0 ));
+
+            mesh.draw();
+        }
+
+    private:
+        UVQuad() {
+            mesh.addVertex(glm::vec3(0));
+        	mesh.addVertex(glm::vec3(0));
+        	mesh.addVertex(glm::vec3(0));
+        	mesh.addVertex(glm::vec3(0));
+        			
+        	mesh.addTexCoord(glm::vec2(0.0, 0.0));
+        	mesh.addTexCoord(glm::vec2(1.0, 0.0));
+        	mesh.addTexCoord(glm::vec2(1.0, 1.0));
+        	mesh.addTexCoord(glm::vec2(0.0, 1.0));
+        
+            mesh.addIndex(0);
+            mesh.addIndex(1);
+            mesh.addIndex(2);
+        
+            mesh.addIndex(2);
+            mesh.addIndex(3);
+            mesh.addIndex(0);
+        }
+
+        ofMesh mesh;
+
+
+    };
 }

@@ -1,4 +1,13 @@
 # To-do
+### Urgetn for demmo
+
+  [ ] Start full screen
+  [ ] In portrait layer, when mask activated, layer masking activate
+  [ ] Show brush for mask, rectangle . mousex and y tzpo . snap to grid according tp size , mouse wheel changes brushsize
+  [ ] AI collage - snaps to last portrait transform
+  [ ] edit global on ai collage 
+  [ ] grid openframeworks . fake histo - 
+  [x] CPU perf by default 
 
 ### General
   [ ] Animation output.
@@ -11,6 +20,7 @@
   [x] Filters don't redraw on reorder?
   [ ] Add Mask Sharing
   [x] Add canvas size presets
+  [ ] Make mask fbos GL_L
 
 ### GUI
   [ ] Better "New layer" interface
@@ -19,7 +29,7 @@
 
 ### Static Layers
   [ ] Add video layer
-  [ ] 
+  [ ] Add fance overlay for collages
   [ ] Fix manual collage (with drag and drop?)
 
 
@@ -37,4 +47,5 @@
   [ ] Add loading bar for assets
  
  ### BUGS
+  [ ] Mask tried to draw after layer deleted
  

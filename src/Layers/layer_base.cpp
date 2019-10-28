@@ -8,7 +8,6 @@ Layer_base::Layer_base(string _name, int _instance, Layer_Manager * layer_manage
     b_active(false),
     layer_manager(layer_manager)
 {
-    quadSetup();
 }
 
 Layer_base::~Layer_base()
@@ -20,6 +19,7 @@ void Layer_base::setup(int  _width, int _height) {
     size = glm::vec2(_width, _height);
     setupFbo(size.x, size.y);
 
+    mask_shader = Shader_lib::get_mask_shader();
     l_onShaderLoad = mask_shader->onLoad.newListener( [&](bool &) {return this->redraw(); });
 
     onSetup();
@@ -272,41 +272,16 @@ bool Filter_base::draw(pingPongFbo & mainFbo, bool _forceRedraw) const
     }
 }
 
-void Layer_base::quadSetup()
+void Layer_base::onMask() const
 {
-    mask_shader = Shader_lib::get_mask_shader();
-
-    baseQuad.addVertex(glm::vec3(0));
-	baseQuad.addVertex(glm::vec3(0));
-	baseQuad.addVertex(glm::vec3(0));
-	baseQuad.addVertex(glm::vec3(0));
-			
-	baseQuad.addTexCoord(glm::vec2(0.0, 0.0));
-	baseQuad.addTexCoord(glm::vec2(1.0, 0.0));
-	baseQuad.addTexCoord(glm::vec2(1.0, 1.0));
-	baseQuad.addTexCoord(glm::vec2(0.0, 1.0));
-
-    baseQuad.addIndex(0);
-    baseQuad.addIndex(1);
-    baseQuad.addIndex(2);
-
-    baseQuad.addIndex(2);
-    baseQuad.addIndex(3);
-    baseQuad.addIndex(0);
-}
-
-void Layer_base::setQuad(const ofTexture & _baseTex) const
-{
-    baseQuad.setVertex(0, glm::vec3( 0                  , 0                   , 0 ));
-	baseQuad.setVertex(1, glm::vec3( _baseTex.getWidth(), 0                   , 0 ));
-	baseQuad.setVertex(2, glm::vec3( _baseTex.getWidth(), _baseTex.getHeight(), 0 ));
-	baseQuad.setVertex(3, glm::vec3( 0                  , _baseTex.getHeight(), 0 ));
+    if (p_mask)
+    {
+        drawMasked();
+    }
 }
 
 void Layer_base::drawMasked() const
 {
-
-    setQuad(fbo.getTexture());
     fbo.swap();
     fbo.clear();
     fbo.begin();
@@ -316,15 +291,8 @@ void Layer_base::drawMasked() const
     mask_shader->setUniformTexture("u_alphaTex", maskFbo.getTexture(), 1);
     mask_shader->setUniform1i("u_invert", (int)p_invertMask );
 
-    baseQuad.draw();
+    LayerUtils::UVQuad::getInstance().draw(0, 0, size.x, size.y); 
+
     mask_shader->end();
     fbo.end();
-}
-
-void Layer_base::onMask() const
-{
-    if (p_mask)
-    {
-        drawMasked();
-    }
 }

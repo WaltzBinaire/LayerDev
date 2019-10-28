@@ -336,7 +336,7 @@ void LayerGui::drawInfoWindow(ImVec2 pos, ImVec2 size)
 
     if (ImGui::Begin("Info", NULL, infoWindowFlags)) {
 
-        static enum InfoType { PROJECT, CPU, FPS, RAM, CACHE} infoType = InfoType::PROJECT;
+        static enum InfoType { PROJECT, CPU, FPS, RAM, CACHE} infoType = InfoType::CPU;
         struct Funcs
         {
             static float QueueGetter(void* data, int i) { 

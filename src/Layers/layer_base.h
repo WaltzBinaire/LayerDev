@@ -130,14 +130,10 @@ private:
 
     
     void drawMasked() const;
-
-    void quadSetup();
-    void setQuad(const ofTexture & _baseTex) const;
-    
     
     shared_ptr<AutoShader> mask_shader;
     ofEventListener l_onShaderLoad;
-    mutable ofMesh baseQuad;
+
 };
 
 class Static_base : public Layer_base

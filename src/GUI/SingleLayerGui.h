@@ -175,7 +175,8 @@ static void SingleLayerGui::specialisedDrawGui(Layer_image_advanced * layer) {
 
     for (auto & mask : masks) {
         string label_id = "##" + mask;
-        bool isActive = layer->isActive(mask);
+        bool isActive  = layer->isActive(mask);
+        bool isEnabled = layer->isEnabled(mask);
         Mask::ADD_MODE mode = layer->getMaskMode(mask);
 
         string name = mask;
@@ -184,23 +185,34 @@ static void SingleLayerGui::specialisedDrawGui(Layer_image_advanced * layer) {
             layer->setActive(mask, !isActive);
         }
 
+        ImGui::SameLine();
+        switch (mode) {
+        case Mask::ADD_MODE::AND: 
+            if (ImGui::Button((ICON_MDI_GATE_AND + label_id).c_str())) {
+                layer->setMaskMode(mask, Mask::ADD_MODE::OR);
+            }
+            break;
+        case Mask::ADD_MODE::OR: 
+            if (ImGui::Button((ICON_MDI_GATE_OR + label_id).c_str())) {
+                layer->setMaskMode(mask, Mask::ADD_MODE::XOR);
+            }
+            break;
+        case Mask::ADD_MODE::XOR: 
+            if (ImGui::Button((ICON_MDI_GATE_XOR + label_id).c_str())) {
+                layer->setMaskMode(mask, Mask::ADD_MODE::AND);
+            }
+            break;
+        }
 
-        if (mode != Mask::ADD_MODE::ADD) {
-            ImGui::SameLine();
-            if (ImGui::Button((ICON_MDI_PLUS + label_id).c_str())) {
-                layer->setMaskMode(mask, Mask::ADD_MODE::ADD);
+        ImGui::SameLine();
+        if (isEnabled) {            
+            if (ImGui::Button((ICON_MDI_CHECK + label_id).c_str())) {
+                layer->setEnabled(mask, false);
             }
         }
-        if (mode != Mask::ADD_MODE::SUBTRACT) {
-            ImGui::SameLine();
-            if (ImGui::Button((ICON_MDI_MINUS + label_id).c_str())) {
-                layer->setMaskMode(mask, Mask::ADD_MODE::SUBTRACT);
-            }
-        }
-        if (mode != Mask::ADD_MODE::DISABLE) {
-            ImGui::SameLine();
+        else {
             if (ImGui::Button((ICON_MDI_BLOCK_HELPER + label_id).c_str())) {
-                layer->setMaskMode(mask, Mask::ADD_MODE::DISABLE);
+                layer->setEnabled(mask, true);
             }
         }
     }

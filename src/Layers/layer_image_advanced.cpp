@@ -3,7 +3,6 @@
 
 REGISTER_TYPE(Layer_image_advanced, Mask Image)
 
-
 using namespace ofxCv;
 using namespace cv;
 
@@ -12,12 +11,41 @@ void Layer_image_advanced::onSetup()
     finder.setup("models/haarcascade_frontalface_default.xml");
     finder.setPreset(ObjectFinder::Accurate);
 
+    setupMaskComposeFbo();
     setupCustomMask();
 }
 
 void Layer_image_advanced::onDrawGui()
 {
     SingleLayerGui::specialisedDrawGui<Layer_image_advanced>(this); 
+}
+
+void Layer_image_advanced::onDrawOverlay()
+{
+    if (isActive("Custom Mask")) {
+
+        float edges[4]{
+            brushPosition.x - brushSize * 0.5,
+            brushPosition.y - brushSize * 0.5,
+            brushPosition.x + brushSize * 0.5,
+            brushPosition.y + brushSize * 0.5,
+        };
+
+        glm::vec2 points[4]{
+            {edges[0], edges[1]},
+            {edges[2], edges[1]},
+            {edges[2], edges[3]},
+            {edges[0], edges[3]}
+        };
+
+        ofDrawLine(points[0], points[1]);
+        ofDrawLine(points[1], points[2]);
+        ofDrawLine(points[2], points[3]);
+        ofDrawLine(points[3], points[0]);
+
+    }
+
+
 }
 
 void Layer_image_advanced::loadBodyMask(const string & path) { 
@@ -41,23 +69,29 @@ void Layer_image_advanced::handle_file(const string & _path)
 void Layer_image_advanced::onRender() const
 {
     if (needsRedraw() ) {
-        clearMaskFbo();
-        maskFbo.begin();
 
+        maskComposeFbo.begin();
+        ofClear(0.0);
+        maskComposeFbo.end();
+
+        bool isFirst = true;
         for (auto & maskEl : masks) {
             Mask * mask = maskEl.second;
-            if (mask->isDrawn()) {
-                
+            if (mask->isDrawn()) {                
                 QuadMask * quadMask = dynamic_cast<QuadMask *>(mask);
                 if (quadMask != nullptr) {
-                    quadMask->draw(position, scale);
+                    quadMask->draw( maskComposeFbo, position, scale, isFirst);                    
                 }
-                StretchMask * stretchMask = dynamic_cast<StretchMask *>(mask);
-                if (stretchMask != nullptr) {
-                    stretchMask->draw();
+                else {
+                    mask->draw( maskComposeFbo, isFirst);
                 }
+                isFirst = false;
             }
         }
+
+        clearMaskFbo();
+        maskFbo.begin();
+        maskComposeFbo.draw(0, 0);  
         maskFbo.end();
     }
 }
@@ -65,22 +99,29 @@ void Layer_image_advanced::onRender() const
 void Layer_image_advanced::onResize()
 {
     customMask.resize(size);
+    setupMaskComposeFbo();
+}
+
+void Layer_image_advanced::setupMaskComposeFbo()
+{
+    maskComposeFbo.allocate(size.x, size.y, GL_RGBA); 
+    maskComposeFbo.clearAll();
 }
 
 void Layer_image_advanced::setupFaceMask()
 {
     finder.update(img);
+    faceMask.setup(size.x, size.y);
+    faceMask.setupQuad(img.getWidth(), img.getHeight());
 
-    faceMask.setup(img.getWidth(), img.getHeight());
-
-    faceMask.begin();
+    faceMask.beginQuad();
     for (int i = 0; i < finder.size(); i++) {
         auto rect = finder.getObject(i);
         ofSetColor(ofColor::white);
         ofDrawRectangle(rect);
     }
 
-    faceMask.end();
+    faceMask.endQuad();
 
     masks.insert_or_assign("Face Mask", &faceMask);
 
@@ -108,13 +149,15 @@ void Layer_image_advanced::setupBodyMask(const string & _path)
         ofLogWarning(__FUNCDNAME__) << "Image and image mask should have the same aspect ration";
     }
 
-    bodyMask.setup(img.getWidth(), img.getHeight());
+    bodyMask.setup(size.x, size.y);
+    bodyMask.setupQuad(img.getWidth(), img.getHeight());
 
-    bodyMask.begin();
+    bodyMask.beginQuad();
     bodyMaskImg.draw(0, 0, img.getWidth(), img.getHeight());
-    bodyMask.end();
+    bodyMask.endQuad();
 
     masks.insert_or_assign("Body Mask", &bodyMask);
+    setEnabled("Body Mask", true);
 }
 
 void Layer_image_advanced::onCustomMousePressed(ofMouseEventArgs & _args)
@@ -128,8 +171,11 @@ void Layer_image_advanced::drawBrush(ofMouseEventArgs & _args)
     ofLogNotice() << _args.button;
 
     brushPosition = glm::vec2(_args.x, _args.y);
-    if (_args.button == 0) ofSetColor(ofColor::white);
-    else                   ofSetColor(ofColor::black);
+
+    brushPosition = brushSize * glm::floor(brushPosition / brushSize);
+
+    if (_args.button == 0) ofSetColor(ofColor::black);
+    else                   ofSetColor(ofColor::white);
 
     customMask.begin();
     ofDrawRectangle(
