@@ -9,9 +9,9 @@ public:
 
 protected:
 
-    virtual void onSetupParams() override;
-    virtual void onActivate()    override;
-    virtual void onDeactivate()  override;
+    virtual void onSetupParams()    override;
+    virtual void onSetupListeners() override;
+
 
     virtual ofTexture & getAlphaTexture() const = 0;
 
@@ -26,7 +26,7 @@ protected:
     ofParameter<bool> p_loadFile;
 
 private:
-
+    
     ofTexture replacementTexture;
 };
 

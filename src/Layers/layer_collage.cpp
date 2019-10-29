@@ -1,16 +1,10 @@
 #include "Layers\layer_collage.h"
 #include "GUI/SingleLayerGui.h"
 
-void Layer_collage::onActivate()
+void Layer_collage::onSetupListeners()
 {    
-    ofAddListener(ofEvents().fileDragEvent, this, &Layer_collage::onFileDragEvent);
+    l_onFileDragged = ofEvents().fileDragEvent.newListener( this, &Layer_collage::onFileDragEvent);
 }
-
-void Layer_collage::onDeactivate()
-{
-    ofRemoveListener(ofEvents().fileDragEvent, this, &Layer_collage::onFileDragEvent);
-}
-
 
 //--------------------------------------------------------------
 void Layer_collage::onSetup()

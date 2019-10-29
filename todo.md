@@ -5,10 +5,9 @@
   [x] In portrait layer, when mask activated, layer masking activate
   [x] Show brush for mask, rectangle . mousex and y tzpo . snap to grid according tp size , mouse wheel changes brushsize
   [x] AI collage - snaps to last portrait transform
-  [ ] edit global on ai collage 
+  [x] edit global on ai collage 
   [ ] grid openframeworks . fake histo - 
   [x] CPU perf by default 
-  [ ] Update collage furniture
 
 ### General
   [ ] Animation output.
@@ -44,9 +43,10 @@
 ### Project Manager
   [ ] Add bang out for saving
   [ ] Correct texture scaling in preview
-  [ ] Add collage preset
+  [x] Add collage preset
   [ ] Add loading bar for assets
  
  ### BUGS
-  [ ] Mask tried to draw after layer deleted
+  [x] Mask tried to draw after layer deleted
+  [ ] Glitch distort has empty texture on first mark
  

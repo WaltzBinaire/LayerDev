@@ -67,15 +67,13 @@ protected:
         EDITING
     };
 
-    virtual void onActivate()    override ;
-    virtual void onDeactivate()  override ;
-    virtual void onSetup()       override ;
-    virtual void onSetupParams() override ;
-    virtual void onDraw()  const override ;
-    virtual void onDrawGui()     override ;
-    virtual void onUpdate()      override ;
-
-    virtual void onReset()       override ;    
+    virtual void onSetupListeners() override ;
+    virtual void onSetup()          override ;
+    virtual void onSetupParams()    override ;
+    virtual void onDraw()  const    override ;
+    virtual void onDrawGui()        override ;
+    virtual void onUpdate()         override ;
+    virtual void onReset()          override ;    
 
     virtual void setupPatch(CollagePatch & _patch, int _idx) = 0;
 

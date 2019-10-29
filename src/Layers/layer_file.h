@@ -15,17 +15,15 @@ public:
     float     getScale()      const { return scale; }
 
 protected:
-    virtual void onSetupParams() override ;
-    virtual void onActivate()    override ;
-    virtual void onDeactivate()  override ;
-    virtual void onDrawGui()     override ;
+    virtual void onSetupParams()    override ;
+    virtual void onSetupListeners() override ;
+    virtual void onDrawGui()        override ;
 
     virtual float getFileWidth()  const = 0;
     virtual float getFileHeight() const = 0;
 
 
     virtual const vector<string> & get_allowed_exts() = 0;
-
 
     void onFileDragEvent(ofDragInfo & _fileInfo);
     void onLoadFile(bool & _loadFolder);

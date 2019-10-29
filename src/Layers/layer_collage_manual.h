@@ -10,8 +10,7 @@ public:
 
 protected:
 
-    virtual void onActivate()    override ;
-    virtual void onDeactivate()  override ;
+    virtual void onSetupListeners()  override ;
     
     virtual void setupPatch(CollagePatch & _patch, int _idx) override;
 

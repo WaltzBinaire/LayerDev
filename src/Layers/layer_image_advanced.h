@@ -25,7 +25,7 @@ public:
         maskFbo.allocate(width, height, GL_RGBA); 
         maskFbo.begin();
         ofClear(0);
-        ofBackground(255);
+        ofBackground(0);
         maskFbo.end();
     }
 
@@ -138,7 +138,7 @@ public:
         for (auto & mask : masks) {
             if (mask.first == _mask) {
                 mask.second->setActive(_active);
-                if (_mask == "Custom Mask") onCustomMaskActive(_active);
+                //if (_mask == "Custom Mask") onCustomMaskActive(_active);
             }
             else {
                 mask.second->setActive(false);
@@ -195,21 +195,21 @@ protected:
 
     virtual void setupMaskComposeFbo();
     virtual void setupFaceMask();
-    virtual void setupCustomMask();
     virtual void setupBodyMask(const string & _path);
+    //virtual void setupCustomMask();
 
-    void onCustomMousePressed(ofMouseEventArgs & _args);
-    void drawBrush(ofMouseEventArgs & _args);
-    void onCustomMouseDragged(ofMouseEventArgs & _args);
-    void onCustomMouseScrolled(ofMouseEventArgs & _args);
+    //void onCustomMousePressed(ofMouseEventArgs & _args);
+    //void drawBrush(ofMouseEventArgs & _args);
+    //void onCustomMouseDragged(ofMouseEventArgs & _args);
+    //void onCustomMouseScrolled(ofMouseEventArgs & _args);
 
-    void onCustomMaskActive(bool & _val);
+    //void onCustomMaskActive(bool & _val);
 
     map<string, Mask*> masks;
 
     QuadMask    bodyMask;
     QuadMask    faceMask;
-    Mask        customMask;
+    //Mask        customMask;
 
 private:
     ofxCv::ObjectFinder finder;

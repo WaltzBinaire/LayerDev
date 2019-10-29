@@ -22,21 +22,19 @@ public:
     void ShuffleInternal() { m_collage.randomInternal();   }
 
 protected:
-    virtual void onSetupParams() override ;
-    virtual void onActivate()   override;
-    virtual void onDeactivate() override;
-    virtual void onRender()     const override;    
-    virtual void onDraw()       const override;  
-    virtual void onDrawOverlay()  override;  
-    virtual void onDrawGui()    override;
-    virtual void onUpdate()     override;
-    virtual void onReset()      override;
+    virtual void onSetupParams()    override ;
+    virtual void onSetupListeners() override ;
+    virtual void onRender()      const override;    
+    virtual void onDraw()        const override;  
+    virtual void onDrawOverlay() override;  
+    virtual void onDrawGui()     override;
+    virtual void onUpdate()      override;
+    virtual void onReset()       override;
 
     void onModeChanged(int & _mode);
-    void addDefaultListeners();
-    void addCollageListeners();        
-    void removeDefaultListeners();
-    void removeCollageListeners();
+    void addCollageListeners();       
+
+    void setListeners();
 
     void onMouseMovedCollage(ofMouseEventArgs & _args);
 

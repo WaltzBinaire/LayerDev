@@ -21,14 +21,13 @@ public:
 
 protected:
     virtual void onDraw(const ofTexture & _baseTex) const override;
-    virtual void onDrawGui()     override ;
-    virtual void onSetup()       override;
-    virtual void onReset()       override;
-    virtual void onUpdate()      override;
-    virtual void onSetupParams() override;
-    virtual void onResize()      override;
-    virtual void onActivate()    override;
-    virtual void onDeactivate()  override;
+    virtual void onDrawGui()        override ;
+    virtual void onSetup()          override;
+    virtual void onReset()          override;
+    virtual void onUpdate()         override;
+    virtual void onSetupParams()    override;
+    virtual void onResize()         override;
+    virtual void onSetupListeners() override;
 
     void onMousePressed(ofMouseEventArgs & _args);
     void onMouseDragged(ofMouseEventArgs & _args);

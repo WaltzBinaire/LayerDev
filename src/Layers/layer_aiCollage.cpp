@@ -22,28 +22,9 @@ void Layer_file_aiCollage::onSetupParams()
     );
 }
 
-void Layer_file_aiCollage::onActivate()
+void Layer_file_aiCollage::onSetupListeners()
 {
-    switch (mode) {
-    case MODE::EDITING:
-        addCollageListeners();  
-        break;
-    case MODE::PLACING:
-        addDefaultListeners();
-        break;
-    }
-}
-
-void Layer_file_aiCollage::onDeactivate()
-{
-    switch (mode) {
-    case MODE::EDITING:
-        removeCollageListeners();
-        break;
-    case MODE::PLACING:
-        removeDefaultListeners();
-        break;
-    }
+    setListeners();
 }
 
 void Layer_file_aiCollage::onRender() const
@@ -86,29 +67,8 @@ void Layer_file_aiCollage::onReset()
 
 void Layer_file_aiCollage::onModeChanged(int & _mode)
 {
-    MODE newMode = (MODE)_mode;
-
-    switch (newMode) {
-    case MODE::EDITING:
-        if (mode == MODE::PLACING) removeDefaultListeners();
-        addCollageListeners();  
-        break;
-    case MODE::PLACING:
-        if (mode == MODE::EDITING) removeCollageListeners();
-        addDefaultListeners();
-        break;
-    case MODE::NONE :
-        if (mode == MODE::PLACING) removeDefaultListeners();
-        if (mode == MODE::EDITING) removeCollageListeners();
-        break;
-    }
-
-    mode = newMode;
-}
-
-void Layer_file_aiCollage::addDefaultListeners()
-{
-    Layer_file::onActivate();
+    mode = (MODE)_mode;
+    setListeners();
 }
 
 void Layer_file_aiCollage::addCollageListeners()
@@ -119,19 +79,24 @@ void Layer_file_aiCollage::addCollageListeners()
         &ofEvents().keyPressed
     );
 
-    ofAddListener(layer_manager->canvasMouseMoved, this, &Layer_file_aiCollage::onMouseMovedCollage);
+    l_onMouseMoved = layer_manager->canvasMouseMoved.newListener( this, &Layer_file_aiCollage::onMouseMovedCollage);
     m_collage.setInteractive(true);
 }
 
-void Layer_file_aiCollage::removeDefaultListeners()
+void Layer_file_aiCollage::setListeners()
 {
-    Layer_file::onDeactivate();
-}
-
-void Layer_file_aiCollage::removeCollageListeners()
-{
-    ofRemoveListener(layer_manager->canvasMouseMoved, this, &Layer_file_aiCollage::onMouseMovedCollage);
+    clearListeners();
     m_collage.setInteractive(false);
+    switch (mode) {
+    case MODE::EDITING:
+        addCollageListeners();  
+        break;
+    case MODE::PLACING:
+        Layer_file::onSetupListeners();
+        break;
+    case MODE::NONE:
+        break;
+    }
 }
 
 void Layer_file_aiCollage::onMouseMovedCollage(ofMouseEventArgs & _args)

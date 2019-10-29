@@ -19,7 +19,8 @@ void Layer_base::setup(int  _width, int _height) {
     size = glm::vec2(_width, _height);
     setupFbo(size.x, size.y);
 
-    mask_shader = Shader_lib::get_mask_shader();
+
+    mask_shader    = Shader_lib::get_mask_shader();
     l_onShaderLoad = mask_shader->onLoad.newListener( [&](bool &) {return this->redraw(); });
 
     onSetup();
@@ -28,18 +29,20 @@ void Layer_base::setup(int  _width, int _height) {
     
     p_reset.set("Reset", false);
     p_disable.set("Disable", false);
-    p_debugRedraw.set("Redraw", false);   
-
-    p_loadMask.addListener(this, &Layer_base::onLoadMask);
-    p_clearMask.addListener(this, &Layer_base::onClearMask);
-    p_loadMask.set(  "Load Mask"  , false);
-    p_clearMask.set( "Clear Mask" , false);
-    p_showMask.set(  "Show Mask"  , false);
-    p_mask.set(      "Mask"       , false);
-    p_invertMask.set("Invert Mask", false);
-    
+    p_debugRedraw.set("Redraw", false);  
     p_pause.set("Pause"  , false);
-    
+
+    p_loadMask.addListener (this, &Layer_base::onLoadMask);
+    p_clearMask.addListener(this, &Layer_base::onClearMask);
+    p_editMask.addListener (this, &Layer_base::onEditMask);
+
+    p_loadMask.set  ( "Load Mask"  , false);
+    p_clearMask.set ( "Clear Mask" , false);
+    p_editMask.set  ( "Edit Mask"  , false);
+    p_showMask.set  ( "Show Mask"  , false);
+    p_mask.set      ( "Mask"       , false);
+    p_invertMask.set( "Invert Mask", false);
+
     params.add(
         p_reset,
         p_disable,
@@ -47,6 +50,7 @@ void Layer_base::setup(int  _width, int _height) {
         p_loadMask,
         p_clearMask,
         p_showMask,
+        p_editMask,
         p_mask,
         p_invertMask,
         p_pause
@@ -66,8 +70,11 @@ void Layer_base::drawGui()
 void Layer_base::drawOverlay(ofFbo & overlayFbo)
 {
     if (p_disable) return;
+
     overlayFbo.begin();
-    if(p_showMask) maskFbo.draw(0, 0);
+    if (p_showMask) maskFbo.draw(0, 0);
+    if (p_editMask) drawMaskBrush();
+
     onDrawOverlay();
     overlayFbo.end();
 }
@@ -148,6 +155,7 @@ void Layer_base::setupFbo(int w, int h)
     settings.useStencil         = false;
     settings.textureTarget      = GL_TEXTURE_2D;
     maskFbo.allocate(settings);
+    clearMaskFbo();
 
 }
 
@@ -164,6 +172,18 @@ void Layer_base::clearFbo() const
     fbo.begin();
     ofClear(0);
     fbo.end();
+}
+
+void Layer_base::clearListeners()
+{
+    l_onMouseMoved.unsubscribe();
+    l_onMouseDragged.unsubscribe();
+    l_onMousePressed.unsubscribe();
+    l_onMouseReleased.unsubscribe();
+    l_onMouseScrolled.unsubscribe();
+    l_onMouseEntered.unsubscribe();
+    l_onMouseExited.unsubscribe();
+    l_onFileDragged.unsubscribe();
 }
 
 void Layer_base::clearMaskFbo() const
@@ -188,6 +208,90 @@ void Layer_base::onClearMask(bool & _val)
         clearMaskFbo();
     }
     _val = false;
+}
+
+void Layer_base::onEditMask(bool & _val)
+{
+    clearListeners();
+    if (_val) {    
+        l_onMousePressed  = layer_manager->canvasMousePressed.newListener ( this,  &Layer_base::onMaskEditMousePressed );
+        l_onMouseDragged  = layer_manager->canvasMouseDragged.newListener ( this,  &Layer_base::onMaskEditMouseDragged );
+        l_onMouseScrolled = layer_manager->canvasMouseScrolled.newListener( this,  &Layer_base::onMaskEditMouseScrolled );
+
+        if (!p_mask || p_showMask) {
+            p_mask.set(true);
+        }
+    }
+    else {
+        onSetupListeners();
+    }
+}
+
+void Layer_base::onMaskEditMousePressed(ofMouseEventArgs & _args)
+{
+    drawMaskEditBrush(_args);
+}
+
+void Layer_base::onMaskEditMouseDragged(ofMouseEventArgs & _args)
+{
+    drawMaskEditBrush(_args);
+}
+
+void Layer_base::onMaskEditMouseScrolled(ofMouseEventArgs & _args)
+{
+    maskBrushSize += 5.0 * _args.scrollY;
+    maskBrushSize = ofClamp(maskBrushSize, MIN_MASK_BRUSH_SIZE, MAX_MASK_BRUSH_SIZE);
+}
+
+void Layer_base::drawMaskEditBrush(ofMouseEventArgs & _args)
+{
+    ofPushStyle();
+
+    maskBrushPosition = glm::vec2(_args.x, _args.y);
+
+    maskBrushPosition = maskBrushSize * glm::floor(maskBrushPosition / maskBrushSize);
+
+    if (_args.button == 0) ofSetColor(ofColor::black);
+    else                   ofSetColor(ofColor::white);
+
+    maskFbo.begin();
+    ofDrawRectangle(
+        maskBrushPosition.x - maskBrushSize * 0.5,
+        maskBrushPosition.y - maskBrushSize * 0.5,
+        maskBrushSize,
+        maskBrushSize
+    );
+
+    maskFbo.end();
+    redraw();
+    ofPopStyle();
+}
+
+void Layer_base::drawMaskBrush() const
+{
+    float edges[4]{
+        maskBrushPosition.x - maskBrushSize * 0.5,
+        maskBrushPosition.y - maskBrushSize * 0.5,
+        maskBrushPosition.x + maskBrushSize * 0.5,
+        maskBrushPosition.y + maskBrushSize * 0.5,
+    };
+
+    glm::vec2 points[4]{
+        {edges[0], edges[1]},
+        {edges[2], edges[1]},
+        {edges[2], edges[3]},
+        {edges[0], edges[3]}
+    };
+
+
+    ofSetColor(ofColor::grey);
+    ofDrawLine(points[0], points[1]);
+    ofDrawLine(points[1], points[2]);
+    ofDrawLine(points[2], points[3]);
+    ofDrawLine(points[3], points[0]);
+
+    string mousePosition_srt = ofToString(maskBrushPosition.x) + ", " + ofToString(maskBrushPosition.y);
+    ofDrawBitmapStringHighlight(mousePosition_srt, points[4]);
 }
 
 void Layer_base::handle_mask(const string & _path)

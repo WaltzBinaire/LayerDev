@@ -2,17 +2,11 @@
 
 REGISTER_TYPE(Layer_collage_manual, Manual Collage)
 
-void Layer_collage_manual::onActivate()
+void Layer_collage_manual::onSetupListeners()
 {
-    Layer_collage::onActivate();
-    ofAddListener(ofEvents().fileDragEvent, this, &Layer_collage_manual::onFileDragEvent);
+    l_onFileDragged = ofEvents().fileDragEvent.newListener( this, &Layer_collage_manual::onFileDragEvent);
 }
 
-//--------------------------------------------------------------
-void Layer_collage_manual::onDeactivate()
-{
-    ofRemoveListener(ofEvents().fileDragEvent, this, &Layer_collage_manual::onFileDragEvent);
-}
 
 void Layer_collage_manual::setupPatch(CollagePatch & _patch, int _idx)
 {

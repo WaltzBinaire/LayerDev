@@ -52,21 +52,14 @@ void Layer_filter_distort::onResize()
     setupBrushFbo();
 }
 
-void Layer_filter_distort::onActivate()
+void Layer_filter_distort::onSetupListeners()
 {
-    ofAddListener(layer_manager->canvasMousePressed , this, &Layer_filter_distort::onMousePressed );
-    ofAddListener(layer_manager->canvasMouseDragged , this, &Layer_filter_distort::onMouseDragged );
-    ofAddListener(layer_manager->canvasMouseReleased, this, &Layer_filter_distort::onMouseReleased);
-    ofAddListener(layer_manager->canvasMouseScrolled, this, &Layer_filter_distort::onMouseScrolled);
+    l_onMousePressed  = layer_manager->canvasMousePressed .newListener( this, &Layer_filter_distort::onMousePressed );
+    l_onMouseDragged  = layer_manager->canvasMouseDragged .newListener( this, &Layer_filter_distort::onMouseDragged );
+    l_onMouseReleased = layer_manager->canvasMouseReleased.newListener( this, &Layer_filter_distort::onMouseReleased);
+    l_onMouseScrolled = layer_manager->canvasMouseScrolled.newListener( this, &Layer_filter_distort::onMouseScrolled);
 }
 
-void Layer_filter_distort::onDeactivate()
-{
-    ofRemoveListener(layer_manager->canvasMousePressed , this, &Layer_filter_distort::onMousePressed );
-    ofRemoveListener(layer_manager->canvasMouseDragged , this, &Layer_filter_distort::onMouseDragged );
-    ofRemoveListener(layer_manager->canvasMouseReleased, this, &Layer_filter_distort::onMouseReleased);
-    ofRemoveListener(layer_manager->canvasMouseScrolled, this, &Layer_filter_distort::onMouseScrolled);
-}
 
 void Layer_filter_distort::onMousePressed(ofMouseEventArgs & _args)
 {

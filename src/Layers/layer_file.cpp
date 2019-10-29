@@ -17,22 +17,13 @@ void Layer_file::onSetupParams()
     );
 }
 
-void Layer_file::onActivate()
+void Layer_file::onSetupListeners()
 {    
-    ofAddListener(ofEvents().fileDragEvent          , this, &Layer_file::onFileDragEvent);
-    ofAddListener(layer_manager->canvasMousePressed , this, &Layer_file::onMousePressed);
-    ofAddListener(layer_manager->canvasMouseScrolled, this, &Layer_file::onMouseScrolled);
-    ofAddListener(layer_manager->canvasMouseMoved   , this, &Layer_file::onMouseMoved);
+    l_onFileDragged   = ofEvents().fileDragEvent.newListener(           this, &Layer_file::onFileDragEvent);
+    l_onMousePressed  = layer_manager->canvasMousePressed.newListener ( this, &Layer_file::onMousePressed);
+    l_onMouseScrolled = layer_manager->canvasMouseScrolled.newListener( this, &Layer_file::onMouseScrolled);
+    l_onMouseMoved    = layer_manager->canvasMouseMoved.newListener   ( this, &Layer_file::onMouseMoved);
 }   
-
-void Layer_file::onDeactivate()
-{
-    ofRemoveListener(ofEvents().fileDragEvent, this, &Layer_file::onFileDragEvent);
-    ofRemoveListener(layer_manager->canvasMousePressed , this, &Layer_file::onMousePressed);
-    ofRemoveListener(layer_manager->canvasMouseScrolled, this, &Layer_file::onMouseScrolled);
-    ofRemoveListener(layer_manager->canvasMouseMoved   , this, &Layer_file::onMouseMoved);
-
-}
 
 void Layer_file::onFileDragEvent(ofDragInfo & _fileInfo)
 {

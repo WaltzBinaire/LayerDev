@@ -8,6 +8,8 @@ class Layer_factory;
 
 #define REDRAW true
 #define NO_REDRAW false
+#define MAX_MASK_BRUSH_SIZE 100.0
+#define MIN_MASK_BRUSH_SIZE 10.0
 
 class Layer_base
 {
@@ -41,12 +43,14 @@ public:
     void activate() {
         if (!b_active) {
             b_active = true;
+            onSetupListeners();
             onActivate();
         }
     };
     void deactivate() {
         if (b_active) {
             b_active = false;
+            clearListeners();
             onDeactivate();
         }
     };
@@ -74,10 +78,12 @@ public:
 
 protected:
     void clearFbo() const;  
+    void clearListeners();  
     void clearMaskFbo() const;  
 
     virtual void onSetup()         {};
     virtual void onSetupParams()   {};
+    virtual void onSetupListeners(){};
     virtual void onDrawGui()       {};
     virtual void onDrawOverlay()   {};
     virtual void onUpdate()        {};
@@ -100,38 +106,58 @@ protected:
     ofParameter<bool> p_disable;
     ofParameter<bool> p_debugRedraw;
     ofParameter<bool> p_loadMask;
+    ofParameter<bool> p_pause;
+
     ofParameter<bool> p_clearMask;
     ofParameter<bool> p_showMask;
     ofParameter<bool> p_mask;
     ofParameter<bool> p_invertMask;
-    ofParameter<bool> p_pause;
+    ofParameter<bool> p_editMask;
 
 
     ofEventListener l_paramsChanged;
     ofEventListener l_debugRedraw;
+
+    ofEventListener l_onMouseMoved;
+    ofEventListener l_onMouseDragged;
+    ofEventListener l_onMousePressed;
+    ofEventListener l_onMouseReleased;
+    ofEventListener l_onMouseScrolled;
+    ofEventListener l_onMouseEntered;
+    ofEventListener l_onMouseExited;
+    ofEventListener l_onFileDragged;
 
     glm::vec2 size;
     mutable pingPongFbo fbo;
     mutable ofFbo maskFbo;
 
 private:
-    void onLoadMask(bool & _val);
-    void onClearMask(bool & _val);
+    void setupFbo(int w, int h); 
+    void onResetInternal(bool & b_reset);
 
-    mutable bool b_redraw;
+    void onLoadMask (bool & _val);
+    void onClearMask(bool & _val);
+    void onEditMask (bool & _val);
+
+    void onMaskEditMousePressed ( ofMouseEventArgs & _args);
+    void onMaskEditMouseDragged ( ofMouseEventArgs & _args);
+    void onMaskEditMouseScrolled( ofMouseEventArgs & _args);
+    void drawMaskEditBrush      ( ofMouseEventArgs & _args);
+    void drawMaskBrush() const;
+    void drawMasked() const;
 
     static map<string, Layer_factory*>* GetFactoryDirectory() {        
         static map<string, Layer_factory*>* factories = new map<string, Layer_factory*>();
         return factories;
     }
-    void onResetInternal(bool & b_reset);
-    void setupFbo(int w, int h);  
 
-    
-    void drawMasked() const;
-    
+    mutable bool b_redraw;
+
     shared_ptr<AutoShader> mask_shader;
-    ofEventListener l_onShaderLoad;
+    ofEventListener        l_onShaderLoad;
+
+    glm::vec2 maskBrushPosition;
+    float     maskBrushSize = 50;
 
 };
 

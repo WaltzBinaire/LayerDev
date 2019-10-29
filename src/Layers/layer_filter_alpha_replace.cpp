@@ -17,15 +17,11 @@ void Layer_filter_alpha_replace::setupShader()
     shader = Shader_lib::get_alpha_shader();
 }
 
-void Layer_filter_alpha_replace::onActivate()
+void Layer_filter_alpha_replace::onSetupListeners()
 {    
-    ofAddListener(ofEvents().fileDragEvent, this, &Layer_filter_alpha_replace::onFileDragEvent);
+    l_onFileDragged = ofEvents().fileDragEvent.newListener( this, &Layer_filter_alpha_replace::onFileDragEvent);
 }   
 
-void Layer_filter_alpha_replace::onDeactivate()
-{
-    ofRemoveListener(ofEvents().fileDragEvent, this, &Layer_filter_alpha_replace::onFileDragEvent);
-}
 
 void Layer_filter_alpha_replace::setUniforms(const ofTexture & _baseTex) const
 {
