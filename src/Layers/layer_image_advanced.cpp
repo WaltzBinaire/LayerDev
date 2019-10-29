@@ -219,5 +219,4 @@ void Layer_image_advanced::onCustomMaskActive(bool & _val)
         ofRemoveListener(layer_manager->canvasMouseScrolled, this, &Layer_image_advanced::onCustomMouseScrolled);
         Layer_file::onActivate();
     }
-
 }

@@ -5,6 +5,7 @@ void ofApp::setup(){
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofSetWindowShape(ofGetScreenWidth(), ofGetScreenHeight() - 70);
     ofSetWindowPosition(0, 30);
+    ofSetEscapeQuitsApp(false);
 }
 
 //--------------------------------------------------------------

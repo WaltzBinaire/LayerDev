@@ -8,16 +8,16 @@
   [ ] edit global on ai collage 
   [ ] grid openframeworks . fake histo - 
   [x] CPU perf by default 
-  [?] Add icon
+  [ ] Update collage furniture
 
 ### General
   [ ] Animation output.
-  [ ] Add size presets
+  [x] Add size presets
   [ ] Add app icon
 
 ### Layer System
   [x] Sort out Fbo flipping.
-  [ ] Center and fit layer?
+  [x] Center and fit layer?
   [x] Filters don't redraw on reorder?
   [ ] Add Mask Sharing
   [x] Add canvas size presets
@@ -30,7 +30,7 @@
 
 ### Static Layers
   [ ] Add video layer
-  [ ] Add fance overlay for collages
+  [ ] Add fancy overlay for collages
   [ ] Fix manual collage (with drag and drop?)
 
 

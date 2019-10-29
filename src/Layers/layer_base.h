@@ -118,7 +118,6 @@ private:
     void onLoadMask(bool & _val);
     void onClearMask(bool & _val);
 
-
     mutable bool b_redraw;
 
     static map<string, Layer_factory*>* GetFactoryDirectory() {        
