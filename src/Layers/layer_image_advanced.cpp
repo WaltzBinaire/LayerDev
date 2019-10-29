@@ -38,11 +38,15 @@ void Layer_image_advanced::onDrawOverlay()
             {edges[0], edges[3]}
         };
 
+
+        ofSetColor(ofColor::grey);
         ofDrawLine(points[0], points[1]);
         ofDrawLine(points[1], points[2]);
         ofDrawLine(points[2], points[3]);
         ofDrawLine(points[3], points[0]);
 
+        string mousePosition_srt = ofToString(brushPosition.x) + ", " + ofToString(brushPosition.y);
+        ofDrawBitmapStringHighlight(mousePosition_srt, points[4]);
     }
 
 

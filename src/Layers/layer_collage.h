@@ -13,7 +13,6 @@ public:
         scale(1.0),
         b_positionSet(false)
     {
-        ofLogNotice() << "COnstructor";
     }
 
     ~CollagePatch() {}
@@ -36,7 +35,6 @@ public:
     }
 
     void setup(glm::vec2 _center, float _scale, float _angle) {
-        ofLogNotice() << "Setting up";
         center  = _center;
         angle   = _angle;
         scale   = _scale;

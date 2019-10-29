@@ -1,4 +1,5 @@
 #include "Layers\layer_aiCollage.h"
+#include "layer_image_advanced.h"
 #include "GUI/SingleLayerGui.h"
 
 
@@ -150,4 +151,17 @@ void Layer_file_aiCollage::handle_file(const string & _path)
 {
     m_collage.load(_path);
     if (m_collage.isLoaded()) redraw(); 
+
+    Layer_file * img_layer = dynamic_cast<Layer_image_advanced *>(layer_manager->keyLayer);
+    if (img_layer != nullptr) {
+        position = img_layer->getPosition();
+
+        glm::vec2 _scale = img_layer->getScreenSize() / glm::vec2(m_collage.getWidth(),m_collage.getHeight());
+        
+        if (_scale.x != _scale.y) ofLogWarning(__FUNCTION__) << "Collage does not match portrait aspect ratio";
+        scale = _scale.x;
+    }
+    else {
+        p_mode = (int)MODE::PLACING;
+    }
 }

@@ -14,6 +14,8 @@ public:
 
     Layer_file_aiCollage(string name, int instance, Layer_Manager * _layer_manager) : Layer_file(name, instance, _layer_manager) {};
 
+    virtual void handle_file(const string & _path);
+
     void Sort()            { m_collage.sortByLoss();       }
     void SortInternal()    { m_collage.sortInternal();     }
     void Shuffle()         { m_collage.randomGroupOrder(); }
@@ -44,7 +46,7 @@ protected:
     ofParameter<int> p_mode;
 
     virtual vector<string> & get_allowed_exts() { return allowed_exts; }
-    virtual void handle_file(const string & _path);
+
 
 private:
     static vector<string> allowed_exts;

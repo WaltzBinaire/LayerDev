@@ -40,6 +40,7 @@ public:
     void redrawAll();
 
     map<string, std::function<void(bool)>> specialLayers;
+    Layer_base * keyLayer = nullptr;
 
 private:
 
@@ -54,6 +55,7 @@ private:
     void onProjectLoaded(bool & _val);
     void addPortraitLayer(bool _activate);
     void addCollageLayer(bool _activate);
+    void addAICollageLayer(bool _activate);
 
     void addListeners();
     void removeListeners();
@@ -71,6 +73,7 @@ private:
 
     deque<Layer_base*> layers;
     Layer_base* active_layer;
+    
 
     // Gui
     LayerGui * gui;

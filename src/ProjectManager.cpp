@@ -54,11 +54,22 @@ const vector<ofTexture>& ProjectResource::getThumbnails() const
 
 bool ProjectResource::setup(const string & _path)
 {
-    dir = ofDirectory(_path);
+    rootDir = ofDirectory(_path);
     ofLogVerbose(__FUNCTION__) << "Loading: " << _path;
-    if (dir.exists()) {
-        for( auto & ext : get_allowed_exts())  dir.allowExt(ext);
-        dir.listDir();
+    if (rootDir.exists()) {
+
+        bool recursiveSearch = rt == RESOURCE_TYPE::COLLAGE;
+
+        if (recursiveSearch) {
+            scanDir(rootDir, get_allowed_exts());
+        }
+        else {
+            for( auto & ext : get_allowed_exts())  rootDir.allowExt(ext);
+            rootDir.listDir();
+
+            filePaths.clear();
+            for (const auto & file : rootDir) filePaths.push_back(file.path());
+        }
 
         switch (rt)
         {
@@ -67,12 +78,16 @@ bool ProjectResource::setup(const string & _path)
         case ProjectResource::RESOURCE_TYPE::TARGET:
         case ProjectResource::RESOURCE_TYPE::MASKS:
             loadThumbnails();
+            break;
+        case RESOURCE_TYPE::COLLAGE:
+            loadCollageThumbnails();
+            break;
         default:
             break;
 
         }
 
-        ofLogNotice() << dir.size() << " files found";
+        ofLogNotice() << filePaths.size() << " files found";
         return true;
     }
     else {
@@ -99,9 +114,28 @@ vector<string> ProjectResource::get_allowed_exts()
 
 void ProjectResource::loadThumbnails()
 {
-    for (const ofFile & file : dir) {
+    for (const string & file : filePaths) {
         thumbnail_images.push_back( new ofImage() );
-        imageLoader.loadFromDisk(*thumbnail_images.back(), file.path(), THUMBNAIL_SIZE);
+        imageLoader.loadFromDisk(*thumbnail_images.back(), file, THUMBNAIL_SIZE);
+    }
+}
+
+void ProjectResource::loadCollageThumbnails()
+{
+    for (const string & file : filePaths) {
+
+        string imagePath(file);
+
+        if (imagePath.size() > 5) {
+            imagePath.replace(imagePath.end()-3, imagePath.end(), "png");
+
+            ofFile imageFile(imagePath);
+            if (imageFile.exists()) {
+                ofLogNotice(__FUNCTION__) << imagePath;
+                thumbnail_images.push_back( new ofImage() );
+                imageLoader.loadFromDisk(*thumbnail_images.back(), imagePath, THUMBNAIL_SIZE);
+            }
+        }
     }
 }
 

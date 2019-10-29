@@ -97,7 +97,6 @@ void Layer_collage::updatePatches()
             patchInfo.nLoading++;
         }
     }
-    ofLogNotice() << patchInfo.nNeedsSetup;
 
     if (patchInfo.nNeedsSetup > 0) redraw();
 

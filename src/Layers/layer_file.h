@@ -10,6 +10,10 @@ public:
     
     virtual void handle_file(const string & _path) = 0;
 
+    glm::vec2 getPosition()   const { return position; }
+    glm::vec2 getScreenSize() const { return scale * glm::vec2(getFileWidth(), getFileHeight()); }
+    float     getScale()      const { return scale; }
+
 protected:
     virtual void onSetupParams() override ;
     virtual void onActivate()    override ;

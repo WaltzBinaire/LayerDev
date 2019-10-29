@@ -19,11 +19,12 @@ public:
     int getNumLoadedFiles() const { return thumbnail_textures.size(); };
 
     string getFilePath(int i) const { 
-        if (i < dir.size()) return dir[i].path();
+        if (i < filePaths.size()) return filePaths[i];
         else return "";
     }
+
     string getDirectoryPath() const { 
-        return dir.path();
+        return rootDir.path();
     }
 
     bool setup(const string & _path);
@@ -36,9 +37,32 @@ public:
 
 private:
 
-    void loadThumbnails();
+    void scanDir(ofDirectory & dir, const vector<string>  & allowedExts)
+    {
+	    dir.listDir();
 
-    ofDirectory dir;
+	    for(auto file : dir)
+	    {
+            string ext = file.getExtension();
+
+            auto result = find(allowedExts.begin(), allowedExts.end(), ext);
+
+            if (result != allowedExts.end()) {
+                filePaths.push_back(file.path());
+            }
+		    else if(file.isDirectory())
+		    {
+			    scanDir(ofDirectory(file.getAbsolutePath()), allowedExts);
+		    }
+	    }
+    }
+
+    void loadThumbnails();
+    void loadCollageThumbnails();
+
+    ofDirectory rootDir;
+    vector<string> filePaths;
+
     vector<ofImage*>   thumbnail_images;
     mutable vector<ofTexture> thumbnail_textures;
 
