@@ -138,12 +138,16 @@ public:
         for (auto & mask : masks) {
             if (mask.first == _mask) {
                 mask.second->setActive(_active);
-                if (_mask == "Custom Mask") onCustomMaskActive(_active);
+                if (_active) {
+                    if (_mask == "Custom Mask") onCustomMaskActive(_active);
+                    setEnabled(_mask, true);
+                }
             }
             else {
                 mask.second->setActive(false);
             }
         }
+        redraw();
     }
     void setEnabled(const string & _mask, bool _active) {
         for (auto & mask : masks) {

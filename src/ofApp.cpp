@@ -3,8 +3,8 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofSetLogLevel(OF_LOG_VERBOSE);
-
-    ofSetWindowTitle("EMMA // Editor");
+    ofSetWindowShape(ofGetScreenWidth(), ofGetScreenHeight() - 70);
+    ofSetWindowPosition(0, 30);
 }
 
 //--------------------------------------------------------------
