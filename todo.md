@@ -1,13 +1,14 @@
 # To-do
 ### Urgetn for demmo
 
-  [ ] Start full screen
-  [ ] In portrait layer, when mask activated, layer masking activate
-  [ ] Show brush for mask, rectangle . mousex and y tzpo . snap to grid according tp size , mouse wheel changes brushsize
+  [x] Start full screen
+  [x] In portrait layer, when mask activated, layer masking activate
+  [x] Show brush for mask, rectangle . mousex and y tzpo . snap to grid according tp size , mouse wheel changes brushsize
   [ ] AI collage - snaps to last portrait transform
   [ ] edit global on ai collage 
   [ ] grid openframeworks . fake histo - 
   [x] CPU perf by default 
+  [ ] Add icon
 
 ### General
   [ ] Animation output.
