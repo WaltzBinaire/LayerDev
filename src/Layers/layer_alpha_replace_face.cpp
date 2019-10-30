@@ -1,37 +1,36 @@
 #include "Layers\layer_alpha_replace_face.h"
 
-#ifdef NDEBUG
-
 REGISTER_TYPE(Layer_alpha_replace_face, Face Replace)
 
 void Layer_alpha_replace_face::onSetup()
 {
     Layer_filter_shader::onSetup();
 
+#ifdef NDEBUG
     tracker.setup();
+#endif // !NDEBUG    
+    setupFaceFbo();
 }
 
 void Layer_alpha_replace_face::onDestroy()
 {
-    ofLogNotice(name) << "Stopping tracker";
-    tracker.stop();
+#ifdef NDEBUG
+    //tracker.stop();
+#endif // !NDEBUG  
 }
 
-void Layer_alpha_replace_face::onDraw(const ofTexture & _baseTex) const
+void Layer_alpha_replace_face::onResize()
 {
-    updateFace(_baseTex);
-    Layer_filter_shader::onDraw(_baseTex);
+    setupFaceFbo();
 }
 
-void Layer_alpha_replace_face::onSetupParams()
+void Layer_alpha_replace_face::onRender(const ofTexture & _baseTex) const
 {
-    Layer_filter_alpha_replace::onSetupParams();
-
+   updateFace(_baseTex);
 }
 
 void Layer_alpha_replace_face::setupShader()
 {
-    //shader = Shader_lib::get_alpha_shader();
     shader = Shader_lib::get_alpha_multi_shader();
 
     face_shader = Shader_lib::get_face_shader();
@@ -39,23 +38,27 @@ void Layer_alpha_replace_face::setupShader()
 
 }
 
+void Layer_alpha_replace_face::setupFaceFbo()
+{
+    faceFbo.allocate(size.x, size.y, GL_RGBA);
+    faceFbo.begin();
+    ofClear(0.0);
+    faceFbo.end();
+}
+
 void Layer_alpha_replace_face::updateFace(const ofTexture & _baseTex) const
 {
-    if (!faceFbo.isAllocated()) faceFbo.allocate((int)_baseTex.getWidth(), (int)_baseTex.getHeight(), GL_RGBA);
-    
-    if (faceFbo.getWidth() != _baseTex.getWidth() || faceFbo.getHeight() != _baseTex.getHeight()) 
-        faceFbo.allocate((int)_baseTex.getWidth(), (int)_baseTex.getHeight(), GL_RGBA);
-
     _baseTex.readToPixels(pixels);
 
     if (pixels.isAllocated()) {
-        tracker.update(pixels);
+        //tracker.update(pixels);
 
         faceFbo.begin();
         ofClear(0, 0);
         face_shader->begin();
 
         ofPushStyle();
+#ifdef NDEBUG
         for (auto instance : tracker.getInstances()) {
             ofMesh& faceMesh = instance.getLandmarks().getImageMesh();
             faceMesh.enableColors();
@@ -76,9 +79,7 @@ void Layer_alpha_replace_face::updateFace(const ofTexture & _baseTex) const
 
             faceMesh.draw();
         }
-
-        
-        
+#endif // !NDEBUG    
         ofPopStyle();
 
         face_shader->end();
@@ -88,4 +89,3 @@ void Layer_alpha_replace_face::updateFace(const ofTexture & _baseTex) const
 
 }
 
-#endif // !NDEBUG

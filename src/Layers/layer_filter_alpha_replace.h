@@ -11,6 +11,7 @@ protected:
 
     virtual void onSetupParams()    override;
     virtual void onSetupListeners() override;
+    virtual void onDrawGui()        override;
 
 
     virtual ofTexture & getAlphaTexture() const = 0;

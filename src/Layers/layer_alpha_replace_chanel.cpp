@@ -3,26 +3,24 @@
 
 REGISTER_TYPE(Layer_alpha_replace_channel, Channel Apha)
 
-void Layer_alpha_replace_channel::onDraw(const ofTexture & _baseTex) const
+void Layer_alpha_replace_channel::onRender(const ofTexture & _baseTex) const
 {
     update_alpha_texture(_baseTex);
-    Layer_filter_shader::onDraw(_baseTex);
 }
 
 void Layer_alpha_replace_channel::onDrawGui()
 {
     SingleLayerGui::specialisedDrawGui<Layer_alpha_replace_channel>(this); 
-
 }
 
 void Layer_alpha_replace_channel::onSetupParams()
 {
     Layer_filter_alpha_replace::onSetupParams();
 
-    p_invert.set("Invert", false);
-    p_threshold.set("Threshold", glm::vec2(0.5),  glm::vec2(0.0),  glm::vec2(1.0));
+    p_invert.set    ("Invert"     , false);
+    p_threshold.set ("Threshold"  , glm::vec2(0.5),  glm::vec2(0.0),  glm::vec2(1.0));
     p_blurPasses.set("Blur Passes", 4, 1, 10);
-    p_color.set("Channel Mix", glm::vec4(0.5), glm::vec4(0), glm::vec4(1));
+    p_color.set     ("Channel Mix", glm::vec4(0.5), glm::vec4(0), glm::vec4(1));
 
     params.add(
         p_invert,

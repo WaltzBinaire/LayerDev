@@ -22,9 +22,11 @@ public:
     template<> static void specialisedDrawGui( Layer_file_aiCollage * layer);
 
     template<> static void specialisedDrawGui( Layer_filter_chromatic_aberation * layer);
-    template<> static void specialisedDrawGui( Layer_alpha_replace_channel * layer);
-    template<> static void specialisedDrawGui( Layer_filter_mpeg_glitch * layer);
-    template<> static void specialisedDrawGui( Layer_filter_distort * layer);
+    template<> static void specialisedDrawGui( Layer_filter_alpha_replace       * layer);
+    template<> static void specialisedDrawGui( Layer_alpha_replace_channel      * layer);
+    template<> static void specialisedDrawGui( Layer_filter_mpeg_glitch         * layer);
+    template<> static void specialisedDrawGui( Layer_filter_distort             * layer);
+
 
 
 private:
@@ -85,6 +87,13 @@ void SingleLayerGui::specialisedDrawGui(Layer_collage_generative * layer)
     Button(p_generate);
 }
 
+template<>
+void SingleLayerGui::specialisedDrawGui(Layer_filter_alpha_replace * layer)
+{
+    ofParameter<bool> & p_load        = layer->params.get("Load").cast<bool>();   
+    LoadButton(p_load);
+
+}
 template<>
 void SingleLayerGui::specialisedDrawGui(Layer_alpha_replace_channel * layer)
 {
@@ -217,3 +226,4 @@ static void SingleLayerGui::specialisedDrawGui(Layer_image_advanced * layer) {
         }
     }
 };
+

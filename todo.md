@@ -1,5 +1,5 @@
 # To-do
-### Urgetn for demmo
+### Urgetnt for demmo
 
   [x] Start full screen
   [x] In portrait layer, when mask activated, layer masking activate
@@ -50,8 +50,9 @@
  ### BUGS
   [x] Mask tried to draw after layer deleted
   [ ] Glitch distort has empty texture on first mark
-  [!] Mouse position does not map to fbo
+  [x] Mouse position does not map to fbo
   [!] Generative collage blank fbos
   [ ] MPEG GLitch doesn't resize
   [ ] Historgram takes wrong texture back/front sometimes
+  [ ] Histrogram not rendering properly in UI
  

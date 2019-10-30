@@ -1,9 +1,12 @@
 #include "Layers\layer_filter_alpha_replace.h"
 #include "Utils\LayerUtils.h"
+#include "GUI/SingleLayerGui.h"
 
 
 void Layer_filter_alpha_replace::onSetupParams()
 {    
+
+
     p_loadFile.set("Load", false);
     p_loadFile.addListener(this, &Layer_filter_alpha_replace::onLoadFile);
 
@@ -20,7 +23,12 @@ void Layer_filter_alpha_replace::setupShader()
 void Layer_filter_alpha_replace::onSetupListeners()
 {    
     l_onFileDragged = ofEvents().fileDragEvent.newListener( this, &Layer_filter_alpha_replace::onFileDragEvent);
-}   
+}
+
+void Layer_filter_alpha_replace::onDrawGui()
+{
+    SingleLayerGui::specialisedDrawGui<Layer_filter_alpha_replace>(this); 
+}
 
 
 void Layer_filter_alpha_replace::setUniforms(const ofTexture & _baseTex) const
