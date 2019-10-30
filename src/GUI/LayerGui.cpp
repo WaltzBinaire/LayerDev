@@ -68,19 +68,26 @@ void LayerGui::draw(Layer_Manager * manager)
     static float rightWidth    = 350;
     float rightPosX     = ofGetWidth() - rightWidth;
     
-    ImVec2 pos_L1 (0    , menuBarHeight);
-    ImVec2 size_L1(leftWidth, remainingHeight * 0.66);
+    // RIGHT SIDE
 
+    ImVec2 pos_L0 (0    , menuBarHeight);
+    ImVec2 size_L0(leftWidth, remainingHeight * 0.20);
+
+    ImVec2 pos_L1 = pos_L0 + ImVec2( 0.0,  size_L0.y);
+    ImVec2 size_L1(leftWidth, remainingHeight * 0.45);
+    
     ImVec2 pos_L2 = pos_L1 + ImVec2( 0.0,  size_L1.y);
-    ImVec2 size_L2(leftWidth, remainingHeight * 0.34);
+    ImVec2 size_L2(leftWidth, remainingHeight * 0.35);
 
-    drawLayerMenu(pos_L1, size_L1);
-    drawActiveLayerMenu(pos_L2, size_L2);
+    drawHistrogram     ( pos_L0, size_L0);
+    drawLayerMenu      ( pos_L1, size_L1);
+    drawActiveLayerMenu( pos_L2, size_L2);
+
+    // LEFT SIDE
 
     ImVec2 pos_R1 (rightPosX , menuBarHeight);
     ImVec2 size_R1(rightWidth, 200);
     
-
     ImVec2 pos_R2 = pos_R1 + ImVec2( 0.0,  size_R1.y);
     ImVec2 size_R2(leftWidth, remainingHeight - size_R1.y );
 
@@ -88,6 +95,9 @@ void LayerGui::draw(Layer_Manager * manager)
     drawProjectMenu(pos_R2, size_R2);
     ImGui::PopFont();
     gui.end();
+
+    //ofTexture & tex = histogram.getTexture();
+    //tex.draw(ofGetWidth() - tex.getWidth() - rightWidth , ofGetHeight() - tex.getHeight());
 }
 
 //---------------------------------------------------------
@@ -377,6 +387,34 @@ void LayerGui::drawInfoWindow(ImVec2 pos, ImVec2 size)
     }
     ImGui::End();
 
+}
+//---------------------------------------------------------
+// HISTOGRAM
+//---------------------------------------------------------
+void LayerGui::drawHistrogram(ImVec2 pos, ImVec2 size)
+{
+    static ImGuiWindowFlags histogramFlags = 
+        ImGuiWindowFlags_None     |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove   |
+        ImGuiWindowFlags_NoScrollbar  |
+        ImGuiWindowFlags_NoCollapse;
+
+    ImGui::SetNextWindowPos( pos , ImGuiCond_Always);
+    ImGui::SetNextWindowSize(size, ImGuiCond_Always);
+
+    histogram.render();
+    if (ImGui::Begin("Histogram", NULL, histogramFlags)) {
+            ImTextureID tex_id;
+
+            if (getTextureId( histogram.getTexture(), tex_id) ){
+                ImGui::Image(tex_id, ImVec2(FBO_RESOLUTION_X, FBO_RESOLUTION_Y));
+            }
+            else {
+                ImGui::Text("NO TEXTURE");
+            }
+    }
+    ImGui::End();
 }
 //---------------------------------------------------------
 // PROJECT VIEWER

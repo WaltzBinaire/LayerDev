@@ -20,6 +20,9 @@ public:
 
     void setBackgroundColor(const ofColor _backgroundColor);
 
+
+    ofMouseEventArgs transformMouseEventArgs(const ofMouseEventArgs & _args);
+
     float*  getBackgroundColorArray()  const;
     ofColor getBackgroundColor()       const;
 

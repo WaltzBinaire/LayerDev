@@ -19,12 +19,6 @@ void Layer_image_advanced::onDrawGui()
     SingleLayerGui::specialisedDrawGui<Layer_image_advanced>(this); 
 }
 
-void Layer_image_advanced::onDrawOverlay()
-{
-
-
-}
-
 void Layer_image_advanced::loadBodyMask(const string & path) { 
     if (img.isAllocated()) {
         setupBodyMask(path);
@@ -48,7 +42,7 @@ void Layer_image_advanced::onRender() const
     if (needsRedraw() ) {
 
         maskComposeFbo.begin();
-        ofClear(0.0);
+        ofClear(255);
         maskComposeFbo.end();
 
         bool isFirst = true;
@@ -67,6 +61,8 @@ void Layer_image_advanced::onRender() const
         }
 
         clearMaskFbo();
+
+
         maskFbo.begin();
         maskComposeFbo.draw(0, 0);  
         maskFbo.end();
@@ -91,6 +87,7 @@ void Layer_image_advanced::setupFaceMask()
     faceMask.setupQuad(img.getWidth(), img.getHeight());
 
     faceMask.beginQuad();
+    ofBackground(0.0);
     for (int i = 0; i < finder.size(); i++) {
         auto rect = finder.getObject(i);
         ofSetColor(ofColor::white);
@@ -102,12 +99,6 @@ void Layer_image_advanced::setupFaceMask()
     masks.insert_or_assign("Face Mask", &faceMask);
 
 }
-
-//void Layer_image_advanced::setupCustomMask()
-//{
-//    customMask.setup(size.x, size.y);
-//    masks.insert_or_assign("Custom Mask", &customMask);
-//}
 
 void Layer_image_advanced::setupBodyMask(const string & _path)
 {
@@ -133,62 +124,4 @@ void Layer_image_advanced::setupBodyMask(const string & _path)
     bodyMask.endQuad();
 
     masks.insert_or_assign("Body Mask", &bodyMask);
-    setEnabled("Body Mask", true);
 }
-
-//void Layer_image_advanced::onCustomMousePressed(ofMouseEventArgs & _args)
-//{
-//    drawBrush(_args);
-//}
-
-//void Layer_image_advanced::drawBrush(ofMouseEventArgs & _args)
-//{
-//    ofPushStyle();
-//    ofLogNotice() << _args.button;
-//
-//    brushPosition = glm::vec2(_args.x, _args.y);
-//
-//    brushPosition = brushSize * glm::floor(brushPosition / brushSize);
-//
-//    if (_args.button == 0) ofSetColor(ofColor::black);
-//    else                   ofSetColor(ofColor::white);
-//
-//    customMask.begin();
-//    ofDrawRectangle(
-//        brushPosition.x - brushSize * 0.5,
-//        brushPosition.y - brushSize * 0.5,
-//        brushSize,
-//        brushSize
-//    );
-//
-//    customMask.end();
-//    redraw();
-//    ofPopStyle();
-//}
-//
-//void Layer_image_advanced::onCustomMouseDragged(ofMouseEventArgs & _args)
-//{
-//    drawBrush(_args);
-//}
-//
-//void Layer_image_advanced::onCustomMouseScrolled(ofMouseEventArgs & _args)
-//{
-//    brushSize += 5.0 * _args.scrollY;
-//    brushSize = ofClamp(brushSize, minBrushSize, maxBrushSize);
-//}
-//
-//void Layer_image_advanced::onCustomMaskActive(bool & _val)
-//{
-//    if (_val) {
-//        Layer_file::onDeactivate();
-//        ofAddListener(layer_manager->canvasMousePressed , this, &Layer_image_advanced::onCustomMousePressed );
-//        ofAddListener(layer_manager->canvasMouseDragged , this, &Layer_image_advanced::onCustomMouseDragged );
-//        ofAddListener(layer_manager->canvasMouseScrolled, this, &Layer_image_advanced::onCustomMouseScrolled);
-//    }
-//    else {
-//        ofRemoveListener(layer_manager->canvasMousePressed , this, &Layer_image_advanced::onCustomMousePressed );
-//        ofRemoveListener(layer_manager->canvasMouseDragged , this, &Layer_image_advanced::onCustomMouseDragged );
-//        ofRemoveListener(layer_manager->canvasMouseScrolled, this, &Layer_image_advanced::onCustomMouseScrolled);
-//        Layer_file::onActivate();
-//    }
-//}

@@ -21,7 +21,7 @@ void SingleLayerGui::baseDrawGui(Layer_base * layer)
     ImGui::SameLine();
     IconButton(reset,   ICON_MDI_SYNC);
     ImGui::SameLine();
-    IconToggle(disable, ICON_MDI_EYE, ICON_MDI_EYE_OFF);
+    IconToggle(disable, ICON_MDI_EYE, ICON_MDI_EYE);
     ImGui::SameLine();
     IconButton(redraw,  ICON_MDI_BRUSH);
     ImGui::SameLine();
@@ -45,5 +45,6 @@ void SingleLayerGui::baseDrawGui(Layer_base * layer)
     ImGui::SameLine();
 
     static string MaskSaveLabel = ofToString(ICON_MDI_CONTENT_SAVE) + "##MaskSave";
+    if (ImGui::Button(MaskSaveLabel.c_str())) layer->saveMask();
 
 }

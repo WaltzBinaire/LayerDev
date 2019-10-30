@@ -6,6 +6,7 @@ void ofApp::setup(){
     ofSetWindowShape(ofGetScreenWidth(), ofGetScreenHeight() - 70);
     ofSetWindowPosition(0, 30);
     ofSetEscapeQuitsApp(false);
+
 }
 
 //--------------------------------------------------------------

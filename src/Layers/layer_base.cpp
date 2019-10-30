@@ -72,6 +72,7 @@ void Layer_base::drawOverlay(ofFbo & overlayFbo)
     if (p_disable) return;
 
     overlayFbo.begin();
+
     if (p_showMask) maskFbo.draw(0, 0);
     if (p_editMask) drawMaskBrush();
 
@@ -249,8 +250,8 @@ void Layer_base::drawMaskEditBrush(ofMouseEventArgs & _args)
 
     maskBrushPosition = glm::vec2(_args.x, _args.y);
 
-    maskBrushPosition = maskBrushSize * glm::floor(maskBrushPosition / maskBrushSize);
-
+    maskBrushPosition = maskBrushSize * glm::floor((glm::vec2(maskBrushSize * 0.5) + maskBrushPosition) / maskBrushSize);
+    
     if (_args.button == 0) ofSetColor(ofColor::black);
     else                   ofSetColor(ofColor::white);
 
@@ -289,9 +290,6 @@ void Layer_base::drawMaskBrush() const
     ofDrawLine(points[1], points[2]);
     ofDrawLine(points[2], points[3]);
     ofDrawLine(points[3], points[0]);
-
-    string mousePosition_srt = ofToString(maskBrushPosition.x) + ", " + ofToString(maskBrushPosition.y);
-    ofDrawBitmapStringHighlight(mousePosition_srt, points[4]);
 }
 
 void Layer_base::handle_mask(const string & _path)

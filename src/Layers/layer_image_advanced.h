@@ -15,7 +15,6 @@ public:
 
     Mask() :
         addMode(ADD_MODE::AND),
-        b_isActive(false),
         b_isEnabled(false)
     { 
         shader = Shader_lib::get_mask_compose_shader();
@@ -54,9 +53,7 @@ public:
 
     void setMode(ADD_MODE _mode)   { addMode     = _mode;       }
     void setEnabled(bool _enabled) { b_isEnabled = _enabled;    }
-    void setActive(bool _active)   { b_isActive = _active;      }
 
-    bool isActive()  const { return b_isActive;   }
     bool isEnabled() const { return b_isEnabled;  }
 
 
@@ -78,7 +75,6 @@ protected:
 
     mutable ofFbo maskFbo;
     ADD_MODE addMode;
-    bool b_isActive;
     bool b_isEnabled;
 
     shared_ptr<AutoShader> shader;
@@ -134,33 +130,14 @@ public:
             redraw();
         }
     }
-    void setActive(const string & _mask, bool _active) {
-        for (auto & mask : masks) {
-            if (mask.first == _mask) {
-                mask.second->setActive(_active);
-                //if (_mask == "Custom Mask") onCustomMaskActive(_active);
-            }
-            else {
-                mask.second->setActive(false);
-            }
-        }
-    }
+
     void setEnabled(const string & _mask, bool _enabled) {
         for (auto & mask : masks) {
             if (mask.first == _mask) {
                 mask.second->setEnabled(_enabled);
                 redraw();              
-                setActive(_mask, _enabled);
             }
         }
-    }
-    
-    bool isActive(const string & _mask) {
-        auto mask = masks.find(_mask);
-        if (mask != masks.end()) {
-            return (mask->second->isActive());
-        }
-        return false;
     }
     
     bool isEnabled(const string & _mask) {
@@ -189,37 +166,20 @@ public:
 protected:
     virtual void onSetup()       override;
     virtual void onDrawGui()     override;
-    virtual void onDrawOverlay() override;
     virtual void onRender()      const override;
     virtual void onResize()      override;
 
     virtual void setupMaskComposeFbo();
     virtual void setupFaceMask();
     virtual void setupBodyMask(const string & _path);
-    //virtual void setupCustomMask();
-
-    //void onCustomMousePressed(ofMouseEventArgs & _args);
-    //void drawBrush(ofMouseEventArgs & _args);
-    //void onCustomMouseDragged(ofMouseEventArgs & _args);
-    //void onCustomMouseScrolled(ofMouseEventArgs & _args);
-
-    //void onCustomMaskActive(bool & _val);
 
     map<string, Mask*> masks;
 
     QuadMask    bodyMask;
     QuadMask    faceMask;
-    //Mask        customMask;
 
 private:
     ofxCv::ObjectFinder finder;
-
     mutable pingPongFbo maskComposeFbo;
-
-    // Custom Draw
-    float brushSize = 50;
-    const float maxBrushSize = 200;
-    const float minBrushSize = 10;
-    glm::vec2 brushPosition;
 };
 

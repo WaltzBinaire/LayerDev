@@ -49,7 +49,8 @@ public:
     };
     void deactivate() {
         if (b_active) {
-            b_active = false;
+            p_editMask = false;
+            b_active   = false;
             clearListeners();
             onDeactivate();
         }

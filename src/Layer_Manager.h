@@ -30,6 +30,8 @@ public:
     void update();
 
     Canvas & getCanvas() { return canvas; }
+    const glm::vec2 & getMousePosition() const { return mousePosition; }
+    bool mouseOverGui() const { return b_mouseOverGui; }
 
     void saveAs() const;
     void save() const;
@@ -44,13 +46,13 @@ public:
 
 private:
 
-    void onMouseMoved   ( ofMouseEventArgs & _args) { if(!b_mouseOverGui) canvasMouseMoved.notify(this, _args);    }
-    void onMouseDragged ( ofMouseEventArgs & _args) { if(!b_mouseOverGui) canvasMouseDragged.notify(this, _args);  }
-    void onMousePressed ( ofMouseEventArgs & _args) { if(!b_mouseOverGui) canvasMousePressed.notify(this, _args);  }
-    void onMouseReleased( ofMouseEventArgs & _args) { if(!b_mouseOverGui) canvasMouseReleased.notify(this, _args); }
-    void onMouseScrolled( ofMouseEventArgs & _args) { if(!b_mouseOverGui) canvasMouseScrolled.notify(this, _args); }
-    void onMouseEntered ( ofMouseEventArgs & _args) { if(!b_mouseOverGui) canvasMouseEntered.notify(this, _args);  }
-    void onMouseExited  ( ofMouseEventArgs & _args) { if(!b_mouseOverGui) canvasMouseExited.notify(this, _args);   }
+    void onMouseMoved(ofMouseEventArgs & _args);
+    void onMouseDragged(ofMouseEventArgs & _args);
+    void onMousePressed(ofMouseEventArgs & _args);
+    void onMouseReleased(ofMouseEventArgs & _args);
+    void onMouseScrolled(ofMouseEventArgs & _args);
+    void onMouseEntered(ofMouseEventArgs & _args);
+    void onMouseExited(ofMouseEventArgs & _args);
 
     void onProjectLoaded(bool & _val);
     void addPortraitLayer(bool _activate);
@@ -59,6 +61,8 @@ private:
 
     void addListeners();
     void removeListeners();
+
+    void drawFancyCursor() const;
 
     void onCanvasResized(glm::vec2 & _size);
     void onBackgroundChanged(bool & _var);
@@ -69,6 +73,7 @@ private:
     void move_layer(Layer_base* _layer, DIRECTION _dir);
 
     mutable Canvas canvas;
+    glm::vec2 mousePosition;
     vector<string> layer_types;
 
     deque<Layer_base*> layers;

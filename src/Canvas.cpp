@@ -35,6 +35,13 @@ void Canvas::resize(float width, float height)
     }
 }
 
+ofMouseEventArgs Canvas::transformMouseEventArgs(const ofMouseEventArgs & _args) {
+    ofMouseEventArgs args(_args);
+    args.x = (args.x - position.x) / scale ;
+    args.y = (args.y - position.y) / scale ;
+    return args;
+}
+
 float * Canvas::getBackgroundColorArray() const {
     return new float[4]{
         (float)(backgroundColor.r / 255.0),
@@ -115,10 +122,12 @@ void Canvas::setupParams()
 
 void Canvas::fitToScreen() const
 {
+
+
     float sw = ofGetWidth()  / getWidth();
     float sh = ofGetHeight() / getHeight();
 
-    scale = min( 1.0f, min(sw, sh));
+    scale = min( 1.0f, min(sw, sh)) * 0.9;
 
     position = glm::vec2(
         (ofGetWidth()  * 0.5) - (0.5  * scale * getWidth()  ),

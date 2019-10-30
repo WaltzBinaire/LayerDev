@@ -8,6 +8,7 @@
   [x] edit global on ai collage 
   [ ] grid openframeworks . fake histo - 
   [x] CPU perf by default 
+  [x] Data under mouse
 
 ### General
   [ ] Animation output.
@@ -49,4 +50,8 @@
  ### BUGS
   [x] Mask tried to draw after layer deleted
   [ ] Glitch distort has empty texture on first mark
+  [!] Mouse position does not map to fbo
+  [!] Generative collage blank fbos
+  [ ] MPEG GLitch doesn't resize
+  [ ] Historgram takes wrong texture back/front sometimes
  

@@ -8,6 +8,7 @@
 #include "Layers/layer_base.h"
 
 #include "ofxMonitor.h"
+#include "Utils/Histogram.h"
 
 #define TEXT_SIZE 20.0
 
@@ -20,6 +21,9 @@ public:
     void draw(Layer_Manager * manager);
     bool mouseOverGui() const { return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow); }
 
+    void setHistogramTexture(ofTexture & tex) {
+        histogram.setTexture(tex);
+    }
 
     static  bool getTextureId(const ofTexture & _tex, ImTextureID & _texID) {
         if (_tex.isAllocated()) {
@@ -41,6 +45,7 @@ private:
     float drawMainMenuBar()     ;
     void drawActiveLayerMenu(ImVec2 pos, ImVec2 size) ;
     void drawInfoWindow(ImVec2 pos, ImVec2 size)      ;
+    void drawHistrogram(ImVec2 pos, ImVec2 size)      ;
     void drawLayerMenu(ImVec2 pos, ImVec2 size)       ;
     void drawProjectMenu(ImVec2 pos, ImVec2 size)     ;
     
@@ -52,6 +57,7 @@ private:
     ImFont * font_bold;
     
     ofxMonitor monitor;
+    Histogram histogram;
     Layer_Manager * manager;
 
     // Internal

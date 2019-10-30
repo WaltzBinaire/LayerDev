@@ -11,6 +11,7 @@ Layer_Manager::Layer_Manager()
     gui = new LayerGui();
 
     canvas.setup();
+    gui->setHistogramTexture(canvas.getFbo().getTexture());
     addListeners();
 
     ofDisableArbTex();
@@ -55,6 +56,48 @@ void Layer_Manager::redrawAll()
     for (auto & layer : layers) {
         layer->redraw();
     }
+}
+
+void Layer_Manager::onMouseMoved(ofMouseEventArgs & _args) { 
+    auto args = canvas.transformMouseEventArgs(_args);
+    mousePosition = glm::vec2(args.x, args.y);
+    if (!b_mouseOverGui) canvasMouseMoved.notify(this, args); 
+}
+
+void Layer_Manager::onMouseDragged(ofMouseEventArgs & _args) {
+    auto args = canvas.transformMouseEventArgs(_args);
+    mousePosition = glm::vec2(args.x, args.y);
+    if (!b_mouseOverGui) canvasMouseDragged.notify(this, args); 
+}
+
+void Layer_Manager::onMousePressed(ofMouseEventArgs & _args) {
+    auto args = canvas.transformMouseEventArgs(_args);
+    mousePosition = glm::vec2(args.x, args.y);
+    if (!b_mouseOverGui) canvasMousePressed.notify(this, args); 
+}
+
+void Layer_Manager::onMouseReleased(ofMouseEventArgs & _args) {
+    auto args = canvas.transformMouseEventArgs(_args);
+    mousePosition = glm::vec2(args.x, args.y);
+    if (!b_mouseOverGui) canvasMouseReleased.notify(this, _args); 
+}
+
+void Layer_Manager::onMouseScrolled(ofMouseEventArgs & _args) {
+    auto args = canvas.transformMouseEventArgs(_args);
+    mousePosition = glm::vec2(args.x, args.y);
+    if (!b_mouseOverGui) canvasMouseScrolled.notify(this, args); 
+}
+
+void Layer_Manager::onMouseEntered(ofMouseEventArgs & _args) {
+    auto args = canvas.transformMouseEventArgs(_args);
+    mousePosition = glm::vec2(args.x, args.y);
+    if (!b_mouseOverGui) canvasMouseEntered.notify(this, args); 
+}
+
+void Layer_Manager::onMouseExited(ofMouseEventArgs & _args) {
+    auto args = canvas.transformMouseEventArgs(_args);
+    mousePosition = glm::vec2(args.x, args.y);
+    if (!b_mouseOverGui) canvasMouseExited.notify(this, args); 
 }
 
 
@@ -112,7 +155,7 @@ void Layer_Manager::addPortraitLayer(bool _activate)
             img_layer->set_display_name("Portrait");
             img_layer->handle_file( targets->getFilePath(0));
             img_layer->loadBodyMask(masks->getFilePath(0));
-
+            img_layer->params.get("Mask").cast<bool>().set(true);
             keyLayer = layer;
         }
     }
@@ -191,6 +234,7 @@ void Layer_Manager::onCanvasResized(glm::vec2 & _size)
     for (auto & layer : layers) {
         layer->resize(ofGetWidth(), ofGetHeight());
     }
+    gui->setHistogramTexture(canvas.getFbo().getTexture());
 }
 void Layer_Manager::onBackgroundChanged(bool & _var)
 {    
@@ -282,6 +326,17 @@ void Layer_Manager::draw() const
     }
 
     canvas.draw();
+
+    drawFancyCursor();
+}
+
+void Layer_Manager::drawFancyCursor() const
+{
+    ofPushStyle();
+    string str = "x " + ofToString(mousePosition.x) +  "\ny " + ofToString(mousePosition.y);
+    ofSetColor(ofColor::grey);
+    ofDrawBitmapString(str, ofGetMouseX() + 30, ofGetMouseY() + 30);
+    ofPopStyle();
 }
 
 void Layer_Manager::drawGui()
