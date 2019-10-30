@@ -14,7 +14,7 @@ out vec4 outputColor;
 
 void main()
 {
-    vec2 _uv     = vec2( texCoordVarying.x, 1.0 - texCoordVarying.y);
+    vec2 _uv     = vec2( texCoordVarying.x, texCoordVarying.y);
 
     vec4 base        = texture(u_imageTex, _uv);
     vec4 alpha       = texture(u_alphaTex, _uv);

@@ -6,7 +6,8 @@ const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_rel_
     {RESOURCE_TYPE::SEGMENTED, "Assets/Segmented" },
     {RESOURCE_TYPE::TARGET   , "Assets/Targets"   },
     {RESOURCE_TYPE::COLLAGE  , "Assets/Collage"   },
-    {RESOURCE_TYPE::MASKS    , "Assets/Masks"     }
+    {RESOURCE_TYPE::MASKS    , "Assets/Masks"     },
+    {RESOURCE_TYPE::FACES    , "Assets/Faces"     }
 };
 
 const char* ProjectResource::resource_name_c[] = {
@@ -14,7 +15,8 @@ const char* ProjectResource::resource_name_c[] = {
     "Segmented",
     "Portrait" ,
     "Collage"  , 
-    "Masks"    
+    "Masks"    ,
+    "Faces"    
 };
 
 const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_names
@@ -23,7 +25,8 @@ const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_name
     {RESOURCE_TYPE::SEGMENTED, resource_name_c[1] },
     {RESOURCE_TYPE::TARGET   , resource_name_c[2] },
     {RESOURCE_TYPE::COLLAGE  , resource_name_c[3] },
-    {RESOURCE_TYPE::MASKS    , resource_name_c[4] }
+    {RESOURCE_TYPE::MASKS    , resource_name_c[4] },
+    {RESOURCE_TYPE::FACES    , resource_name_c[5] }
 };
 
 ProjectResource::~ProjectResource()
@@ -77,6 +80,7 @@ bool ProjectResource::setup(const string & _path)
         case ProjectResource::RESOURCE_TYPE::SEGMENTED:
         case ProjectResource::RESOURCE_TYPE::TARGET:
         case ProjectResource::RESOURCE_TYPE::MASKS:
+        case ProjectResource::RESOURCE_TYPE::FACES:
             loadThumbnails();
             break;
         case RESOURCE_TYPE::COLLAGE:
@@ -104,11 +108,32 @@ vector<string> ProjectResource::get_allowed_exts()
     case RESOURCE_TYPE::SEGMENTED:
     case RESOURCE_TYPE::TARGET:
     case RESOURCE_TYPE::MASKS:
+    case RESOURCE_TYPE::FACES:
         return LayerUtils::img_exts;
     case RESOURCE_TYPE::COLLAGE:
         return LayerUtils::collage_exts;
     default:
         return vector<string> { "" };
+    }
+}
+
+inline void ProjectResource::scanDir(ofDirectory & dir, const vector<string>& allowedExts)
+{
+    dir.listDir();
+
+    for (auto file : dir)
+    {
+        string ext = file.getExtension();
+
+        auto result = find(allowedExts.begin(), allowedExts.end(), ext);
+
+        if (result != allowedExts.end()) {
+            filePaths.push_back(file.path());
+        }
+        else if (file.isDirectory())
+        {
+            scanDir(ofDirectory(file.getAbsolutePath()), allowedExts);
+        }
     }
 }
 
@@ -160,6 +185,31 @@ void ProjectManager::clear()
     name = "";
 }
 
+void ProjectManager::populateFaceFolder()
+{
+    auto raw = getResource(RESOURCE_TYPE::RAW);
+
+    if (raw == nullptr) {
+        ofLogWarning(__FUNCTION__) << "Raw image folder not found";
+        return;
+    }
+
+
+    FaceExtractor & faceExtractor = FaceExtractor::getInstance();
+
+    string in_path  = ofFilePath::join( root_path , ProjectResource::resource_rel_paths.at(RESOURCE_TYPE::RAW));
+    string out_path = ofFilePath::join( root_path , ProjectResource::resource_rel_paths.at(RESOURCE_TYPE::FACES));
+
+    faceExtractor.extractFaces( in_path, out_path );
+
+
+    l_onFaceExtractorComplete = faceExtractor.faceExtractorComplete.newListener( [this](bool &) {
+        this->createResource(RESOURCE_TYPE::FACES, ProjectResource::resource_rel_paths.at(RESOURCE_TYPE::FACES) );
+        this->l_onFaceExtractorComplete.unsubscribe();
+        }
+    );
+}
+
 const shared_ptr<ProjectResource> ProjectManager::getResource(RESOURCE_TYPE _rt) const
 {
     auto resource = resources.find(_rt);
@@ -180,12 +230,7 @@ void ProjectManager::loadProject(const string & _root_path)
     name = ofFilePath::getEnclosingDirectory(root_path);
 
     for (auto & resource_path : ProjectResource::resource_rel_paths) {
-        RESOURCE_TYPE rt = resource_path.first;
-        string path = ofFilePath::join(root_path, resource_path.second);
-        shared_ptr<ProjectResource> newResource = make_shared<ProjectResource>(rt);
-        if (newResource->setup(path)) {
-            resources[resource_path.first] = newResource;
-        }
+        createResource(resource_path.first, resource_path.second );
     }
 
     if (resources.size() == 0) {
@@ -196,4 +241,13 @@ void ProjectManager::loadProject(const string & _root_path)
     }
 
     onLoaded.notify(b_isLoaded);
+}
+
+void ProjectManager::createResource( ProjectResource::RESOURCE_TYPE rt, const string & resource_path)
+{
+    string path = ofFilePath::join(root_path, resource_path);
+    shared_ptr<ProjectResource> newResource = make_shared<ProjectResource>(rt);
+    if (newResource->setup(path)) {
+        resources[rt] = newResource;
+    }
 }

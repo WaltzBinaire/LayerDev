@@ -2,6 +2,7 @@
 #include "ofMain.h"
 #include "Utils/LayerUtils.h"
 #include "Utils/threadedImageLoader.h"
+#include "Utils/FaceExtractor.h"
 
 
 #define THUMBNAIL_SIZE 150
@@ -10,7 +11,7 @@ class ProjectResource {
 
 public:
 
-    enum class RESOURCE_TYPE {  RAW, SEGMENTED, TARGET, COLLAGE, MASKS };
+    enum class RESOURCE_TYPE {  RAW, SEGMENTED, TARGET, COLLAGE, MASKS, FACES };
     ProjectResource(RESOURCE_TYPE _rt) : rt(_rt) {};
     ~ProjectResource();
 
@@ -37,25 +38,7 @@ public:
 
 private:
 
-    void scanDir(ofDirectory & dir, const vector<string>  & allowedExts)
-    {
-	    dir.listDir();
-
-	    for(auto file : dir)
-	    {
-            string ext = file.getExtension();
-
-            auto result = find(allowedExts.begin(), allowedExts.end(), ext);
-
-            if (result != allowedExts.end()) {
-                filePaths.push_back(file.path());
-            }
-		    else if(file.isDirectory())
-		    {
-			    scanDir(ofDirectory(file.getAbsolutePath()), allowedExts);
-		    }
-	    }
-    }
+    void scanDir(ofDirectory & dir, const vector<string>  & allowedExts);
 
     void loadThumbnails();
     void loadCollageThumbnails();
@@ -83,6 +66,8 @@ class ProjectManager
         void loadProject();
         void clear();
 
+        void populateFaceFolder();
+
         bool isLoaded() const { return b_isLoaded; };
 
         const shared_ptr<ProjectResource> getResource(RESOURCE_TYPE _rt) const;
@@ -99,14 +84,13 @@ class ProjectManager
 
     private:
 
-
         ProjectManager():
             b_isLoaded(false)
         {};
 
         void loadProject(const string & _root_path);
 
-        
+        void createResource(ProjectResource::RESOURCE_TYPE rt, const string & resource_path);
 
         bool b_isLoaded;
 
@@ -115,5 +99,7 @@ class ProjectManager
         string root_path;
         string name;
         vector<ofTexture> thumbnails;
+
+        ofEventListener l_onFaceExtractorComplete;
 
 };

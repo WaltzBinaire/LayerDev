@@ -8,11 +8,24 @@ Histogram::Histogram()
     plane.rotate(65, glm::vec3(1, 0, 0));
 
 
-    fbo.allocate(FBO_RESOLUTION_X, FBO_RESOLUTION_Y, GL_RGBA);
+    ofFboSettings settings;
+    settings.numColorbuffers    = 1;   // one buff per fbo
+    settings.width              = FBO_RESOLUTION_X;
+    settings.height             = FBO_RESOLUTION_Y;
+    settings.internalformat     = GL_RGBA;
+    settings.wrapModeHorizontal = true;
+    settings.wrapModeVertical   = true;
+    settings.numSamples         = 0;
+    settings.useDepth           = false;
+    settings.useStencil         = false;
+    settings.textureTarget      = GL_TEXTURE_2D;
+    fbo.allocate(settings);
 
     cam.setupPerspective(true, 30, 0.0, 1000);
 
     shader = Shader_lib::get_histogram_shader();
+
+    l_onUpdate = ofEvents().update.newListener([this](ofEventArgs &) { this->render(); });
 }
 
 
@@ -22,6 +35,8 @@ Histogram::~Histogram()
 
 void Histogram::render()
 {
+    if (!texture.isAllocated()) return;
+
     ofPushStyle();
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
     fbo.begin();

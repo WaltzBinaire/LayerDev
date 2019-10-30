@@ -8,6 +8,7 @@ void Layer_alpha_replace_face::onSetup()
 
 #ifdef NDEBUG
     tracker.setup();
+    tracker.setThreaded(false);
 #endif // !NDEBUG    
     setupFaceFbo();
 }
@@ -51,14 +52,17 @@ void Layer_alpha_replace_face::updateFace(const ofTexture & _baseTex) const
     _baseTex.readToPixels(pixels);
 
     if (pixels.isAllocated()) {
-        //tracker.update(pixels);
 
         faceFbo.begin();
         ofClear(0, 0);
         face_shader->begin();
 
         ofPushStyle();
+
 #ifdef NDEBUG
+        tracker.update(pixels);
+
+
         for (auto instance : tracker.getInstances()) {
             ofMesh& faceMesh = instance.getLandmarks().getImageMesh();
             faceMesh.enableColors();

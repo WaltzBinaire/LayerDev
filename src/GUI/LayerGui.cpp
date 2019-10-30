@@ -108,6 +108,8 @@ float LayerGui::drawMainMenuBar()
     static float menuBarHeight;
     if (ImGui::BeginMainMenuBar())
     {
+        // FILE
+        //---------------------------------------------------------
         if (ImGui::BeginMenu("File"))
         {
             const char T_OPEN[] = ICON_MDI_FOLDER           " Open Project";
@@ -121,7 +123,8 @@ float LayerGui::drawMainMenuBar()
             ImGui::EndMenu();
         }
 
-
+        // SETTINGS
+        //---------------------------------------------------------
         if (ImGui::BeginMenu("Settings"))
         {
 
@@ -218,7 +221,8 @@ float LayerGui::drawMainMenuBar()
             ImGui::EndMenu();
         }
 
-
+        // LAYERS
+        //---------------------------------------------------------
         if (ImGui::BeginMenu("Layers"))
         {
 
@@ -253,6 +257,34 @@ float LayerGui::drawMainMenuBar()
                     }
                 }
                 ImGui::EndMenu();
+            }   
+
+            ImGui::EndMenu();
+        }
+
+        // TOOLS
+        //---------------------------------------------------------
+        if (ImGui::BeginMenu("Tools"))
+        {
+            ProjectManager & projectManager = ProjectManager::getInstance();
+            if (projectManager.isLoaded()) {
+                if (ImGui::Button("Face Extractor")) {
+                    projectManager.populateFaceFolder();
+                    ImGui::OpenPopup("Face Extractor...");
+                }
+            }
+
+            if (ImGui::BeginPopupModal("Face Extractor...", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+            {
+                FaceExtractor & faceExtractor = FaceExtractor::getInstance();
+
+                ImGui::ProgressBar(faceExtractor.getProgress(), ImVec2(400, 30));
+
+                if (!faceExtractor.isRunning()) {
+                    ImGui::CloseCurrentPopup();
+                }
+
+                ImGui::EndPopup();
             }
 
             ImGui::EndMenu();
@@ -403,11 +435,13 @@ void LayerGui::drawHistrogram(ImVec2 pos, ImVec2 size)
     ImGui::SetNextWindowPos( pos , ImGuiCond_Always);
     ImGui::SetNextWindowSize(size, ImGuiCond_Always);
 
-    histogram.render();
     if (ImGui::Begin("Histogram", NULL, histogramFlags)) {
             ImTextureID tex_id;
+            ofTexture & tex = histogram.getTexture();
+            //ofTexture & tex = manager->getCanvas().getFbo().getTexture();
 
-            if (getTextureId( histogram.getTexture(), tex_id) ){
+
+            if (getTextureId( tex, tex_id) ){
                 ImGui::Image(tex_id, ImVec2(FBO_RESOLUTION_X, FBO_RESOLUTION_Y));
             }
             else {
@@ -443,7 +477,7 @@ void LayerGui::drawProjectMenu(ImVec2 pos, ImVec2 size)
             static int current_resource_type = -1;
 
             ImGui::PushItemWidth(-1);
-            ImGui::ListBox("Resource Folders", &current_resource_type, ProjectResource::resource_name_c, 5);
+            ImGui::ListBox("Resource Folders", &current_resource_type, ProjectResource::resource_name_c, IM_ARRAYSIZE(*(ProjectResource::resource_name_c)));
             ImGui::PopItemWidth();
 
 

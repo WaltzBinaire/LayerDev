@@ -3,8 +3,8 @@
 #include "Utils/shader_base.h"
 
 #define PLANE_RESOLUTION 100
-#define FBO_RESOLUTION_X 400
-#define FBO_RESOLUTION_Y 400
+#define FBO_RESOLUTION_X 300
+#define FBO_RESOLUTION_Y 200
 
 class Histogram
 {
@@ -24,6 +24,8 @@ public:
     }
 
 private:
+
+    ofEventListener l_onUpdate;
 
     void drawChannel(CHANNEL ch) const;
 
