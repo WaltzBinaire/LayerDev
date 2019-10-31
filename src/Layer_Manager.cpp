@@ -161,7 +161,11 @@ void Layer_Manager::addPortraitLayer(bool _activate)
         else {
             img_layer->set_display_name("Portrait");
             img_layer->handle_file( targets->getFilePath(0));
-            img_layer->loadBodyMask(masks->getFilePath(0));
+
+            if (masks != nullptr) {
+                img_layer->loadBodyMask(masks->getFilePath(0));
+            }
+
             img_layer->params.get("Mask").cast<bool>().set(true);
             keyLayer = layer;
         }
@@ -259,7 +263,7 @@ void Layer_Manager::removeListeners()
 
 void Layer_Manager::onCanvasResized(glm::vec2 & _size)
 {    
-
+    ofLogNotice() << "Here";
     for (auto & layer : layers) {
         layer->resize(ofGetWidth(), ofGetHeight());
     }

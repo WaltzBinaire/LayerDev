@@ -81,6 +81,13 @@ void Layer_image_advanced::onResize()
     setupMaskComposeFbo();
 }
 
+void Layer_image_advanced::onDestroy()
+{
+#ifdef NDEBUG
+    finder.stop();
+#endif // !NDEBUG
+}
+
 void Layer_image_advanced::setupMaskComposeFbo()
 {
     maskComposeFbo.allocate(size.x, size.y, GL_RGBA); 

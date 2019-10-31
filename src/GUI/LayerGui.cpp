@@ -145,9 +145,11 @@ float LayerGui::drawMainMenuBar()
                 }
 
                 // Resizing
-                static glm::vec2 size = glm::vec2(canvas.getWidth(), canvas.getHeight());
+                static glm::vec2 size;
                 static char bufw[6] = ""; 
                 static char bufh[6] = "";
+
+                if(canvasSettingsInit)  size = glm::vec2(canvas.getWidth(), canvas.getHeight());
 
                 if (!tmpaAutoResize) {
                     auto labels     = canvas.getCanavasSizePresets();
@@ -173,6 +175,7 @@ float LayerGui::drawMainMenuBar()
 	                }
 	                if (result)
 	                {
+
 		                size = labels[iSelected].second;
 	                }
 
@@ -185,7 +188,7 @@ float LayerGui::drawMainMenuBar()
                         copy(h.begin(), h.end(), bufh);
                     }
 
-                    if( ImGui::InputText("Width ", bufw, 6, ImGuiInputTextFlags_CharsDecimal)) size.x = floor(ofToFloat(bufw));
+                    if (ImGui::InputText("Width ", bufw, 6, ImGuiInputTextFlags_CharsDecimal)) size.x = floor(ofToFloat(bufw));
                     if (ImGui::InputText("Height", bufh, 6, ImGuiInputTextFlags_CharsDecimal)) size.y = floor(ofToFloat(bufh));
                 }
 
@@ -204,7 +207,6 @@ float LayerGui::drawMainMenuBar()
                             tmpColor.w * 255
                         )
                     );
-                    
                     canvas.p_autoResize.set(autoResize);
                     canvas.resize(size);
                     ImGui::CloseCurrentPopup();               
@@ -224,8 +226,9 @@ float LayerGui::drawMainMenuBar()
         //---------------------------------------------------------
         if (ImGui::BeginMenu("Layers"))
         {
+            ProjectManager & projectManager = manager->projectManager();
 
-            if (manager->specialLayers.size() > 0) {
+            if (manager->specialLayers.size() > 0 && projectManager.isLoaded()) {
                 if (ImGui::BeginMenu("Presets"))
                 {
                     for (auto & specialLayer : manager->specialLayers) {
@@ -314,7 +317,7 @@ void LayerGui::drawLayerMenu(ImVec2 pos, ImVec2 size)
         for (auto itr = manager->layers.rbegin(); itr != manager->layers.rend(); ++itr) {
             Layer_base* layer = (*itr);
             string label = layer->get_display_name();
-            string id_label = "##" + label;
+            string id_label = "##" + layer->get_name();
 
             if (layer == manager->active_layer) label += "*";
 

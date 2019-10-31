@@ -219,6 +219,7 @@ void Layer_base::onEditMask(bool & _val)
         l_onMousePressed  = layer_manager->canvasMousePressed.newListener ( this,  &Layer_base::onMaskEditMousePressed );
         l_onMouseDragged  = layer_manager->canvasMouseDragged.newListener ( this,  &Layer_base::onMaskEditMouseDragged );
         l_onMouseScrolled = layer_manager->canvasMouseScrolled.newListener( this,  &Layer_base::onMaskEditMouseScrolled );
+        l_onMouseMoved    = layer_manager->canvasMouseMoved.newListener   ( this,  &Layer_base::onMaskEditMouseMoved    );
 
         if (!p_mask || p_showMask) {
             p_mask.set(true);
@@ -231,11 +232,18 @@ void Layer_base::onEditMask(bool & _val)
 
 void Layer_base::onMaskEditMousePressed(ofMouseEventArgs & _args)
 {
+    updateMaskBrushPosition(_args);
     drawMaskEditBrush(_args);
+}
+
+void Layer_base::onMaskEditMouseMoved(ofMouseEventArgs & _args)
+{
+    updateMaskBrushPosition(_args);
 }
 
 void Layer_base::onMaskEditMouseDragged(ofMouseEventArgs & _args)
 {
+    updateMaskBrushPosition(_args);
     drawMaskEditBrush(_args);
 }
 
@@ -248,11 +256,6 @@ void Layer_base::onMaskEditMouseScrolled(ofMouseEventArgs & _args)
 void Layer_base::drawMaskEditBrush(ofMouseEventArgs & _args)
 {
     ofPushStyle();
-
-    maskBrushPosition = glm::vec2(_args.x, _args.y);
-
-    maskBrushPosition = maskBrushSize * glm::floor((glm::vec2(maskBrushSize * 0.5) + maskBrushPosition) / maskBrushSize);
-    
     if (_args.button == 0) ofSetColor(ofColor::black);
     else                   ofSetColor(ofColor::white);
 
@@ -265,12 +268,21 @@ void Layer_base::drawMaskEditBrush(ofMouseEventArgs & _args)
     );
 
     maskFbo.end();
+
     redraw();
     ofPopStyle();
 }
 
+void Layer_base::updateMaskBrushPosition(ofMouseEventArgs & _args)
+{
+    maskBrushPosition = glm::vec2(_args.x, _args.y);
+    maskBrushPosition = maskBrushSize * glm::floor((glm::vec2(maskBrushSize * 0.5) + maskBrushPosition) / maskBrushSize);
+}
+
 void Layer_base::drawMaskBrush() const
 {
+    ofPushStyle();
+
     float edges[4]{
         maskBrushPosition.x - maskBrushSize * 0.5,
         maskBrushPosition.y - maskBrushSize * 0.5,
@@ -287,10 +299,13 @@ void Layer_base::drawMaskBrush() const
 
 
     ofSetColor(ofColor::grey);
+    ofSetLineWidth(2.0);
     ofDrawLine(points[0], points[1]);
     ofDrawLine(points[1], points[2]);
     ofDrawLine(points[2], points[3]);
     ofDrawLine(points[3], points[0]);
+
+    ofPopStyle();
 }
 
 void Layer_base::handle_mask(const string & _path)
@@ -327,15 +342,18 @@ bool Static_base::draw(pingPongFbo & mainFbo, bool _forceRedraw) const
         ofClear(0);
         onDraw();
         fbo.end();
+        
+        setRedraw(false);
 
         onMask();
 
         mainFbo.begin();
         fbo.draw(0, 0);
         mainFbo.end();
-        setRedraw(false);
         return REDRAW;
-    } else {            
+
+    } else {        
+
         mainFbo.begin();
         fbo.draw(0, 0);
         mainFbo.end();
@@ -359,7 +377,7 @@ bool Filter_base::draw(pingPongFbo & mainFbo, bool _forceRedraw) const
 
         setRedraw(false);
 
-        onMask();
+        onMask(mainFbo.getBackTexture());
         
         mainFbo.begin();
         fbo.draw(0, 0);
@@ -375,27 +393,43 @@ bool Filter_base::draw(pingPongFbo & mainFbo, bool _forceRedraw) const
     }
 }
 
-void Layer_base::onMask() const
+void Static_base::onMask() const
 {
     if (p_mask)
     {
-        drawMasked();
+        fbo.swap();
+        fbo.clear();
+        fbo.begin();
+        mask_shader->begin();
+    
+        mask_shader->setUniformTexture("u_imageTex", fbo.getBackTexture(), 0);
+        mask_shader->setUniformTexture("u_alphaTex", maskFbo.getTexture(), 1);
+        mask_shader->setUniform1i("u_invert", (int)p_invertMask );
+
+        LayerUtils::UVQuad::getInstance().draw(0, 0, size.x, size.y); 
+
+        mask_shader->end();
+        fbo.end();
     }
 }
 
-void Layer_base::drawMasked() const
+void Filter_base::onMask(const ofTexture & _baseTex) const
 {
-    fbo.swap();
-    fbo.clear();
-    fbo.begin();
-    mask_shader->begin();
+    if (p_mask)
+    {
+        fbo.swap();
+        fbo.clear();
+        fbo.begin();
+        _baseTex.draw(0, 0);
+        mask_shader->begin();
     
-    mask_shader->setUniformTexture("u_imageTex", fbo.getBackTexture(), 0);
-    mask_shader->setUniformTexture("u_alphaTex", maskFbo.getTexture(), 1);
-    mask_shader->setUniform1i("u_invert", (int)p_invertMask );
+        mask_shader->setUniformTexture("u_imageTex", fbo.getBackTexture(), 0);
+        mask_shader->setUniformTexture("u_alphaTex", maskFbo.getTexture(), 1);
+        mask_shader->setUniform1i("u_invert", (int)p_invertMask );
 
-    LayerUtils::UVQuad::getInstance().draw(0, 0, size.x, size.y); 
+        LayerUtils::UVQuad::getInstance().draw(0, 0, size.x, size.y); 
 
-    mask_shader->end();
-    fbo.end();
+        mask_shader->end();
+        fbo.end();
+    }
 }

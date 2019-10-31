@@ -83,7 +83,11 @@ void FaceExtractor::extractNextFace()
     img.load(currentFile->path());
     if (img.isAllocated()) {
         ofxFaceTracker2 & tracker = getTracker();
-        tracker.update(img.getPixels());
+        ofPixels & pixels = img.getPixels();
+        if (!tracker.update(pixels)) {
+            ofLogVerbose(__FUNCTION__) << "No faces found";
+        };
+
 
         for (auto instance : tracker.getInstances()) {
             ofImage faceInstance;
@@ -93,6 +97,7 @@ void FaceExtractor::extractNextFace()
 
             string fileName = "Face_" + ofToString(saveNum++) + ".png";
             string path = ofFilePath::join(out_dir.path(), fileName);
+
             faceInstance.save(path);
         }
     }

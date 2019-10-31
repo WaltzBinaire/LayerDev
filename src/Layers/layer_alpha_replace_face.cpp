@@ -16,7 +16,7 @@ void Layer_alpha_replace_face::onSetup()
 void Layer_alpha_replace_face::onDestroy()
 {
 #ifdef NDEBUG
-    //tracker.stop();
+    tracker.stop();
 #endif // !NDEBUG  
 }
 

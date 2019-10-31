@@ -172,6 +172,7 @@ protected:
     virtual void onDrawGui()     override;
     virtual void onRender()      const override;
     virtual void onResize()      override;
+    virtual void onDestroy()     override;
 
     virtual void setupMaskComposeFbo();
     virtual void setupFaceMask();

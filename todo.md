@@ -60,4 +60,7 @@
   [ ] Histogram takes wrong texture back/front sometimes
   [x] Histogram not rendering properly in UI
   [ ] Saving appears to be broken
+  [x] Facedetector layers crash when deleted
+  [ ] Facedetector crashes sometimes;
+  [ ] Filter layers show mask when redrawing
  

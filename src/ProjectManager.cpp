@@ -195,7 +195,6 @@ void ProjectManager::populateFaceFolder()
         return;
     }
 
-
     FaceExtractor & faceExtractor = FaceExtractor::getInstance();
 
     string in_path  = ofFilePath::join( root_path , ProjectResource::resource_rel_paths.at(RESOURCE_TYPE::RAW));

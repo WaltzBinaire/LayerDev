@@ -68,7 +68,7 @@ public:
 
     void resize( int width, int height);
 
-    const string& get_name() const { return name + ofToString(instance); }
+    const string get_name() const { return name + ofToString(instance); }
     const string get_display_name() const { 
         if(customName == "" ) return name; 
         else                  return customName;
@@ -93,8 +93,6 @@ protected:
     virtual void onDeactivate()    {};
     virtual void onDestroy()       {};
     virtual void onResize()        {};
-
-    virtual void onMask()    const;
 
     virtual void handle_mask(const string & _path);
 
@@ -131,6 +129,7 @@ protected:
     glm::vec2 size;
     mutable pingPongFbo fbo;
     mutable ofFbo maskFbo;
+    shared_ptr<AutoShader> mask_shader;
 
 private:
     void setupFbo(int w, int h); 
@@ -141,11 +140,12 @@ private:
     void onEditMask (bool & _val);
 
     void onMaskEditMousePressed ( ofMouseEventArgs & _args);
+    void onMaskEditMouseMoved ( ofMouseEventArgs & _args);
     void onMaskEditMouseDragged ( ofMouseEventArgs & _args);
     void onMaskEditMouseScrolled( ofMouseEventArgs & _args);
     void drawMaskEditBrush      ( ofMouseEventArgs & _args);
+    void updateMaskBrushPosition(ofMouseEventArgs & _args);
     void drawMaskBrush() const;
-    void drawMasked() const;
 
     static map<string, Layer_factory*>* GetFactoryDirectory() {        
         static map<string, Layer_factory*>* factories = new map<string, Layer_factory*>();
@@ -154,7 +154,7 @@ private:
 
     mutable bool b_redraw;
 
-    shared_ptr<AutoShader> mask_shader;
+    
     ofEventListener        l_onShaderLoad;
 
     glm::vec2 maskBrushPosition;
@@ -171,6 +171,7 @@ public:
 protected:
     virtual void onDraw()   const {};
     virtual void onRender() const {};
+    virtual void onMask()   const;
 };
 
 class Filter_base  : public Layer_base
@@ -179,8 +180,9 @@ public:
     Filter_base(string name, int instance, Layer_Manager * layer_manager) : Layer_base(name, instance, layer_manager) { redraw(); };
     bool draw(pingPongFbo & mainFbo, bool _forceRedraw = false) const override;
 protected:
-    virtual void onDraw(const ofTexture & _baseTex) const {};
+    virtual void onDraw  (const ofTexture & _baseTex) const {};
     virtual void onRender(const ofTexture & _baseTex) const {};
+    virtual void onMask  (const ofTexture & _baseTex) const;
 
 };
 
