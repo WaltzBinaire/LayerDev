@@ -4,6 +4,10 @@
 #include "Utils\shader_base.h"
 #include "ofxCv.h"
 
+#ifdef NDEBUG
+#include "ofxFaceTracker2.h"
+#endif // !NDEBUG
+
 class Mask {
 public:
     enum class ADD_MODE {
@@ -179,7 +183,13 @@ protected:
     QuadMask    faceMask;
 
 private:
+
+#ifdef NDEBUG
+    ofxFaceTracker2 finder;
+#else
     ofxCv::ObjectFinder finder;
+#endif // !NDEBUG
+    
     mutable pingPongFbo maskComposeFbo;
 };
 

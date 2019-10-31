@@ -8,8 +8,15 @@ using namespace cv;
 
 void Layer_image_advanced::onSetup()
 {
+
+#ifdef NDEBUG
+    finder.setup(); 
+    finder.setThreaded(false);
+#else
     finder.setup("models/haarcascade_frontalface_default.xml");
     finder.setPreset(ObjectFinder::Accurate);
+#endif // !NDEBUG
+
 
     setupMaskComposeFbo();
 }
@@ -82,17 +89,26 @@ void Layer_image_advanced::setupMaskComposeFbo()
 
 void Layer_image_advanced::setupFaceMask()
 {
+
     finder.update(img);
     faceMask.setup(size.x, size.y);
     faceMask.setupQuad(img.getWidth(), img.getHeight());
 
     faceMask.beginQuad();
     ofBackground(0.0);
+#ifdef NDEBUG
+        for (auto instance : finder.getInstances()) {
+            ofMesh& faceMesh = instance.getLandmarks().getImageMesh();
+            ofSetColor(ofColor::white);
+            faceMesh.draw();
+        }
+#else
     for (int i = 0; i < finder.size(); i++) {
         auto rect = finder.getObject(i);
         ofSetColor(ofColor::white);
         ofDrawRectangle(rect);
     }
+#endif // !NDEBUG
 
     faceMask.endQuad();
 

@@ -35,8 +35,8 @@ private:
 #ifdef NDEBUG
     mutable ofxFaceTracker2 tracker;
     mutable ofRectangle faceRect;
-
 #endif // !NDEBUG    
+
     mutable ofPixels pixels;
 };
 

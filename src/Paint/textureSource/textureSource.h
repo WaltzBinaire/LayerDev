@@ -1,6 +1,6 @@
 #pragma once
 #include "ofMain.h"
-#include "ofxSpout2Receiver.h"
+//#include "ofxSpout2Receiver.h"
 
 class textureSourceBase
 {
@@ -24,6 +24,6 @@ public:
 
 private:
     
-    ofxSpout2::Receiver spoutReceiver; 
+    //ofxSpout2::Receiver spoutReceiver; 
 };
 
