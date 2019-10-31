@@ -58,6 +58,7 @@ private:
     void addPortraitLayer(bool _activate);
     void addCollageLayer(bool _activate);
     void addAICollageLayer(bool _activate);
+    void addFaceSwapLayer(bool _activate);
 
     void addListeners();
     void removeListeners();

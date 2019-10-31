@@ -59,4 +59,5 @@
   [x] MPEG Glitch doesn't resize
   [ ] Histogram takes wrong texture back/front sometimes
   [x] Histogram not rendering properly in UI
+  [ ] Saving appears to be broken
  

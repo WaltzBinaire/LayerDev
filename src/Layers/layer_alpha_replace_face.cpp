@@ -41,6 +41,30 @@ void Layer_alpha_replace_face::setupShader()
 
 }
 
+void Layer_alpha_replace_face::renderReplacmentFbo() const
+{
+#ifdef NDEBUG
+    replacementPosition = glm::vec2(faceRect.getCenter().x, faceRect.getCenter().y);  
+
+#endif // !NDEBUG 
+    replacementFbo.begin();
+    ofClear(0.0);
+    if (currentImage != images.end()) {
+        currentImage->draw(
+            replacementPosition.x - replacementScale * 0.5 * currentImage->getWidth(),
+            replacementPosition.y - replacementScale * 0.5 * currentImage->getHeight(),
+            replacementScale * currentImage->getWidth(),
+            replacementScale * currentImage->getHeight()
+            );
+    }
+    else {
+        ofBackground(ofColor::cyan);
+    }
+
+    replacementFbo.end();
+}
+
+
 void Layer_alpha_replace_face::setupFaceFbo()
 {
     faceFbo.allocate(size.x, size.y, GL_RGBA);
@@ -64,11 +88,12 @@ void Layer_alpha_replace_face::updateFace(const ofTexture & _baseTex) const
 #ifdef NDEBUG
         tracker.update(pixels);
 
-
         for (auto instance : tracker.getInstances()) {
             ofMesh& faceMesh = instance.getLandmarks().getImageMesh();
-            faceMesh.enableColors();
 
+            faceRect = instance.getBoundingBox();
+
+            faceMesh.enableColors();
             vector<ofFloatColor> colors;
             ofFloatColor col = ofFloatColor(ofRandom(0.0, 1.0), 1.0);
             colors.resize(faceMesh.getNumVertices());

@@ -21,6 +21,7 @@ protected:
 
     virtual void setupShader() override;
 
+    virtual void renderReplacmentFbo() const override;
     virtual ofTexture & getAlphaTexture() const override { return faceFbo.getTexture(); };
 
     void setupFaceFbo();
@@ -33,6 +34,8 @@ private:
     
 #ifdef NDEBUG
     mutable ofxFaceTracker2 tracker;
+    mutable ofRectangle faceRect;
+
 #endif // !NDEBUG    
     mutable ofPixels pixels;
 };

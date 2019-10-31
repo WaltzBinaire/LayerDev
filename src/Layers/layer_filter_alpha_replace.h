@@ -35,13 +35,13 @@ protected:
     ofParameter<bool> p_invert;
     ofParameter<bool> p_loadFile;
 
-private:
-    vector<ofImage> images;
-    vector<ofImage>::iterator currentImage;
+protected:
     mutable ofFbo   replacementFbo;
+    vector<ofImage>::iterator currentImage;
+    vector<ofImage> images;
 
-    glm::vec2 replacementPosition;
-    float     replacementScale;
+   mutable glm::vec2 replacementPosition;
+   mutable float     replacementScale;
 
     bool b_placing;
     glm::vec2 clickPosition, initPosition;

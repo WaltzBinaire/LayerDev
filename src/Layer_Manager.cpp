@@ -133,6 +133,14 @@ void Layer_Manager::onProjectLoaded(bool & _val)
         };
         specialLayers.insert_or_assign("AI Collage", func);
     }
+
+    // Add AI Collage Layer
+    if (projectManager().getResource(RESOURCE_TYPE::FACES) != nullptr) {
+        std::function<void(bool)> func = [=](bool _activate) {
+            this->addFaceSwapLayer(_activate);
+        };
+        specialLayers.insert_or_assign("Face Swap", func);
+    }
 }
 
 void Layer_Manager::addPortraitLayer(bool _activate)
@@ -196,6 +204,27 @@ void Layer_Manager::addAICollageLayer(bool _activate)
         }
 
         collage_layer->handle_file(targets->getFilePath(0));
+    }
+}
+
+void Layer_Manager::addFaceSwapLayer(bool _activate)
+{
+    const string layer_name = "Face Replace";
+
+    auto targets = projectManager().getResource(RESOURCE_TYPE::FACES);
+
+    auto layer_type = find(layer_types.begin(), layer_types.end(), layer_name);
+    if (layer_type != layer_types.end()) {
+        Layer_base * layer = add_layer(layer_name, _activate);
+        Layer_alpha_replace_face * collage_layer = dynamic_cast<Layer_alpha_replace_face *>(layer);
+
+        if (collage_layer == nullptr) {
+            delete_layer(layer);
+            return;
+        }
+        for (int i = 0; i < targets->size(); i++) {
+            collage_layer->handle_file(targets->getFilePath(i));
+        }
     }
 }
 

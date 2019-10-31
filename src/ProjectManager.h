@@ -26,6 +26,8 @@ public:
         else return "";
     }
 
+    size_t size() const { return filePaths.size(); }
+
     string getDirectoryPath() const { 
         return rootDir.path();
     }
