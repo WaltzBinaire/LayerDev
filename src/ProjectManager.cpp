@@ -187,6 +187,7 @@ void ProjectManager::clear()
 
 void ProjectManager::populateFaceFolder()
 {
+#ifdef NDEBUG
     auto raw = getResource(RESOURCE_TYPE::RAW);
 
     if (raw == nullptr) {
@@ -208,6 +209,7 @@ void ProjectManager::populateFaceFolder()
         this->l_onFaceExtractorComplete.unsubscribe();
         }
     );
+#endif // !NDEBUG
 }
 
 const shared_ptr<ProjectResource> ProjectManager::getResource(RESOURCE_TYPE _rt) const

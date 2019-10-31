@@ -4,7 +4,7 @@
 
 #ifdef NDEBUG
 #include "ofxFaceTracker2.h"
-#endif // !NDEBUG
+
 
 class FaceExtractor
 {
@@ -54,3 +54,4 @@ private:
     ofEventListener l_onUpdate;
 };
 
+#endif // !NDEBUG

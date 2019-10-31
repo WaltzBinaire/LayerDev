@@ -8,16 +8,25 @@ public:
     void handle_file(const string & _path);
 
 protected:
-
+    virtual void onSetup()  override;
+    virtual void onRender(const ofTexture & _baseTex) const override;
     virtual void onSetupParams()    override;
+    virtual void onReset();
     virtual void onSetupListeners() override;
     virtual void onDrawGui()        override;
+    virtual void onResize()         override;
 
+    void setupReplacementFbo();
+    virtual void renderReplacmentFbo() const;
 
     virtual ofTexture & getAlphaTexture() const = 0;
 
     const static vector<string> get_allowed_exts();
     void onFileDragEvent(ofDragInfo & _fileInfo);
+    void onMousePressed ( ofMouseEventArgs & args);
+    void onMouseScrolled( ofMouseEventArgs & args);
+    void onMouseMoved   ( ofMouseEventArgs & args);
+
     void onLoadFile(bool & _loadFile);
 
     virtual void setupShader() override;
@@ -27,8 +36,15 @@ protected:
     ofParameter<bool> p_loadFile;
 
 private:
-    
-    ofTexture replacementTexture;
+    vector<ofImage> images;
+    vector<ofImage>::iterator currentImage;
+    mutable ofFbo   replacementFbo;
+
+    glm::vec2 replacementPosition;
+    float     replacementScale;
+
+    bool b_placing;
+    glm::vec2 clickPosition, initPosition;
 };
 
 

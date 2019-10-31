@@ -2,7 +2,7 @@
 #include "Utils\FaceExtractor.h"
 #include "LayerUtils.h"
 
-
+#ifdef NDEBUG
 //---------------------------------------------------------------------------------------
 FaceExtractor & FaceExtractor::getInstance()
 {
@@ -118,3 +118,4 @@ ofxFaceTracker2 & FaceExtractor::getTracker() {
     }
     return tracker;
 }
+#endif // !NDEBUG

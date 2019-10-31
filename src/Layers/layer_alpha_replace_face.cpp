@@ -4,7 +4,7 @@ REGISTER_TYPE(Layer_alpha_replace_face, Face Replace)
 
 void Layer_alpha_replace_face::onSetup()
 {
-    Layer_filter_shader::onSetup();
+    Layer_filter_alpha_replace::onSetup();
 
 #ifdef NDEBUG
     tracker.setup();
@@ -22,11 +22,13 @@ void Layer_alpha_replace_face::onDestroy()
 
 void Layer_alpha_replace_face::onResize()
 {
+    Layer_filter_alpha_replace::onResize();
     setupFaceFbo();
 }
 
 void Layer_alpha_replace_face::onRender(const ofTexture & _baseTex) const
 {
+   renderReplacmentFbo();
    updateFace(_baseTex);
 }
 

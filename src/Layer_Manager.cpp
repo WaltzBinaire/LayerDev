@@ -230,6 +230,7 @@ void Layer_Manager::removeListeners()
 
 void Layer_Manager::onCanvasResized(glm::vec2 & _size)
 {    
+
     for (auto & layer : layers) {
         layer->resize(ofGetWidth(), ofGetHeight());
     }

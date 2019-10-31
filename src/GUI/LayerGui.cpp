@@ -204,9 +204,9 @@ float LayerGui::drawMainMenuBar()
                             tmpColor.w * 255
                         )
                     );
-
-                    canvas.resize(size);
+                    
                     canvas.p_autoResize.set(autoResize);
+                    canvas.resize(size);
                     ImGui::CloseCurrentPopup();               
                 }
 
@@ -265,6 +265,7 @@ float LayerGui::drawMainMenuBar()
         //---------------------------------------------------------
         if (ImGui::BeginMenu("Tools"))
         {
+#ifdef NDEBUG
             ProjectManager & projectManager = ProjectManager::getInstance();
             if (projectManager.isLoaded()) {
                 if (ImGui::Button("Face Extractor")) {
@@ -285,8 +286,9 @@ float LayerGui::drawMainMenuBar()
 
                 ImGui::EndPopup();
             }
-
+#endif // !NDEBUG
             ImGui::EndMenu();
+
         }
         menuBarHeight = ImGui::GetWindowSize().y;
         ImGui::EndMainMenuBar();

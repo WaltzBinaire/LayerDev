@@ -162,6 +162,7 @@ void Layer_base::setupFbo(int w, int h)
 
 void Layer_base::resize(int _width, int _height )
 {
+    ofLogNotice(name) << "Resizing " << _width << "x" << _height;
     size = glm::vec2(_width, _height);
     setupFbo(size.x, size.y);
     onResize();

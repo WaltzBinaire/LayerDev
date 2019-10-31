@@ -28,8 +28,7 @@ public:
         }
         else {
             return false;
-        }
-        
+        }        
     }
 
 private:
@@ -38,12 +37,12 @@ private:
     ImFont * setupFont(ImGuiIO & io, const string & path, const string & icon_path);
 
 
-    float drawMainMenuBar()     ;
-    void drawActiveLayerMenu(ImVec2 pos, ImVec2 size) ;
-    void drawInfoWindow(ImVec2 pos, ImVec2 size)      ;
-    void drawHistrogram(ImVec2 pos, ImVec2 size)      ;
-    void drawLayerMenu(ImVec2 pos, ImVec2 size)       ;
-    void drawProjectMenu(ImVec2 pos, ImVec2 size)     ;
+    float drawMainMenuBar();
+    void  drawActiveLayerMenu(ImVec2 pos, ImVec2 size) ;
+    void  drawInfoWindow(ImVec2 pos, ImVec2 size)      ;
+    void  drawHistrogram(ImVec2 pos, ImVec2 size)      ;
+    void  drawLayerMenu(ImVec2 pos, ImVec2 size)       ;
+    void  drawProjectMenu(ImVec2 pos, ImVec2 size)     ;
     
 
     ofxImGui::Gui gui;
