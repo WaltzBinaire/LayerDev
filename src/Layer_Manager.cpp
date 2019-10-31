@@ -11,7 +11,6 @@ Layer_Manager::Layer_Manager()
     gui = new LayerGui();
 
     canvas.setup();
-    gui->setHistogramTexture(canvas.getFbo().getTexture());
     addListeners();
 
     ofDisableArbTex();
@@ -234,7 +233,6 @@ void Layer_Manager::onCanvasResized(glm::vec2 & _size)
     for (auto & layer : layers) {
         layer->resize(ofGetWidth(), ofGetHeight());
     }
-    gui->setHistogramTexture(canvas.getFbo().getTexture());
 }
 void Layer_Manager::onBackgroundChanged(bool & _var)
 {    

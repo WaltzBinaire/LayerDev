@@ -22,8 +22,8 @@ void main()
 	uv_noise += mod(time * vec2(0.001234, 0.004657), 10.0) / 10;
 	//uv_noise += time * vec2(0.001234, 0.004657);
 	
-	float block_thresh = pow(fract(time * 0.01236), 2.0) * 0.2;
-	float line_thresh  = pow(fract(time * 0.02236), 3.0) * 0.7;
+	float block_thresh = pow(fract(time * 0.01236), 2.0) * 0.1;
+	float line_thresh  = pow(fract(time * 0.02236), 3.0) * 0.5;
 	
 	vec2 uv_r = uv, uv_g = uv, uv_b = uv;
 

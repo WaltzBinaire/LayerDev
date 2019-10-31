@@ -3,10 +3,9 @@
 
 REGISTER_TYPE(Layer_filter_distort, Glitch Distort)
 
-void Layer_filter_distort::onDraw(const ofTexture & _baseTex) const
+void Layer_filter_distort::onRender(const ofTexture & _baseTex) const
 {
     drawBrush(_baseTex);
-    Layer_filter_shader::onDraw(_baseTex);
 }
 
 void Layer_filter_distort::onDrawGui()

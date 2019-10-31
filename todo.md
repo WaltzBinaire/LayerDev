@@ -1,5 +1,5 @@
 # To-do
-### Urgetnt for demmo
+### Urgent for demo
 
   [x] Start full screen
   [x] In portrait layer, when mask activated, layer masking activate
@@ -27,8 +27,10 @@
   [ ] Better "New layer" interface
   [ ] Tooltips
   [ ] Meaningful figures on monitor
+  [x] Add face extractor tool
 
 ### Static Layers
+  [!] Folder face replace
   [ ] Add video layer
   [ ] Add fancy overlay for collages
   [ ] Fix manual collage (with drag and drop?)
@@ -54,7 +56,7 @@
   [ ] Glitch distort has empty texture on first mark
   [x] Mouse position does not map to fbo
   [!] Generative collage blank fbos
-  [ ] MPEG GLitch doesn't resize
+  [x] MPEG Glitch doesn't resize
   [ ] Histogram takes wrong texture back/front sometimes
-  [ ] Histogram not rendering properly in UI
+  [x] Histogram not rendering properly in UI
  

@@ -58,6 +58,8 @@ void LayerGui::draw(Layer_Manager * manager)
 {
     this->manager = manager;
 
+    histogram.setFboSource(manager->getCanvas().getFbo());
+
     gui.begin();
     ImGui::PushFont(font_normal);
 
@@ -95,9 +97,6 @@ void LayerGui::draw(Layer_Manager * manager)
     drawProjectMenu(pos_R2, size_R2);
     ImGui::PopFont();
     gui.end();
-
-    //ofTexture & tex = histogram.getTexture();
-    //tex.draw(ofGetWidth() - tex.getWidth() - rightWidth , ofGetHeight() - tex.getHeight());
 }
 
 //---------------------------------------------------------
@@ -438,14 +437,9 @@ void LayerGui::drawHistrogram(ImVec2 pos, ImVec2 size)
     if (ImGui::Begin("Histogram", NULL, histogramFlags)) {
             ImTextureID tex_id;
             ofTexture & tex = histogram.getTexture();
-            //ofTexture & tex = manager->getCanvas().getFbo().getTexture();
-
 
             if (getTextureId( tex, tex_id) ){
                 ImGui::Image(tex_id, ImVec2(FBO_RESOLUTION_X, FBO_RESOLUTION_Y));
-            }
-            else {
-                ImGui::Text("NO TEXTURE");
             }
     }
     ImGui::End();
@@ -477,7 +471,7 @@ void LayerGui::drawProjectMenu(ImVec2 pos, ImVec2 size)
             static int current_resource_type = -1;
 
             ImGui::PushItemWidth(-1);
-            ImGui::ListBox("Resource Folders", &current_resource_type, ProjectResource::resource_name_c, IM_ARRAYSIZE(*(ProjectResource::resource_name_c)));
+            ImGui::ListBox("Resource Folders", &current_resource_type, ProjectResource::resource_name_c, 6);
             ImGui::PopItemWidth();
 
 

@@ -17,7 +17,13 @@ public:
 
     void render();
     void draw() const;
-    void setTexture(ofTexture & _tex);
+
+    template<class T>
+    void setFboSource(T fbo) {
+        texture = fbo.getTexture();
+    };
+
+    void setTextureSource(ofTexture & _tex);
 
     ofTexture & getTexture() {
         return fbo.getTexture();

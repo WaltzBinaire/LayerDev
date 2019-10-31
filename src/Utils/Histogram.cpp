@@ -60,7 +60,7 @@ void Histogram::draw() const
     fbo.draw(0, 0);
 }
 
-void Histogram::setTexture(ofTexture & _tex)
+void Histogram::setTextureSource(ofTexture & _tex)
 {
     texture = _tex;
 }

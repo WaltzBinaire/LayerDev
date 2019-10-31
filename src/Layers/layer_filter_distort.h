@@ -20,8 +20,8 @@ public:
     }
 
 protected:
-    virtual void onDraw(const ofTexture & _baseTex) const override;
-    virtual void onDrawGui()        override ;
+    virtual void onRender(const ofTexture & _baseTex) const override;
+    virtual void onDrawGui()        override;
     virtual void onSetup()          override;
     virtual void onReset()          override;
     virtual void onUpdate()         override;

@@ -21,10 +21,6 @@ public:
     void draw(Layer_Manager * manager);
     bool mouseOverGui() const { return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow); }
 
-    void setHistogramTexture(ofTexture & tex) {
-        histogram.setTexture(tex);
-    }
-
     static  bool getTextureId(const ofTexture & _tex, ImTextureID & _texID) {
         if (_tex.isAllocated()) {
             _texID = (ImTextureID)(uintptr_t)(_tex.texData.textureID);
