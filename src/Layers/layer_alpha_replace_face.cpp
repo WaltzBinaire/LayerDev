@@ -86,6 +86,7 @@ void Layer_alpha_replace_face::updateFace(const ofTexture & _baseTex) const
         ofPushStyle();
 
 #ifdef NDEBUG
+        tracker.stop();
         tracker.update(pixels);
 
         for (auto instance : tracker.getInstances()) {

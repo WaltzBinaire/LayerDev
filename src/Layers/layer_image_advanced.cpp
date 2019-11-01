@@ -10,8 +10,8 @@ void Layer_image_advanced::onSetup()
 {
 
 #ifdef NDEBUG
-    finder.setup(); 
-    finder.setThreaded(false);
+    tracker.setup(); 
+    tracker.setThreaded(false);
 #else
     finder.setup("models/haarcascade_frontalface_default.xml");
     finder.setPreset(ObjectFinder::Accurate);
@@ -84,7 +84,7 @@ void Layer_image_advanced::onResize()
 void Layer_image_advanced::onDestroy()
 {
 #ifdef NDEBUG
-    finder.stop();
+    tracker.stop();
 #endif // !NDEBUG
 }
 
@@ -96,15 +96,18 @@ void Layer_image_advanced::setupMaskComposeFbo()
 
 void Layer_image_advanced::setupFaceMask()
 {
+#ifdef NDEBUG
+    tracker.stop();
+#endif // !NDEBUG
 
-    finder.update(img);
+    tracker.update(img);
     faceMask.setup(size.x, size.y);
     faceMask.setupQuad(img.getWidth(), img.getHeight());
 
     faceMask.beginQuad();
     ofBackground(0.0);
 #ifdef NDEBUG
-        for (auto instance : finder.getInstances()) {
+        for (auto instance : tracker.getInstances()) {
             ofMesh& faceMesh = instance.getLandmarks().getImageMesh();
             ofSetColor(ofColor::white);
             faceMesh.draw();

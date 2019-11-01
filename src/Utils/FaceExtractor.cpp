@@ -83,7 +83,9 @@ void FaceExtractor::extractNextFace()
     img.load(currentFile->path());
     if (img.isAllocated()) {
         ofxFaceTracker2 & tracker = getTracker();
-        ofPixels & pixels = img.getPixels();
+        ofPixels & pixels = img.getPixels();        
+        tracker.stop();
+
         if (!tracker.update(pixels)) {
             ofLogVerbose(__FUNCTION__) << "No faces found";
         };
@@ -92,6 +94,7 @@ void FaceExtractor::extractNextFace()
         for (auto instance : tracker.getInstances()) {
             ofImage faceInstance;
             ofRectangle rect = instance.getBoundingBox();
+            //rect.scaleFromCenter(2.0);
 
             faceInstance.cropFrom(img, rect.x, rect.y, rect.width, rect.height);
 

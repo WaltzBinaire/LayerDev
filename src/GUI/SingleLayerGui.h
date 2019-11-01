@@ -167,11 +167,11 @@ void SingleLayerGui::specialisedDrawGui(Layer_file_aiCollage * layer)
         layer->ShuffleInternal();
     }
 
-    Checkbox(p_ShowTarget);
-    Checkbox(p_ShowBase);
-    Checkbox(p_ShowSource);
+    //Checkbox(p_ShowTarget);
+    //Checkbox(p_ShowBase);
+    //Checkbox(p_ShowSource);
 
-    Slider(p_depth);
+    //Slider(p_depth);
     Slider(p_maxPatches);
 
     SliderVec2(p_alphaRange);

@@ -1,5 +1,4 @@
 #pragma once
-#include "Layers\layer_base.h"
 #include "Layers\layer_filter_shader.h"
 #include "Utils\pingPongFbo.h"
 

@@ -186,7 +186,7 @@ protected:
 private:
 
 #ifdef NDEBUG
-    ofxFaceTracker2 finder;
+    ofxFaceTracker2 tracker;
 #else
     ofxCv::ObjectFinder finder;
 #endif // !NDEBUG
