@@ -13,8 +13,8 @@ void Layer_image_advanced::onSetup()
     tracker.setup(); 
     tracker.setThreaded(false);
 #else
-    finder.setup("models/haarcascade_frontalface_default.xml");
-    finder.setPreset(ObjectFinder::Accurate);
+    tracker.setup("models/haarcascade_frontalface_default.xml");
+    tracker.setPreset(ObjectFinder::Accurate);
 #endif // !NDEBUG
 
 
@@ -113,8 +113,8 @@ void Layer_image_advanced::setupFaceMask()
             faceMesh.draw();
         }
 #else
-    for (int i = 0; i < finder.size(); i++) {
-        auto rect = finder.getObject(i);
+    for (int i = 0; i < tracker.size(); i++) {
+        auto rect = tracker.getObject(i);
         ofSetColor(ofColor::white);
         ofDrawRectangle(rect);
     }

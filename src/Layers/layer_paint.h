@@ -1,33 +1,53 @@
 #pragma once
-#include "Layers\layer_filter_shader.h"
+#include "Layers\layer_base.h"
 
 #include "ofxFlowTools.h"
 #include "fluid/wbFluidFlow.h"
 #include "wbPaintShader.h"
 #include "brush/Brush.h"
 
+using namespace flowTools;
 
-class Layer_paint: public Layer_filter_shader {
+class Layer_paint: public Filter_base {
 public:
     Layer_paint(string name, int instance, Layer_Manager * _layer_manager)
-        : Layer_filter_shader(name, instance, _layer_manager) {};
+        : Filter_base(name, instance, _layer_manager) {};
 
 
 protected:
-    virtual void onRender() const;
-    virtual void onDrawGui()        override;
     virtual void onSetup()          override;
+    virtual void onSetupParams()    override;
+
+    virtual void onDraw  (const ofTexture & _baseTex) const override;
+    virtual void onRender(const ofTexture & _baseTex) const override;
+    
+    virtual void onDrawOverlay()    override;
+
+    virtual void onDrawGui()        override;
+
     virtual void onReset()          override;
     virtual void onUpdate()         override;
-    virtual void onSetupParams()    override;
     virtual void onResize()         override;
     virtual void onSetupListeners() override;
 
-    virtual void setupShader() override;
+    void onMousePressed  (ofMouseEventArgs & _args);
+    void onMouseDragged  (ofMouseEventArgs & _args);
+    void onMouseMoved    (ofMouseEventArgs & _args);
+    void onMouseReleased (ofMouseEventArgs & _args);
+    void onMouseScrolled (ofMouseEventArgs & _args);
 
-    void onMousePressed(ofMouseEventArgs & _args);
-    void onMouseDragged(ofMouseEventArgs & _args);
-    void onMouseReleased(ofMouseEventArgs & _args);
-    void onMouseScrolled(ofMouseEventArgs & _args);
+
+private:
+
+    int densityWidth, densityHeight, simulationWidth, simulationHeight;
+
+    glm::vec2 brushPosition;
+    bool b_mouseDown;
+
+    // Simulation objects
+    mutable wbPainting  * paintingShader;
+    mutable ofFbo       * paintingFbo;
+    mutable Brush       * brush;
+	mutable wbFluidFlow	* fluidFlow;   
 };
 

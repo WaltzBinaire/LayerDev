@@ -30,7 +30,7 @@ void Layer_file_aiCollage::onSetupListeners()
 void Layer_file_aiCollage::onRender() const
 {
     if (m_collage.isLoaded()) {
-         m_collage.render();
+         m_collage.render(false, scale);
     }
 }
 

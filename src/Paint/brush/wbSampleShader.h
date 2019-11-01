@@ -30,10 +30,11 @@ namespace flowTools {
                 precision highp float;
 
                 uniform sampler2D u_positionsTexture;
-                uniform sampler2DRect u_colorTexture;
+                uniform sampler2D u_colorTexture;
 
                 uniform vec2  u_scale;
-                uniform vec2 u_vScale;
+                uniform vec2  u_posScale;
+                uniform vec2  u_vScale;
 
                 in vec2 texCoordVarying;
 
@@ -44,11 +45,12 @@ namespace flowTools {
 
                     uv.y = clamp(uv.y * u_vScale.x +  u_vScale.y, 0.0, 1.0);
 
-                    vec2 position = texture(u_positionsTexture, uv).xy;
+                    vec2 position = texture(u_positionsTexture, uv  * u_posScale ).xy;
                     
 
                     vec4 col = texture( u_colorTexture, position * u_scale);
                     fragColor = col ;
+                    //fragColor = vec4(position.x, position.y, 0.0, 1.0) ;
 
                 }
 
@@ -63,15 +65,14 @@ namespace flowTools {
 
     public:
         void update(ofFbo& _fbo, ofTexture & _positionsTex, ofTexture & _src, glm::vec2 _vScale) {
-
-
             _fbo.begin();
 
             begin();
             setUniformTexture( "u_positionsTexture" , _positionsTex, 0 );
-            setUniformTexture( "u_colorTexture"     , _src                         , 1 );
+            setUniformTexture( "u_colorTexture"     , _src         , 1 );
 
-            setUniform2f("u_scale", glm::vec2(_src.getWidth() / ofGetWidth(), _src.getHeight() / ofGetHeight()));
+            setUniform2f("u_scale"   , glm::vec2(1.0 / _src.getWidth() , 1.0 /  _src.getHeight()));
+            setUniform2f("u_posScale", glm::vec2(1.0 / _positionsTex.getWidth() , 1.0 /  _positionsTex.getHeight()));
             setUniform2f("u_vScale", _vScale);
 
             renderFrame(_fbo.getWidth(), _fbo.getHeight()); 

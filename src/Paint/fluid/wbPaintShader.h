@@ -14,11 +14,11 @@ namespace flowTools {
 			else { ofLogWarning(shaderName + " failed to initialize"); }
 
             lightDir.set(      "Light Dir"      , glm::vec3(0.0, -1.0, 1.0), glm::vec3(-1), glm::vec3(1));
-            normalScale.set(   "Normal Scale"   , 7    , 0, 20   );
-            roughness.set(     "Roughness"      , 0.075, 0, 0.5  );
-            F0.set(            "F0"             , 0.05 , 0, 0.15 );
-            diffuseScale.set(  "Diffuse Scale"  , 0.5  , 0, 2    );
-            specularScale.set( "Specular Scale" , 0.15 , 0, 0.5  );
+            normalScale.set(   "Normal Scale"   , 10     , 0, 20   );
+            roughness.set(     "Roughness"      , 0.075 , 0, 0.5  );
+            F0.set(            "F0"             , 0.05  , 0, 0.15 );
+            diffuseScale.set(  "Diffuse Scale"  , 0.11  , 0, 2    );
+            specularScale.set( "Specular Scale" , 0.15  , 0, 0.5  );
 
 
             params.setName("painting shader");
@@ -155,6 +155,7 @@ namespace flowTools {
                     float a = clamp(value.a, 0.0, 1.0);
                     //fragColor = vec4( mix(vec3(1.0, 1.0, 1.0), surfaceColor, a), 1.0);
                     fragColor = vec4( surfaceColor, a);
+                    //fragColor = vec4( 1.0, 1.0, 1.0, a);
 
 				}
 				);

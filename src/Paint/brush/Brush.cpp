@@ -13,29 +13,29 @@ Brush::Brush()
 
     params.setName("brush parameters");
 
-    ofAddListener(ofEvents().mousePressed , this, &Brush::onMouseDown);
-    ofAddListener(ofEvents().mouseScrolled, this, &Brush::onMouseScrolled);
+    //ofAddListener(ofEvents().mousePressed , this, &Brush::onMouseDown);
+    //ofAddListener(ofEvents().mouseScrolled, this, &Brush::onMouseScrolled);
     pColor.addListener( this, &Brush::onColorChanged);
 
-    params.add(pBristleLength.set("Length" , 4.5 , 0.0, 10.0 )); 
-    params.add(pBristleJitter.set("Jitter" , 0.5 , 0.0, 1.0  ));
-    params.add(pIterations.set("Iterations", 5   , 1  , 20   ));
-    params.add(pGravity.set("Gravity"      , 30.0, 0.0, 100.0));
-    params.add(pDamping.set("Damping"      , 0.75, 0.0, 1.0  ));
-    params.add(pStiffnessVariation.set("Stiffness Variation", 0.3, 0.0, 1.0));
-    params.add(pHeight.set("Height"        , 2.0 , 0.0, 5.0  ));
-    params.add(pScale.set("Scale"         , 50.0 , 00.0, 200.0  ));
-    params.add(pColorMode.set("Color Mode", (int)ColorMode::SIMPLE_COLOR, (int)ColorMode::SIMPLE_COLOR, (int)ColorMode::SAMPLE_CONTINIOUS));
-    params.add(pVScale.set("V Scale", glm::vec2(0, 1), glm::vec2(0), glm::vec2(1)));
-	params.add(pColor.set("color", ofFloatColor(1.0,1.0,.0,.5)));
+    params.add(pBristleLength.set("Length"       , 3.0  , 0.0, 10.0 )); 
+    params.add(pBristleJitter.set("Jitter"       , 0.85 , 0.0, 1.0  ));
+    params.add(pIterations.set   ("Iterations"   , 12   , 1  , 20   ));
+    params.add(pGravity.set      ("Gravity"      , 30.0, 0.0, 100.0));
+    params.add(pDamping.set      ("Damping"      , 0.75, 0.0, 1.0  ));
+    params.add(pStiffnessVariation.set("Stiffness Variation", 0.4, 0.0, 1.0));
+    params.add(pHeight.set       ("Height"       , 2.0 , 0.0, 5.0  ));
+    params.add(pScale.set        ("Scale"        , 50.0 , 00.0, 200.0  ));
+    params.add(pColorMode.set    ("Color Mode", (int)ColorMode::SAMPLE, (int)ColorMode::SIMPLE_COLOR, (int)ColorMode::SAMPLE_CONTINIOUS));
+    params.add(pVScale.set       ("V Scale"   , glm::vec2(0, 1), glm::vec2(0), glm::vec2(1)));
+	params.add(pColor.set        ("color"     , ofFloatColor(1.0,1.0,.0,.5)));
 			
 
 }
 
 Brush::~Brush()
 {
-    ofRemoveListener(ofEvents().mousePressed , this, &Brush::onMouseDown   );
-    ofRemoveListener(ofEvents().mouseScrolled, this, &Brush::onMouseScrolled);
+    //ofRemoveListener(ofEvents().mousePressed , this, &Brush::onMouseDown   );
+    //ofRemoveListener(ofEvents().mouseScrolled, this, &Brush::onMouseScrolled);
 }
 
 void Brush::setupBrush()
@@ -373,7 +373,6 @@ void Brush::onMouseScrolled(ofMouseEventArgs & args)
 {
     pScale += args.scrollY;
     pScale = ofClamp(pScale, pScale.getMin(), pScale.getMax());
-
 }
 
 void Brush::onColorChanged(ofFloatColor & args)

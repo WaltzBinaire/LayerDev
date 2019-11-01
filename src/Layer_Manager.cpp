@@ -263,9 +263,8 @@ void Layer_Manager::removeListeners()
 
 void Layer_Manager::onCanvasResized(glm::vec2 & _size)
 {    
-    ofLogNotice() << "Here";
     for (auto & layer : layers) {
-        layer->resize(ofGetWidth(), ofGetHeight());
+        layer->resize(_size.x, _size.y);
     }
 }
 void Layer_Manager::onBackgroundChanged(bool & _var)

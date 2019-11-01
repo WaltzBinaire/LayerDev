@@ -188,7 +188,7 @@ private:
 #ifdef NDEBUG
     ofxFaceTracker2 tracker;
 #else
-    ofxCv::ObjectFinder finder;
+    ofxCv::ObjectFinder tracker;
 #endif // !NDEBUG
     
     mutable pingPongFbo maskComposeFbo;

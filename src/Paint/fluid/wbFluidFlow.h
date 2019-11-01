@@ -26,10 +26,10 @@ namespace flowTools {
     public:
         wbFluidFlow() : ftFluidFlow() { 
 
-            parameters.add(pSplatRadius.set("Splat Radius", 0.05   , 0.0, 0.1 ));
-            parameters.add(pZThreshold.set( "Z Threshold" , 0.13333, 0.0, 1.0 ));
-            parameters.add(pDensitySpeed.set("Density Speed", 0.0, 0, 0.1));
-            parameters.add(pVelocitySpeed.set("Velocity Speed", 0.0, 0, 0.1));
+            parameters.add(pSplatRadius.set  ("Splat Radius"  , 0.05 , 0.0, 0.1 ));
+            parameters.add(pZThreshold.set   ( "Z Threshold"  , 0.5  , 0.0, 1.0 ));
+            parameters.add(pDensitySpeed.set ("Density Speed" , 0.015, 0.0, 0.1));
+            parameters.add(pVelocitySpeed.set("Velocity Speed", 0.007, 0.0, 0.1));
 
         };
 
@@ -49,7 +49,7 @@ namespace flowTools {
         }
 
         void addDensity( Brush & _brush, float _strength = 1.0)  { addDensity(outputFbo, _brush); }
-        void addVelocity(Brush & _brush, float _strength = 1.0) {  addVelocity(inputFbo, _brush); }
+        void addVelocity(Brush & _brush, float _strength = 1.0)  { addVelocity(inputFbo, _brush); }
 
         void addDensity(ftPingPongFbo &_dstFbo, Brush & _brush, float _strength = 1.0);
         void addVelocity(ftPingPongFbo &_dstFbo, Brush & _brush, float _strength = 1.0);

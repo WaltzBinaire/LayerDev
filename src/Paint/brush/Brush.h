@@ -11,7 +11,7 @@ public:
     void setupBrush();
 
     void init(glm::vec2 pos);
-    void setColorTexture(ofTexture & _colorTexture) { colorTexture = _colorTexture; }
+    void setColorTexture(const ofTexture & _colorTexture) { colorTexture = _colorTexture; }
 
     void drawBrush();
 
@@ -30,7 +30,9 @@ public:
     float getSpeed()            const { return speed;  }
     float getScale()            const { return pScale.get(); }
     bool  isPainting()          const { return b_painting || true; }
-
+    
+    void onMouseDown(ofMouseEventArgs & args);
+    void onMouseScrolled(ofMouseEventArgs & args);
 
     ofParameterGroup params;
 
@@ -54,8 +56,6 @@ private:
     void planeContrain();
     void updateVelocities();
 
-    void onMouseDown(ofMouseEventArgs & args);
-    void onMouseScrolled(ofMouseEventArgs & args);
     void onColorChanged(ofFloatColor & args);
 
     bool b_painting;

@@ -175,7 +175,6 @@ float LayerGui::drawMainMenuBar()
 	                }
 	                if (result)
 	                {
-
 		                size = labels[iSelected].second;
 	                }
 

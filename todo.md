@@ -30,11 +30,11 @@
   [x] Add face extractor tool
 
 ### Static Layers
-  [!] Folder face replace
+  [x] Folder face replace
   [ ] Add video layer
   [ ] Add fancy overlay for collages
   [ ] Fix manual collage (with drag and drop?)
-  [ ] Add paint layer
+  [x] Add paint layer
 
 
 ### Filter Layers
@@ -53,14 +53,14 @@
  
  ### BUGS
   [x] Mask tried to draw after layer deleted
-  [ ] Glitch distort has empty texture on first mark
+  [x] Glitch distort has empty texture on first mark
   [x] Mouse position does not map to fbo
   [!] Generative collage blank fbos
   [x] MPEG Glitch doesn't resize
-  [ ] Histogram takes wrong texture back/front sometimes
+  [x] Histogram takes wrong texture back/front sometimes
   [x] Histogram not rendering properly in UI
-  [ ] Saving appears to be broken
+  [x] Saving appears to be broken
   [x] Facedetector layers crash when deleted
-  [ ] Facedetector crashes sometimes;
-  [ ] Filter layers show mask when redrawing
+  [x] Facedetector crashes sometimes;
+  [x] Filter layers show mask when redrawing
  

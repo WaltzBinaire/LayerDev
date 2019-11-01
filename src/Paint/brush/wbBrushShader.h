@@ -152,18 +152,17 @@ namespace flowTools {
 
                     vec2 finalPosition = mid + coordinates.x * direction * (dist * 0.5 + u_splatRadius) + coordinates.y * tangent * u_splatRadius;
 
-
                     v_previousPosition = previousPlanarPosition;
-                    v_position = planarPosition;
-                    v_quadPosition = finalPosition;
+                    v_position         = planarPosition;
+                    v_quadPosition     = finalPosition;
 
-                    
+
                     v_coordinates = coordinates;
-
+                    
                     vec2 ratio = u_fboDimensions / u_screenDimensions;
                     finalPosition *= ratio;
 
-                    vec2 pos = -1.0 + 2.0 * (finalPosition ) / u_fboDimensions;
+                    vec2 pos = -1.0 + 2.0 * (finalPosition) / u_fboDimensions;
                     gl_Position =  vec4(pos , 0.0, 1.0);
                 }
             );
@@ -205,7 +204,7 @@ namespace flowTools {
                 void main() {
                     float splatDistance = distanceToLine(v_previousPosition, v_position, v_quadPosition);
 
-                    vec4 color = texture(u_colorTexture, v_texCoords);
+                    vec4 color = texture(u_colorTexture, v_texCoords * vec2(100, 10));
 
                     float multiplier = max(1.0 - splatDistance / u_splatRadius, 0.0) * u_strength;
 
@@ -348,9 +347,7 @@ namespace flowTools {
                     vec2 velocity = mix(v_previousVelocity, v_velocity, v_coordinates.x * 0.5 + 0.5);
 
                     fragColor = vec4(clampVelocity(velocity * u_strength), 0.0, multiplier);
-
                 }
-
             );
 
             bInitialized *= setupShaderFromSource(GL_VERTEX_SHADER, vertexShader);
@@ -369,8 +366,8 @@ namespace flowTools {
             begin();
 
 
-            setUniform2f("u_fboDimensions", _fbo.getWidth(), _fbo.getHeight());
-            setUniform2f("u_screenDimensions", ofGetWidth(), ofGetHeight());
+            setUniform2f("u_fboDimensions"   , _fbo.getWidth(), _fbo.getHeight());
+            setUniform2f("u_screenDimensions", _fbo.getWidth(), _fbo.getHeight());
 
             setUniform1f("u_splatRadius", splatRadius);
             setUniform1f("u_zThreshold", zThreshold);
@@ -395,7 +392,6 @@ namespace flowTools {
 
            
             ofDisableAlphaBlending();
-
             ofPopStyle();
         }
 
@@ -410,7 +406,6 @@ namespace flowTools {
                 return;
             };
             splatBuffer.drawElements(GL_TRIANGLES, splatIndex);
-
             
 		}
 
