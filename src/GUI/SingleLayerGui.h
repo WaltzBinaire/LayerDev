@@ -113,8 +113,15 @@ void SingleLayerGui::specialisedDrawGui(Layer_alpha_replace_channel * layer)
 template<>
 void SingleLayerGui::specialisedDrawGui(Layer_filter_mpeg_glitch * layer)
 {
-    ofParameter<int> & p_blockSize  = layer->params.get("Block Size").cast<int>();   
-    Slider(p_blockSize);
+    ofParameter<float> & p_sizeOfKernel   = layer->params.get("Size of Kernel").cast<float>();   
+    ofParameter<float> & p_stopAmount     = layer->params.get("Stop Amount"   ).cast<float>();   
+    ofParameter<float> & p_globalStrength = layer->params.get("Strength"      ).cast<float>();   
+    ofParameter<bool>  & p_greyScale      = layer->params.get("Greyscale"     ).cast<bool>();  
+
+    Slider(p_sizeOfKernel  );
+    Slider(p_stopAmount    );
+    Slider(p_globalStrength);
+    IconToggle(p_greyScale, "Greyscale", "!Greyscale");
 }
 
 template<>

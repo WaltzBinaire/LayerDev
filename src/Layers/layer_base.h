@@ -8,8 +8,8 @@ class Layer_factory;
 
 #define REDRAW true
 #define NO_REDRAW false
-#define MAX_MASK_BRUSH_SIZE 100.0
-#define MIN_MASK_BRUSH_SIZE 10.0
+#define MAX_MASK_BRUSH_SIZE 300.0
+#define MIN_MASK_BRUSH_SIZE 50.0
 
 class Layer_base
 {
@@ -38,7 +38,7 @@ public:
 
     static vector<string> get_layer_names();
 
-    void update() { onUpdate(); };
+    void update() { time = ofGetSystemTimeMillis();  onUpdate(); };
     void reset() { clearFbo(); onReset(); redraw(); };
 
     void activate() {
@@ -100,7 +100,8 @@ protected:
     string name, customName;
     int instance;
     Layer_Manager * layer_manager;
-    bool b_active;
+    bool  b_active;
+    float time;
 
     ofParameter<bool> p_reset;
     ofParameter<bool> p_disable;
@@ -159,7 +160,7 @@ private:
     ofEventListener        l_onShaderLoad;
 
     glm::vec2 maskBrushPosition;
-    float     maskBrushSize = 50;
+    float     maskBrushSize = 100;
 
 };
 

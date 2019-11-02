@@ -17,11 +17,16 @@ protected:
     virtual void setupShader();
     virtual void setUniforms(const ofTexture & _baseTex) const override;
 
+    void createNoiseTexture();
+
 private:
 
-    ofParameter<int>  p_blockSize;
+    ofParameter<float> p_sizeOfKernel;
+    ofParameter<float> p_stopAmount;
+    ofParameter<float> p_globalStrength;
+    ofParameter<bool>  p_greyScale;
 
-    const int noiseTexSize = 64;
+    const int noiseTexSize = 128;
 
     ofTexture noiseTex;
 };

@@ -3,66 +3,140 @@
 
 uniform sampler2D u_imageTex;
 uniform sampler2D u_noiseTex;
-uniform vec2 u_resolution;
-uniform float u_blockSize;
+uniform float u_sizeOfKernel;
+uniform float u_stopAmount;
+uniform float u_globalStrength;
+uniform float u_resolution;
+uniform int   u_greyScale;
 uniform float u_time;
 
 in vec2 texCoordVarying;
 
 out vec4 outputColor;
 
-void main()
+float nrand( vec2 n )
 {
-    float time = u_time / 2000;
+	return fract(sin(dot(n.xy, vec2(12.9898, 78.233)))* 43758.5453);
+}
 
-	vec2 uv = texCoordVarying.xy;
-	vec2 block = floor(uv * vec2(u_blockSize)) /  vec2(u_blockSize);
-	vec2 uv_noise = block;
+float n2rand( vec2 n,float seed )
+{
+	float t = fract( seed );
+	float nrnd0 = nrand( n + 0.07*t );
+	float nrnd1 = nrand( n + 0.11*t );
+	return (nrnd0+nrnd1) / 2.0;
+}
 
-	uv_noise += mod((time + 15) * vec2(0.01234, 0.04657), 10.0) / 12;
-	//uv_noise += time * vec2(0.001234, 0.004657);
+vec3 getGlitchDisplace(vec2 uv,vec2 uv_noise,float block_thresh, float line_thresh,float amount) {
+	vec2 uv_r = uv;
+	vec2 uv_g = uv;
+	vec2 uv_b = uv;
+	vec3  result; 
 	
-	float block_thresh = pow(fract(time * 0.1536), 2.0) * 0.2;
-	float line_thresh  = pow(fract((time - 12) * 0.3833), 3.0) * 0.6;
-	
-	vec2 uv_r = uv, uv_g = uv, uv_b = uv;
-
-	// glitch some blocks and lines
-	if (texture(u_noiseTex, uv_noise).r < block_thresh ||
-		texture(u_noiseTex, vec2(uv_noise.y, 0.0)).g < line_thresh) {
-
+	if (texture(u_noiseTex, uv_noise).r*amount < block_thresh ||
+		texture(u_noiseTex, vec2(uv_noise.y, 0.0)).g*amount < line_thresh) {
 		vec2 dist = (fract(uv_noise) - 0.5) * 0.3;
 		uv_r += dist * 0.1;
 		uv_g += dist * 0.2;
 		uv_b += dist * 0.125;
 	}
+	result.r = texture(u_imageTex, uv_r).r;
+	result.g = texture(u_imageTex, uv_g).g;
+	result.b = texture(u_imageTex, uv_b).b;	
+	return result;
+}
 
-	outputColor.r = texture(u_imageTex, uv_r).r ;
-	outputColor.g = texture(u_imageTex, uv_g).g;
-	outputColor.b = texture(u_imageTex, uv_b).b;
-    outputColor.a = texture(u_imageTex, uv  ).a;
+vec3 getGlitchDiscolorLine(vec2 uv,vec2 uv_noise,float noiseTime,vec3 color,float line_thresh,float amount){
+	vec3 locColor = texture(u_imageTex, vec2(uv.x+noiseTime, uv.y)).rgb ;
 
-	// loose luma for some blocks   
-	if (texture(u_noiseTex, uv_noise).g < block_thresh)
-		outputColor.rgb = outputColor.ggg ;
-    
-    
-	// discolor block lines
-	if (texture(u_noiseTex, vec2(uv_noise.y, 0.0)).b * 3.5 < line_thresh)
-		outputColor.rgb = vec3(0.0, dot(outputColor.rgb, vec3(1.0)), 0.0);
-    
-	// interleave lines in some blocks
-	if (texture(u_noiseTex, uv_noise).g * 1.5 < block_thresh ||
-		texture(u_noiseTex, vec2(uv_noise.y, 0.0)).g * 2.5 < line_thresh) {
-		float line = fract(texCoordVarying.y / 3.0);
-		vec3 mask = vec3(1.0, 0.1, 0.1);
-		if (line > 0.333)
-			mask = vec3(0.1, 1.0, 0.1);
-		if (line > 0.666)
-			mask = vec3(0.1, 0.1, 1.0);
+
+	if (texture(u_noiseTex, vec2(uv_noise.y, 0.0)).r * amount < line_thresh) {
+		return mix(vec3(0, dot(locColor, vec3(locColor.r,locColor.g,1)), 0.0), locColor,fract(noiseTime*uv.y));
+	}   else return color;
+}
+
+vec3 getGlitchLuma(vec2 uv_noise,vec3 color,float block_thresh,float amount) {
+	if (texture(u_noiseTex, uv_noise).g *amount < block_thresh)
+	     return color.ggg;
+	else return color;
+}
+
+vec3 getGlitchRGBLines(vec2 uv,vec2 uv_noise,vec3 color,float block_thresh,float line_thresh,float amount) {
+	if (texture(u_noiseTex, uv_noise).g * amount < block_thresh ||
+		texture(u_noiseTex, vec2(uv_noise.y, 0.0)).g * amount*2 < line_thresh) {
 		
-		outputColor.xyz *= mask;
-	}
-    
-    //outputColor = texture(u_noiseTex, uv_noise);
-}  
+		float lines = fract((uv*u_resolution).y / 9.0);
+		vec3 mask = vec3(3.0, 0.0, 0.0);
+			
+		if (lines > 0.333)
+			mask = vec3(0.0, 3.0, 0.0);
+		if (lines > 0.666)
+			mask = vec3(0.0, 0.0, 3.0);
+		
+		 
+			return color.xyz *= mask;
+		}
+	else return color;
+}
+
+vec3 getGlitchRGBLinesVert(vec2 uv,vec2 uv_noise,vec3 color,float block_thresh,float line_thresh,float amount) {
+
+		if (texture(u_noiseTex, vec2(uv.y,0 )).g * amount < block_thresh ||
+		texture(u_noiseTex, vec2(uv.x,0)).g * amount < line_thresh) {	
+		float lines = fract((uv*u_resolution).y / 9.0);
+		vec3 mask = vec3(3.0, 0.0, 0.0);
+			
+		if (lines > 0.333)
+			mask = vec3(0.0, 3.0, 0.0);
+		if (lines > 0.666)
+			mask = vec3(0.0, 0.0, 3.0);				
+			mask *= texture(u_noiseTex, vec2(uv_noise.x,uv_noise.y)).rgb;		
+			return color.xyz * mask;
+		}
+        else return color;
+}
+
+float getNoisedTime(float amount, float time) {
+	float randStop = n2rand(vec2(time,time),1);
+	return randStop > amount? time : floor(time)/10.0;	
+}
+
+float getSizeofBlocks(float size,float noiseTime) {
+
+	float sizeOfBlocks=(6*size)+floor(n2rand(vec2(noiseTime,noiseTime),noiseTime)*8);
+	return pow(2,sizeOfBlocks);	
+}
+
+
+void main()
+{
+	float time = u_time / 1000;
+	vec2 uv = texCoordVarying;
+    outputColor = texture(u_imageTex, uv);
+
+	float noiseTime  = getNoisedTime(u_stopAmount, time);
+	float sizeOfBlocks = getSizeofBlocks(u_sizeOfKernel, noiseTime);
+	
+	
+	vec2 block = floor(uv*u_resolution / vec2(sizeOfBlocks,sizeOfBlocks));
+	vec2 uv_noise = block / vec2(256.0,256.0);
+	
+	
+	float timeLocal = n2rand(vec2(uv_noise.y,noiseTime),noiseTime);
+	
+	uv_noise += floor(vec2(timeLocal, timeLocal) * vec2(1234.0, 3543.0))/ vec2(256,256);
+	
+	float block_thresh = pow(fract(timeLocal * 1236.0453), 2.0) * 0.10;
+	float line_thresh = pow(fract(timeLocal * 2236.0453), 3.0) * 0.5;
+	
+	
+    outputColor.rgb = getGlitchDisplace    (uv      , uv_noise       , block_thresh   , line_thresh    ,mix(2.4,0.2,  u_globalStrength            ));
+	outputColor.rgb = getGlitchDiscolorLine(uv      , uv_noise       , noiseTime    , outputColor.rgb,line_thresh,  mix(3.0,1.4,u_globalStrength));
+    outputColor.rgb = getGlitchRGBLines    (uv      , uv_noise       , outputColor.rgb, block_thresh   ,line_thresh,  mix(3.0,0.8,u_globalStrength));
+    outputColor.rgb = getGlitchRGBLinesVert(uv      , uv_noise       , outputColor.rgb, block_thresh   ,line_thresh,  mix(3.0,1.2,u_globalStrength));
+    outputColor.rgb = getGlitchLuma        (          uv_noise       , outputColor.rgb, block_thresh   , mix(3.0,0.3,u_globalStrength)             );
+		
+	if (u_greyScale == 1.0) outputColor.rgb = vec3(outputColor.r,outputColor.r,outputColor.r); 
+
+}
+	
