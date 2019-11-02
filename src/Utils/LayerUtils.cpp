@@ -2,6 +2,21 @@
 
 
 namespace LayerUtils {
+    bool saveFolderDialogue(string & path)
+    {
+        ProjectManager & projectManager = ProjectManager::getInstance();
+        
+        string defaultPath = "";
+        if (projectManager.isLoaded()) defaultPath = projectManager.getPath();
+
+        auto result = ofSystemLoadDialog("Open Folder...", true, defaultPath );
+
+        if (result.bSuccess) {
+            path = result.getPath();
+            return true;
+        }
+        return false;
+    }
     bool saveImageDialogue(string & path)
     {
         auto result = ofSystemSaveDialog("image", "Save as..." );

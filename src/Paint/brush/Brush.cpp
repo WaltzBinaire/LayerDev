@@ -24,7 +24,7 @@ Brush::Brush()
     params.add(pDamping.set      ("Damping"      , 0.75, 0.0, 1.0  ));
     params.add(pStiffnessVariation.set("Stiffness Variation", 0.4, 0.0, 1.0));
     params.add(pHeight.set       ("Height"       , 2.0 , 0.0, 5.0  ));
-    params.add(pScale.set        ("Scale"        , 50.0 , 00.0, 200.0  ));
+    params.add(pScale.set        ("Scale"        , 100.0 , 50.0, 400.0  ));
     params.add(pColorMode.set    ("Color Mode", (int)ColorMode::SAMPLE, (int)ColorMode::SIMPLE_COLOR, (int)ColorMode::SAMPLE_CONTINIOUS));
     params.add(pVScale.set       ("V Scale"   , glm::vec2(0, 1), glm::vec2(0), glm::vec2(1)));
 	params.add(pColor.set        ("color"     , ofFloatColor(1.0,1.0,.0,.5)));

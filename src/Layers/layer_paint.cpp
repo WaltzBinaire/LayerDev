@@ -1,4 +1,4 @@
-#include "src\Layers\layer_paint.h"
+#include "Layers\layer_paint.h"
 #include "GUI/SingleLayerGui.h"
 
 
@@ -55,8 +55,8 @@ void Layer_paint::onRender(const ofTexture & _baseTex) const
     brush->update( brushPosition );
 
     if (b_mouseDown) {
-        fluidFlow->addDensity (*brush);
-        fluidFlow->addVelocity(*brush);
+        fluidFlow->addDensity (*brush, size);
+        fluidFlow->addVelocity(*brush, size);
     }
 
     
@@ -73,7 +73,8 @@ void Layer_paint::onDraw(const ofTexture & _baseTex) const
 
     _baseTex.draw(0, 0);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
-    fluidFlow->getOutput().draw(0, 0, size.x, size.y);
+    //fluidFlow->getOutput().draw(0, 0, size.x, size.y);
+    paintingFbo->draw(0, 0, size.x, size.y);
 
 
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);

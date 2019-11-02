@@ -401,3 +401,28 @@ void Layer_Manager::save() const
         LayerUtils::saveImage(savePath, canvas.getPixels());
     }    
 }
+
+void Layer_Manager::exportLayers() const
+{
+    string newPath;
+    if (LayerUtils::saveFolderDialogue(newPath)) {
+        string name = "output_" + ofGetTimestampString();
+        string folderPath = ofFilePath::join(newPath, name);
+        
+        ofDirectory dir(folderPath);
+
+        if (!dir.exists()) dir.create();
+
+        string imageName = name + ".png";
+        string imagePath = ofFilePath::join(folderPath, imageName);
+        LayerUtils::saveImage(imagePath, canvas.getPixels());
+
+
+        int index = 0;
+        for (auto & layer : layers) {
+            string layerName = "Layer_" + ofToString(index++) + "_" + name + ".png";
+            string layerPath = ofFilePath::join(folderPath, layerName);
+            layer->saveLayer(layerPath);
+        }
+    }
+}

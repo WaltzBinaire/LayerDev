@@ -84,8 +84,13 @@ void Layer_base::saveLayer()
 {
     string newPath;
     if (LayerUtils::saveImageDialogue(newPath)) {
-        LayerUtils::saveImage(newPath, fbo);
+        saveLayer(newPath);
     }
+}
+
+void Layer_base::saveLayer(string path)
+{
+    LayerUtils::saveImage(path, fbo);
 }
 
 void Layer_base::saveMask()

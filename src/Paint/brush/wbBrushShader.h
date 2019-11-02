@@ -357,7 +357,7 @@ namespace flowTools {
         }
 
     public:
-        void update(ofFbo& _fbo, ofTexture & _base, Brush & _brush, float splatRadius, float zThreshold,  float strength = 1.0) {
+        void update(ofFbo& _fbo, ofTexture & _base, glm::vec2 canvasSize, Brush & _brush, float splatRadius, float zThreshold,  float strength = 1.0) {
             ofPushStyle();
             _fbo.begin();
 
@@ -367,7 +367,7 @@ namespace flowTools {
 
 
             setUniform2f("u_fboDimensions"   , _fbo.getWidth(), _fbo.getHeight());
-            setUniform2f("u_screenDimensions", 3648, 5472);
+            setUniform2f("u_screenDimensions", canvasSize);
 
             setUniform1f("u_splatRadius", splatRadius);
             setUniform1f("u_zThreshold", zThreshold);

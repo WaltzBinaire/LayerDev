@@ -1,7 +1,7 @@
 #include "wbFluidFlow.h"
 
 namespace flowTools {
-    void wbFluidFlow::addDensity(ftPingPongFbo &_dstFbo, Brush & _brush, float _strength)
+    void wbFluidFlow::addDensity(ftPingPongFbo &_dstFbo, glm::vec2 _canvasSize, Brush & _brush, float _strength)
     {
 		ofPushStyle();
 		ofEnableBlendMode(OF_BLENDMODE_DISABLED);
@@ -9,6 +9,7 @@ namespace flowTools {
 		brushDensityShader.update(
             _dstFbo.get(), 
             _dstFbo.getBackTexture(), 
+            _canvasSize,
             _brush, 
             pSplatRadius * _brush.getScale(), 
             pZThreshold * _brush.getScale(),
@@ -16,7 +17,7 @@ namespace flowTools {
 		ofPopStyle();
     }
 
-    void wbFluidFlow::addVelocity(ftPingPongFbo &_dstFbo, Brush & _brush, float _strength)
+    void wbFluidFlow::addVelocity(ftPingPongFbo &_dstFbo, glm::vec2 _canvasSize, Brush & _brush, float _strength)
     {
 		ofPushStyle();
 		ofEnableBlendMode(OF_BLENDMODE_DISABLED);
@@ -25,6 +26,7 @@ namespace flowTools {
 		brushVelocityShader.update(
             _dstFbo.get(), 
             _dstFbo.getBackTexture(), 
+            _canvasSize,
             _brush, 
             pSplatRadius * _brush.getScale(), 
             pZThreshold * _brush.getScale(),

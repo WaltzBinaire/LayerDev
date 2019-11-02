@@ -63,10 +63,10 @@ void Layer_filter_distort::onSetupListeners()
 void Layer_filter_distort::onMousePressed(ofMouseEventArgs & _args)
 {
     if (!b_drawing) {
-        mousePressedPosition = mousePosition = glm::vec2(ofGetMouseX(), ofGetMouseY());
+        mousePressedPosition = mousePosition = glm::vec2(_args.x, _args.y);
     }
     else {
-        glm::vec2 movement = glm::vec2(ofGetMouseX(), ofGetMouseY()) - mousePosition;
+        glm::vec2 movement = glm::vec2(_args.x, _args.y) - mousePosition;
         mousePosition += movement * 0.8;
     }
     b_drawing = true;
@@ -74,7 +74,7 @@ void Layer_filter_distort::onMousePressed(ofMouseEventArgs & _args)
 
 void Layer_filter_distort::onMouseDragged(ofMouseEventArgs & _args)
 {
-    glm::vec2 movement = glm::vec2(ofGetMouseX(), ofGetMouseY()) - mousePosition;
+    glm::vec2 movement = glm::vec2(_args.x, _args.y) - mousePosition;
     mousePosition += movement * 0.4;
 }
 

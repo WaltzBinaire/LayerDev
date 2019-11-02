@@ -111,14 +111,16 @@ float LayerGui::drawMainMenuBar()
         //---------------------------------------------------------
         if (ImGui::BeginMenu("File"))
         {
-            const char T_OPEN[] = ICON_MDI_FOLDER           " Open Project";
-            const char T_SAVE[] = ICON_MDI_CONTENT_SAVE     " Save";
-            const char T_SAVE_AS[] = ICON_MDI_CONTENT_SAVE_ALL " Save As...";
+            const char T_OPEN[]    = ICON_MDI_FOLDER            " Open Project";
+            const char T_SAVE[]    = ICON_MDI_CONTENT_SAVE      " Save";
+            const char T_SAVE_AS[] = ICON_MDI_CONTENT_SAVE_ALL  " Save As...";
+            const char T_EXPORT[]  = ICON_MDI_CONTENT_SAVE_MOVE " Export Layers";
 
             if (ImGui::MenuItem(T_OPEN, "Ctrl+O")) { manager->projectManager().loadProject(); }
             ImGui::Separator();
-            if (ImGui::MenuItem(T_SAVE, "Ctrl+S")) { manager->save(); }
-            if (ImGui::MenuItem(T_SAVE_AS)) { manager->saveAs(); }
+            if (ImGui::MenuItem(T_SAVE, "Ctrl+S")) { manager->save();  }
+            if (ImGui::MenuItem(T_SAVE_AS)) { manager->saveAs();       }
+            if (ImGui::MenuItem(T_EXPORT))  { manager->exportLayers(); }
             ImGui::EndMenu();
         }
 

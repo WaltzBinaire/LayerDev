@@ -28,6 +28,7 @@ public:
     void drawOverlay(ofFbo & overlayFbo);
 
     void saveLayer();
+    void saveLayer(string path);
     void saveMask();
 
     static void registerType(const string& name, Layer_factory *factory);

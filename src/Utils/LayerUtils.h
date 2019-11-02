@@ -58,6 +58,8 @@ namespace LayerUtils {
         return true;
     }
 
+    bool saveFolderDialogue(string & path);
+
     static const vector<string> img_exts  {
             "jpg",
             "JPG",

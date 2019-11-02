@@ -33,8 +33,9 @@ public:
     const glm::vec2 & getMousePosition() const { return mousePosition; }
     bool mouseOverGui() const { return b_mouseOverGui; }
 
-    void saveAs() const;
-    void save() const;
+    void saveAs()       const;
+    void save()         const;
+    void exportLayers() const;
 
     Layer_base *  add_layer(string name, bool _activate = true);
     

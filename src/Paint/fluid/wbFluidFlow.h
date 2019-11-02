@@ -48,11 +48,11 @@ namespace flowTools {
         
         }
 
-        void addDensity( Brush & _brush, float _strength = 1.0)  { addDensity(outputFbo, _brush); }
-        void addVelocity(Brush & _brush, float _strength = 1.0)  { addVelocity(inputFbo, _brush); }
+        void addDensity( Brush & _brush, glm::vec2 _canvasSize, float _strength = 1.0)  { addDensity(outputFbo, _canvasSize, _brush); }
+        void addVelocity(Brush & _brush, glm::vec2 _canvasSize, float _strength = 1.0)  { addVelocity(inputFbo, _canvasSize, _brush); }
 
-        void addDensity(ftPingPongFbo &_dstFbo, Brush & _brush, float _strength = 1.0);
-        void addVelocity(ftPingPongFbo &_dstFbo, Brush & _brush, float _strength = 1.0);
+        void addDensity (ftPingPongFbo &_dstFbo, glm::vec2 _canvasSize, Brush & _brush, float _strength = 1.0);
+        void addVelocity(ftPingPongFbo &_dstFbo, glm::vec2 _canvasSize, Brush & _brush, float _strength = 1.0);
 
 
         wbBrushShader brushDensityShader;
