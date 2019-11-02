@@ -39,6 +39,7 @@ public:
 
     static vector<pair<string, glm::vec2>> & getCanavasSizePresets() {
         static vector<pair<string, glm::vec2>> canavasSizePresets{
+            {"Default"         , {3648, 5472} },
             {"Instagram Story" , {1080, 1920} },
             {"Instagram Square", {1080, 1080} },
             {"HD"              , {1280, 720 } },

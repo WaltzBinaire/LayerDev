@@ -33,9 +33,9 @@ protected:
     void onMousePressed  (ofMouseEventArgs & _args);
     void onMouseDragged  (ofMouseEventArgs & _args);
     void onMouseMoved    (ofMouseEventArgs & _args);
+
     void onMouseReleased (ofMouseEventArgs & _args);
     void onMouseScrolled (ofMouseEventArgs & _args);
-
 
 private:
 

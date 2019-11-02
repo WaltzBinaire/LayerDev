@@ -10,7 +10,7 @@ void Layer_collage_generative::onSetupParams()
     p_generate.set("Generate", false);
     p_generate.addListener(this, &Layer_collage_generative::onGenerate);
 
-    p_number.set("Number", 10, 1, 100);
+    p_number.set("Number", 10, 1, 300);
 
     p_mode.set("Mode", (int)MODE::RANDOM, (int)MODE::RANDOM, (int)MODE::LINES);
 

@@ -367,7 +367,7 @@ namespace flowTools {
 
 
             setUniform2f("u_fboDimensions"   , _fbo.getWidth(), _fbo.getHeight());
-            setUniform2f("u_screenDimensions", _fbo.getWidth(), _fbo.getHeight());
+            setUniform2f("u_screenDimensions", 3648, 5472);
 
             setUniform1f("u_splatRadius", splatRadius);
             setUniform1f("u_zThreshold", zThreshold);

@@ -5,10 +5,10 @@ const ofColor Canvas::defaultBackground(0, 0, 0, 255);
 
 Canvas::Canvas() :
     backgroundColor(defaultBackground),
-    size(1024, 780),
     position(0, 0),
     scale(1)
 {
+    size = getCanavasSizePresets()[0].second;
 }
 
 
@@ -117,12 +117,11 @@ void Canvas::setupFbo()
 void Canvas::setupParams()
 {
     p_autoResize.addListener(this, &Canvas::onAutoResizeChanged);
-    p_autoResize.set("Auto Resize", true);
+    p_autoResize.set("Auto Resize", false);
 }
 
 void Canvas::fitToScreen() const
 {
-
 
     float sw = ofGetWidth()  / getWidth();
     float sh = ofGetHeight() / getHeight();

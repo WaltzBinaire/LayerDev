@@ -26,6 +26,7 @@ public:
     template<> static void specialisedDrawGui( Layer_alpha_replace_channel      * layer);
     template<> static void specialisedDrawGui( Layer_filter_mpeg_glitch         * layer);
     template<> static void specialisedDrawGui( Layer_filter_distort             * layer);
+    template<> static void specialisedDrawGui( Layer_paint                      * layer);
 
 
 
@@ -225,5 +226,28 @@ static void SingleLayerGui::specialisedDrawGui(Layer_image_advanced * layer) {
             }
         }
     }
+};
+
+
+template<> 
+static void SingleLayerGui::specialisedDrawGui(Layer_paint * layer) {
+    ofParameterGroup   & brushParams = layer->params.getGroup("brush parameters");
+    ofParameter<float> & p_scale     = brushParams.get("Scale").cast<float>();
+    ofParameter<int>   & p_ColorMode = brushParams.get("Color Mode").cast<int>();
+
+    ofParameterGroup & paintingParams = layer->params.getGroup("painting shader");
+    ofParameter<float>  p_normalScale   = paintingParams.get( "Normal Scale"  ).cast<float>();
+    ofParameter<float>  p_roughness     = paintingParams.get( "Roughness"     ).cast<float>();
+    ofParameter<float>  p_F0            = paintingParams.get( "F0"            ).cast<float>();
+    ofParameter<float>  p_diffuseScale  = paintingParams.get( "Diffuse Scale" ).cast<float>();
+    ofParameter<float>  p_specularScale = paintingParams.get( "Specular Scale").cast<float>();
+
+    Slider(p_normalScale    );
+    Slider(p_roughness      );
+    Slider(p_F0             );
+    Slider(p_diffuseScale   );
+    Slider(p_specularScale  );
+
+
 };
 

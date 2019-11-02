@@ -1,4 +1,6 @@
 #include "src\Layers\layer_paint.h"
+#include "GUI/SingleLayerGui.h"
+
 
 REGISTER_TYPE(Layer_paint, Paint)
 
@@ -25,13 +27,13 @@ void Layer_paint::onSetup()
 
     b_mouseDown = false;
 
-	densityWidth  = size.x;
-	densityHeight = size.y;
+	densityWidth  = min(size.x, 2000.f);
+	densityHeight = min(size.y, 2000.f);
 
     paintingFbo->allocate(size.x, size.y, GL_RGBA);
 
-    simulationWidth  = densityWidth ;
-	simulationHeight = densityHeight;
+    simulationWidth  = min(densityWidth , 1000);
+	simulationHeight = min(densityHeight, 1000);
 
 	fluidFlow->setup(simulationWidth, simulationHeight, densityWidth, densityHeight);
 	fluidFlow->setupBrushRenderer(brush->getBristleCount(), brush->getVertsPerBristle(), brush->getSplatsPerSegment());
@@ -71,7 +73,7 @@ void Layer_paint::onDraw(const ofTexture & _baseTex) const
 
     _baseTex.draw(0, 0);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
-    paintingFbo->draw(0, 0, size.x, size.y); 
+    fluidFlow->getOutput().draw(0, 0, size.x, size.y);
 
 
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
@@ -81,11 +83,11 @@ void Layer_paint::onDraw(const ofTexture & _baseTex) const
 void Layer_paint::onDrawOverlay()
 {
     brush->drawBrush();  
-    brush->getColorTexture().draw(0, 0, 400, 400);
 }
 
 void Layer_paint::onDrawGui()
 {
+    SingleLayerGui::specialisedDrawGui<Layer_paint>(this); 
 }
 
 void Layer_paint::onReset()
@@ -103,6 +105,11 @@ void Layer_paint::onUpdate()
 
 void Layer_paint::onSetupParams()
 {
+
+    params.add(
+        brush->params,
+        paintingShader->params
+    );
 }
 
 void Layer_paint::onResize()
@@ -121,8 +128,7 @@ void Layer_paint::onSetupListeners()
 void Layer_paint::onMousePressed(ofMouseEventArgs & _args)
 {
     b_mouseDown = true;
-    brushPosition = glm::vec2(_args.x, _args.y);
-    
+    brushPosition = glm::vec2(_args.x, _args.y);    
     brush->onMouseDown(_args);
 }
 
@@ -139,7 +145,6 @@ void Layer_paint::onMouseMoved(ofMouseEventArgs & _args)
 void Layer_paint::onMouseReleased(ofMouseEventArgs & _args)
 {
     b_mouseDown = false;
-    brushPosition = glm::vec2(_args.x, _args.y);
 }
 
 void Layer_paint::onMouseScrolled(ofMouseEventArgs & _args)
