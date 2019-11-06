@@ -24,10 +24,13 @@ private:
     ofParameter<float> p_sizeOfKernel;
     ofParameter<float> p_stopAmount;
     ofParameter<float> p_globalStrength;
+    ofParameter<bool>  p_forceUpdate;
     ofParameter<bool>  p_greyScale;
 
     const int noiseTexSize = 128;
 
     ofTexture noiseTex;
+
+    ofEventListener        l_onForceUpdate;
 };
 

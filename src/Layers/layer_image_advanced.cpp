@@ -122,6 +122,10 @@ void Layer_image_advanced::setupFaceMask()
 
     faceMask.endQuad();
 
+#ifdef NDEBUG
+    tracker.stop();
+#endif // !NDEBUG
+
     masks.insert_or_assign("Face Mask", &faceMask);
 
 }

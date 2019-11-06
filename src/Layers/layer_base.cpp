@@ -131,6 +131,14 @@ vector<string> Layer_base::get_layer_names()
     return names;
 }
 
+void Layer_base::update() { 
+    updatePerfCounter.begin();
+    if (!p_pause) time = ofGetSystemTimeMillis();  
+    onUpdate(); 
+    updatePerfCounter.end();
+
+}
+
 void Layer_base::setupFbo(int w, int h)
 {  
     // Art fbo
@@ -336,8 +344,11 @@ void Layer_base::onResetInternal(bool & b_reset) {
 
 bool Static_base::draw(pingPongFbo & mainFbo, bool _forceRedraw) const
 {
+    drawPerfCounter.begin();
+    bool status;
+
     if (p_disable) {
-        return needsRedraw();
+        status = needsRedraw();
     }
     else if (needsRedraw() || _forceRedraw) {
 
@@ -355,21 +366,26 @@ bool Static_base::draw(pingPongFbo & mainFbo, bool _forceRedraw) const
         mainFbo.begin();
         fbo.draw(0, 0);
         mainFbo.end();
-        return REDRAW;
+        status = REDRAW;
 
     } else {        
 
         mainFbo.begin();
         fbo.draw(0, 0);
         mainFbo.end();
-        return NO_REDRAW;
+        status = NO_REDRAW;
     }
+
+    drawPerfCounter.end();
+    return status;
 }
 
 bool Filter_base::draw(pingPongFbo & mainFbo, bool _forceRedraw) const
 {
+    drawPerfCounter.begin();
+    bool status;
     if (p_disable ) {
-        return needsRedraw();
+        status = needsRedraw();
     } else if (needsRedraw() || _forceRedraw) {
         mainFbo.swap();
 
@@ -388,14 +404,18 @@ bool Filter_base::draw(pingPongFbo & mainFbo, bool _forceRedraw) const
         fbo.draw(0, 0);
         mainFbo.end();
 
-        return REDRAW;
+        status = REDRAW;
     }
     else {
         mainFbo.begin();
         fbo.draw(0, 0);
         mainFbo.end();
-        return NO_REDRAW;
+        status = NO_REDRAW;
     }
+    
+    drawPerfCounter.end();
+    return status;
+
 }
 
 void Static_base::onMask() const

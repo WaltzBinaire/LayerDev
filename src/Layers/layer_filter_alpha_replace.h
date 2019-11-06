@@ -37,8 +37,10 @@ protected:
 
 protected:
     mutable ofFbo   replacementFbo;
-    vector<ofImage>::iterator currentImage;
-    vector<ofImage> images;
+    vector<string>::iterator currentPath;
+    vector<string> imagePaths;
+
+    ofImage image;
 
    mutable glm::vec2 replacementPosition;
    mutable float     replacementScale;

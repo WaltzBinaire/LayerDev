@@ -30,21 +30,23 @@ void Layer_collage_manual::onFileDragEvent(ofDragInfo & _fileInfo)
 
     ofImage newImage = ofImage(file.getAbsolutePath());
 
-    //if (newImage.isAllocated()) {
-    //    images.push_back( CollagePatch(newImage, pos) );
-    //    active_image = images.end() - 1;
-    //    setMode(Mode::EDITING);
+    if (newImage.isAllocated()) {
+        images.emplace_back();
+        active_image = images.back();
+        active_image->setup(glm::vec2(0, 0), 1.0, 0.0);
+        active_image->getImageReference() = newImage;
+        setMode(Mode::EDITING);
 
-    //    ofLogVerbose() << "Added image: " << file.path();
-    //}
+        ofLogVerbose() << "Added image: " << file.path();
+    }
 }
 //--------------------------------------------------------------
 void Layer_collage_manual::onMouseMoved(ofMouseEventArgs & _args)
 {
-    //if (mode == Mode::EDITING) {
-    //    active_image->center = glm::vec2(_args.x, _args.y);
+    if (mode == Mode::EDITING) {
+        active_image->setCenter( glm::vec2(_args.x, _args.y));
 
-    //}
+    }
 }
 
 //--------------------------------------------------------------
@@ -56,8 +58,7 @@ void Layer_collage_manual::onMousePressed(ofMouseEventArgs & _args)
 //--------------------------------------------------------------
 void Layer_collage_manual::onMouseScrolled(ofMouseEventArgs & _args)
 {
-    //active_image->scale += _args.scrollY / 20.0f;
-    //ofLogNotice() << active_image->scale;
+    active_image->setScale( active_image->getScale() + _args.scrollY / 20.0f);
 }
 
 //--------------------------------------------------------------

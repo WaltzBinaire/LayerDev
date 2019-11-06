@@ -27,11 +27,15 @@ public:
     glm::vec2 getCenter() const { return center; }
     float getAngle() const  { return angle; }
 
+    
+    void setScale(float _scale)       { scale  = _scale;  }
+    void setCenter(glm::vec2 _center) { center = _center; }
+
     bool isSetup()    const { 
-        return image.isUsingTexture() && b_positionSet;  
+        return image.isUsingTexture() && b_positionSet && image.isAllocated();  
     }
     bool needsSetup() const {
-        return !b_positionSet && image.isUsingTexture(); 
+        return !b_positionSet && image.isUsingTexture() && image.isAllocated(); 
     }
 
     void setup(glm::vec2 _center, float _scale, float _angle) {
@@ -113,10 +117,9 @@ protected:
         }
     } patchInfo;
 
+    shared_ptr<CollagePatch> active_image;
+
 private:
-
-
-    vector<CollagePatch>::iterator active_image;
 
     mutable shared_ptr<AutoShader> collageShader;
     mutable ofMesh   drawQuad;

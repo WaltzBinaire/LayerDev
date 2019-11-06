@@ -11,6 +11,45 @@ class Layer_factory;
 #define MAX_MASK_BRUSH_SIZE 300.0
 #define MIN_MASK_BRUSH_SIZE 50.0
 
+class PerfCounter {
+#define NUM_READINGS 30
+public:
+    PerfCounter() :
+        b_timing(false) 
+    {
+    }
+
+    void begin() {
+        if (b_timing) return;
+        b_timing = true;
+        strTime = ofGetSystemTimeMicros();
+    }
+
+    uint64_t getTimeMillis() const { return avrTime / 1000; }
+    uint64_t getTimeMicros() const { return avrTime;        }
+
+    void end() {
+        if (!b_timing) return;
+        b_timing = false;
+        readings.push_back(ofGetSystemTimeMicros() - strTime);
+        if (readings.size() > NUM_READINGS) readings.pop_front();
+
+        avrTime = 0;
+        for (auto & reading : readings) avrTime += reading;
+        avrTime /= readings.size();
+    }
+
+private:
+
+    uint64_t strTime;
+    float avrTime;
+
+    bool b_timing;
+    deque<uint64_t> readings;
+
+};
+
+
 class Layer_base
 {
 public:
@@ -38,7 +77,7 @@ public:
 
     static vector<string> get_layer_names();
 
-    void update() { time = ofGetSystemTimeMillis();  onUpdate(); };
+    void update();
     void reset() { clearFbo(); onReset(); redraw(); };
 
     void activate() {
@@ -76,6 +115,9 @@ public:
     }
     void set_display_name(const string & newName) {  customName = newName; }
 
+    uint64_t getUpdateTime() const { return updatePerfCounter.getTimeMillis(); }
+    uint64_t getDrawTime() const   { return drawPerfCounter.getTimeMillis();   }
+
     ofParameterGroup params;
 
 protected:
@@ -96,6 +138,9 @@ protected:
     virtual void onResize()        {};
 
     virtual void handle_mask(const string & _path);
+
+    mutable PerfCounter drawPerfCounter;
+    mutable PerfCounter updatePerfCounter;
 
     string name, customName;
     int instance;
@@ -133,6 +178,8 @@ protected:
     mutable ofFbo maskFbo;
     shared_ptr<AutoShader> mask_shader;
 
+
+
 private:
     void setupFbo(int w, int h); 
     void onResetInternal(bool & b_reset);
@@ -160,7 +207,7 @@ private:
     ofEventListener        l_onShaderLoad;
 
     glm::vec2 maskBrushPosition;
-    float     maskBrushSize = 100;
+    float     maskBrushSize = 200;
 
 };
 

@@ -79,12 +79,14 @@ void SingleLayerGui::specialisedDrawGui(Layer_collage * layer)
 template<>
 void SingleLayerGui::specialisedDrawGui(Layer_collage_generative * layer)
 {
-    ofParameter<bool> & p_generate  = layer->params.get("Generate").cast<bool>();   
-    ofParameter<int>  & p_number    = layer->params.get("Number").cast<int>();  
-    ofParameter<int>  & p_mode      = layer->params.get("Mode").cast<int>();  
+    ofParameter<bool>  & p_generate  = layer->params.get("Generate").cast<bool>();   
+    ofParameter<int>   & p_number    = layer->params.get("Number").cast<int>();  
+    ofParameter<int>   & p_mode      = layer->params.get("Mode").cast<int>();  
+    ofParameter<float> & p_scale     = layer->params.get("Scale").cast<float>();  
 
     Dropdown(p_mode, Layer_collage_generative::getModeNames());
     Slider(p_number);
+    Slider(p_scale);
     Button(p_generate);
 }
 
@@ -117,11 +119,14 @@ void SingleLayerGui::specialisedDrawGui(Layer_filter_mpeg_glitch * layer)
     ofParameter<float> & p_stopAmount     = layer->params.get("Stop Amount"   ).cast<float>();   
     ofParameter<float> & p_globalStrength = layer->params.get("Strength"      ).cast<float>();   
     ofParameter<bool>  & p_greyScale      = layer->params.get("Greyscale"     ).cast<bool>();  
+    ofParameter<bool>  & p_forceUpdate    = layer->params.get("New"           ).cast<bool>();  
 
     Slider(p_sizeOfKernel  );
     Slider(p_stopAmount    );
     Slider(p_globalStrength);
     IconToggle(p_greyScale, "Greyscale", "!Greyscale");
+
+    Button(p_forceUpdate);
 }
 
 template<>

@@ -1,7 +1,6 @@
 #include "Utils\FaceExtractor.h"
 #include "LayerUtils.h"
 
-#ifdef NDEBUG
 //---------------------------------------------------------------------------------------
 FaceExtractor & FaceExtractor::getInstance()
 {
@@ -50,7 +49,9 @@ FaceExtractor::FaceExtractor() :
 {}
 
 FaceExtractor::~FaceExtractor() {
+#ifdef USE_DLIB
     FaceExtractor::getTracker().stop();
+#endif
 }
 
 void FaceExtractor::start()
@@ -58,6 +59,12 @@ void FaceExtractor::start()
     ofLogVerbose(__FUNCTION__) << "Starting Face Extractor";
     b_isRunning = true;
     l_onUpdate = ofEvents().update.newListener(this, &FaceExtractor::onUpdate);
+
+#ifndef  USE_DLIB
+    tracker.setup("models/haarcascade_frontalface_default.xml");
+    tracker.setPreset(ofxCv::ObjectFinder::Sensitive);
+#endif // ! USE_DLIB
+
 }
 
 void FaceExtractor::onUpdate(ofEventArgs & _args)
@@ -82,6 +89,7 @@ void FaceExtractor::extractNextFace()
 
     img.load(currentFile->path());
     if (img.isAllocated()) {
+#ifdef USE_DLIB
         ofxFaceTracker2 & tracker = getTracker();
         ofPixels & pixels = img.getPixels();        
         tracker.stop();
@@ -103,6 +111,24 @@ void FaceExtractor::extractNextFace()
 
             faceInstance.save(path);
         }
+#else
+
+        tracker.update(img);
+        for (int i = 0; i < tracker.size(); i++) {
+            ofImage faceInstance;
+            ofRectangle  rect = tracker.getObject(i);
+
+            if (rect.getArea() < 22500) continue;
+
+            faceInstance.cropFrom(img, rect.x, rect.y, rect.width, rect.height);
+
+            string fileName = "Face_" + ofToString(saveNum++) + ".png";
+            string path = ofFilePath::join(out_dir.path(), fileName);
+
+            faceInstance.save(path);
+        }
+#endif
+
     }
 
     currentFile++;
@@ -115,6 +141,7 @@ void FaceExtractor::extractNextFace()
     };
 }
 
+#ifdef USE_DLIB
 ofxFaceTracker2 & FaceExtractor::getTracker() {
     static bool isSetup = false;
     static ofxFaceTracker2 tracker;
@@ -125,4 +152,4 @@ ofxFaceTracker2 & FaceExtractor::getTracker() {
     }
     return tracker;
 }
-#endif // !NDEBUG
+#endif

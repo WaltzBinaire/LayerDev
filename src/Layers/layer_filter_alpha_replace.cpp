@@ -11,7 +11,7 @@ void Layer_filter_alpha_replace::onSetup()
     replacementPosition = size * 0.5;
     setupReplacementFbo();
 
-    currentImage = images.end();
+    currentPath = imagePaths.end();
 }
 
 void Layer_filter_alpha_replace::onRender(const ofTexture & _baseTex) const
@@ -31,8 +31,8 @@ void Layer_filter_alpha_replace::onSetupParams()
 
 void Layer_filter_alpha_replace::onReset()
 {
-    images.clear();
-    currentImage = images.end();
+    imagePaths.clear();
+    currentPath = imagePaths.end();
 }
 
 void Layer_filter_alpha_replace::setupShader()
@@ -68,12 +68,12 @@ void Layer_filter_alpha_replace::renderReplacmentFbo() const
 {
     replacementFbo.begin();
     ofClear(0.0);
-    if (currentImage != images.end()) {
-        currentImage->draw(
-            replacementPosition.x - replacementScale * 0.5 * currentImage->getWidth(),
-            replacementPosition.y - replacementScale * 0.5 * currentImage->getHeight(),
-            replacementScale * currentImage->getWidth(),
-            replacementScale * currentImage->getHeight()
+    if (image.isAllocated()) {
+        image.draw(
+            replacementPosition.x - replacementScale * 0.5 * image.getWidth(),
+            replacementPosition.y - replacementScale * 0.5 * image.getHeight(),
+            replacementScale *image.getWidth(),
+            replacementScale *image.getHeight()
             );
     }
     else {
@@ -135,19 +135,20 @@ void Layer_filter_alpha_replace::onMouseScrolled(ofMouseEventArgs & args)
     else {
         switch ((int)args.scrollY) {
         case 1:
-            currentImage++;
-            if (currentImage >= images.end())   currentImage = images.begin();
+            currentPath++;
+            if (currentPath >= imagePaths.end())   currentPath = imagePaths.begin();
             break;
         case -1:
-            if (currentImage == images.begin()) {
-                currentImage = images.end() - 1;
+            if (currentPath == imagePaths.begin()) {
+                currentPath = imagePaths.end() - 1;
             }
             else {
-                currentImage--;
+                currentPath--;
             }
             break;
         }
-
+        
+        image.load(*currentPath);
         redraw();
     }
 }
@@ -170,7 +171,7 @@ void Layer_filter_alpha_replace::onLoadFile(bool & _loadFile)
 
 void Layer_filter_alpha_replace::handle_file(const string & _path)
 {
-    images.emplace_back(_path);
-    currentImage = images.end() - 1;
+    imagePaths.emplace_back(_path);
+    currentPath = imagePaths.end() - 1;
     redraw();
 }

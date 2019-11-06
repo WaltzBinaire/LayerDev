@@ -8,6 +8,10 @@
 
 using namespace flowTools;
 
+
+#define MAX_SIMULATION_SIZE 800
+#define MAX_DENSITY_SIZE    1500
+
 class Layer_paint: public Filter_base {
 public:
     Layer_paint(string name, int instance, Layer_Manager * _layer_manager)

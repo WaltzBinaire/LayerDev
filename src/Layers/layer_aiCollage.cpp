@@ -13,7 +13,7 @@ void Layer_file_aiCollage::onSetupParams()
 { 
     Layer_file::onSetupParams();
 
-    p_mode.set("Mode", (int)MODE::NONE, (int)MODE::NONE, (int)MODE::NONE);
+    p_mode.set("Mode", (int)MODE::NONE, (int)MODE::NONE, (int)MODE::PLACING);
     p_mode.addListener(this, &Layer_file_aiCollage::onModeChanged);
 
     params.add(
@@ -25,6 +25,11 @@ void Layer_file_aiCollage::onSetupParams()
 void Layer_file_aiCollage::onSetupListeners()
 {
     setListeners();
+}
+
+void Layer_file_aiCollage::onDeactivate()
+{
+    p_mode.set((int)MODE::NONE);
 }
 
 void Layer_file_aiCollage::onRender() const

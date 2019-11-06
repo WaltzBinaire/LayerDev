@@ -332,6 +332,8 @@ void Layer_Manager::move_layer(Layer_base* _layer, DIRECTION _dir)
 
 void Layer_Manager::draw() const
 {
+    auto srtTime = ofGetSystemTimeMillis();
+
     canvas.clear(); 
 
     ofEnableBlendMode(ofBlendMode::OF_BLENDMODE_ALPHA);
@@ -359,6 +361,9 @@ void Layer_Manager::draw() const
     canvas.draw();
 
     drawFancyCursor();
+
+    auto drw = ofGetSystemTimeMillis() - srtTime;
+    ofLogNotice(__FUNCTION__) << "Total: " << drw;
 }
 
 void Layer_Manager::drawFancyCursor() const
@@ -372,15 +377,26 @@ void Layer_Manager::drawFancyCursor() const
 
 void Layer_Manager::drawGui()
 {
+    auto srtTime = ofGetSystemTimeMillis();
+
     gui->draw(this);
     b_mouseOverGui = gui->mouseOverGui();
+
+    auto uptTime = ofGetSystemTimeMillis() - srtTime;
+    ofLogNotice(__FUNCTION__) << "GUI draw: " << uptTime;
+
 }
 
 void Layer_Manager::update()
 {
+        auto srtTime = ofGetSystemTimeMillis();
+
     for (auto & layer : layers) {
         layer->update();
     }
+    
+    auto uptTime = ofGetSystemTimeMillis() - srtTime;
+    ofLogNotice(__FUNCTION__) << "Update: " << uptTime;
 }
 
 void Layer_Manager::saveAs() const

@@ -33,9 +33,10 @@ protected:
     void loadImages();
 
 
-    ofParameter<bool> p_generate;
-    ofParameter<int>  p_number;
-    ofParameter<int>  p_mode;
+    ofParameter<bool>  p_generate;
+    ofParameter<float> p_scale;
+    ofParameter<int>   p_number;
+    ofParameter<int>   p_mode;
 
     threadedImageLoader* imageLoader = nullptr;
 };

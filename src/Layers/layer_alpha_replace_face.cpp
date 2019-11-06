@@ -6,6 +6,8 @@ void Layer_alpha_replace_face::onSetup()
 {
     Layer_filter_alpha_replace::onSetup();
 
+    setupDetectionFbo();
+
 #ifdef NDEBUG
     tracker.setup();
     tracker.setThreaded(false);
@@ -24,12 +26,23 @@ void Layer_alpha_replace_face::onResize()
 {
     Layer_filter_alpha_replace::onResize();
     setupFaceFbo();
+
+    setupDetectionFbo();
+}
+
+void Layer_alpha_replace_face::setupDetectionFbo()
+{
+    detectionScale = getDetectionTextureScale();
+    detectionFbo.allocate(detectionScale * size.x, detectionScale * size.y, GL_RGBA);
+    pixels.allocate(detectionScale * size.x, detectionScale * size.y, GL_RGBA);
 }
 
 void Layer_alpha_replace_face::onRender(const ofTexture & _baseTex) const
 {
-   renderReplacmentFbo();
    updateFace(_baseTex);
+
+   renderReplacmentFbo();
+
 }
 
 void Layer_alpha_replace_face::setupShader()
@@ -43,18 +56,28 @@ void Layer_alpha_replace_face::setupShader()
 
 void Layer_alpha_replace_face::renderReplacmentFbo() const
 {
-#ifdef NDEBUG
-    replacementPosition = glm::vec2(faceRect.getCenter().x, faceRect.getCenter().y);  
 
-#endif // !NDEBUG 
+    replacementPosition = glm::vec2(
+        ofClamp(
+            replacementPosition.x, 
+            faceRect.getCenter().x - 0.5 * faceRect.getWidth(), 
+            faceRect.getCenter().x + 0.5 * faceRect.getWidth()
+        ),
+        ofClamp(
+            replacementPosition.y, 
+            faceRect.getCenter().y - 0.5 * faceRect.getHeight(), 
+            faceRect.getCenter().y + 0.5 * faceRect.getHeight()
+        )
+    );  
+
     replacementFbo.begin();
     ofClear(0.0);
-    if (currentImage != images.end()) {
-        currentImage->draw(
-            replacementPosition.x - replacementScale * 0.5 * currentImage->getWidth(),
-            replacementPosition.y - replacementScale * 0.5 * currentImage->getHeight(),
-            replacementScale * currentImage->getWidth(),
-            replacementScale * currentImage->getHeight()
+    if (image.isAllocated()) {
+        image.draw(
+            replacementPosition.x - replacementScale * 0.5 * image.getWidth(),
+            replacementPosition.y - replacementScale * 0.5 * image.getHeight(),
+            replacementScale * image.getWidth(),
+            replacementScale * image.getHeight()
             );
     }
     else {
@@ -75,13 +98,17 @@ void Layer_alpha_replace_face::setupFaceFbo()
 
 void Layer_alpha_replace_face::updateFace(const ofTexture & _baseTex) const
 {
-    _baseTex.readToPixels(pixels);
+    detectionFbo.begin();
+    _baseTex.draw(0, 0, detectionFbo.getWidth(), detectionFbo.getHeight());
+    detectionFbo.end();
+    detectionFbo.readToPixels(pixels);
 
     if (pixels.isAllocated()) {
 
         faceFbo.begin();
         ofClear(0, 0);
         face_shader->begin();
+        face_shader->setUniform1f("u_scale", detectionScale);
 
         ofPushStyle();
 
@@ -92,24 +119,16 @@ void Layer_alpha_replace_face::updateFace(const ofTexture & _baseTex) const
         for (auto instance : tracker.getInstances()) {
             ofMesh& faceMesh = instance.getLandmarks().getImageMesh();
 
-            faceRect = instance.getBoundingBox();
-
-            faceMesh.enableColors();
-            vector<ofFloatColor> colors;
-            ofFloatColor col = ofFloatColor(ofRandom(0.0, 1.0), 1.0);
-            colors.resize(faceMesh.getNumVertices());
-            for (int i = 0; i < colors.size(); i+=3) {
-                
-                if(ofRandomf() < 0.1) ofFloatColor col = ofFloatColor(ofRandom(0.0, 1.0), 1.0);
-
-                colors[i + 0] = col;
-                colors[i + 1] = col;
-                colors[i + 2] = col;
-            }
-
-            faceMesh.addColors(colors);
-
             faceMesh.draw();
+
+            //-----------------------------------------
+            faceRect = instance.getBoundingBox();
+            faceRect.x      /= detectionScale;
+            faceRect.y      /= detectionScale;
+            faceRect.width  /= detectionScale;
+            faceRect.height /= detectionScale;
+
+
         }
 #endif // !NDEBUG    
         ofPopStyle();
@@ -119,5 +138,17 @@ void Layer_alpha_replace_face::updateFace(const ofTexture & _baseTex) const
     }
 
 
+
+}
+
+float Layer_alpha_replace_face::getDetectionTextureScale() {
+    if (size.x > size.y) {
+        float _size = max(size.x, MAX_DETECTION_SIZE);
+        return _size / size.x;
+    }
+    else {
+        float _size = max(size.y, MAX_DETECTION_SIZE);
+        return _size / size.y;
+    }
 }
 

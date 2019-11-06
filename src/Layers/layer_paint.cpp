@@ -27,13 +27,13 @@ void Layer_paint::onSetup()
 
     b_mouseDown = false;
 
-	densityWidth  = min(size.x, 2000.f);
-	densityHeight = min(size.y, 2000.f);
+	densityWidth  = min((int)size.x, MAX_DENSITY_SIZE);
+	densityHeight = min((int)size.y, MAX_DENSITY_SIZE);
 
     paintingFbo->allocate(size.x, size.y, GL_RGBA);
 
-    simulationWidth  = min(densityWidth , 1000);
-	simulationHeight = min(densityHeight, 1000);
+    simulationWidth  = min(densityWidth , MAX_SIMULATION_SIZE);
+	simulationHeight = min(densityHeight, MAX_SIMULATION_SIZE);
 
 	fluidFlow->setup(simulationWidth, simulationHeight, densityWidth, densityHeight);
 	fluidFlow->setupBrushRenderer(brush->getBristleCount(), brush->getVertsPerBristle(), brush->getSplatsPerSegment());

@@ -1,10 +1,17 @@
 #pragma once
 #include "ofMain.h"
 
+//#define USE_DLIB
 
-#ifdef NDEBUG
+#ifdef DEBUG
+#undef USE_DLIB
+#endif
+
+#ifdef USE_DLIB
 #include "ofxFaceTracker2.h"
-
+#else
+#include "ofxCv.h"
+#endif // !NDEBUG
 
 class FaceExtractor
 {
@@ -36,7 +43,11 @@ private:
     FaceExtractor();
     ~FaceExtractor();
 
+#ifdef USE_DLIB
     static ofxFaceTracker2 & getTracker();
+#else
+    ofxCv::ObjectFinder tracker;
+#endif
 
     void start();
     void onUpdate(ofEventArgs & _args);
@@ -54,4 +65,3 @@ private:
     ofEventListener l_onUpdate;
 };
 
-#endif // !NDEBUG

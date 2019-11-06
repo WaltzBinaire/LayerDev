@@ -24,6 +24,7 @@ public:
 protected:
     virtual void onSetupParams()    override ;
     virtual void onSetupListeners() override ;
+    virtual void onDeactivate()  override;
     virtual void onRender()      const override;    
     virtual void onDraw()        const override;  
     virtual void onDrawOverlay() override;  

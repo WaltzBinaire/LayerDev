@@ -11,12 +11,14 @@ void Layer_collage_generative::onSetupParams()
     p_generate.addListener(this, &Layer_collage_generative::onGenerate);
 
     p_number.set("Number", 10, 1, 300);
+    p_scale.set ("Scale" , 1.0, 0.1, 10);
 
     p_mode.set("Mode", (int)MODE::RANDOM, (int)MODE::RANDOM, (int)MODE::LINES);
 
     params.add(
         p_generate,
         p_mode,
+        p_scale,
         p_number
     );
 }
@@ -55,7 +57,7 @@ void Layer_collage_generative::setupPatch(CollagePatch & _patch, int _idx)
 void Layer_collage_generative::setupPatchRandom(CollagePatch & _patch, int _idx)
 {
     glm::vec2 center = glm::vec2( ofRandom(0.0, size.x), ofRandom(0.0, size.y));
-    float scale = ofRandom(0.5, 1.0);
+    float scale = ofRandom(0.5 * p_scale, p_scale);
     float angle = 1.0;
 
     _patch.setup(center, scale, angle);
@@ -68,15 +70,16 @@ void Layer_collage_generative::setupPatchLines(CollagePatch & _patch, int _idx)
     int x  = floor(ofRandom(0.0, _patch.getImageWidth() - w));
     int y  = 0.0;
 
-    float scale = size.x / _patch.getImageHeight();
+    float scale = size.y / _patch.getImageHeight();
     glm::vec2 center((_idx + 0.5) * w, h * 0.5);
 
-    _patch.setup(center, scale, 0.0);
+    _patch.setup(center, 2.0 * scale, 0.0);
 
     ofImage & newImage = _patch.getImageReference();
+    newImage.crop(x, y, w / scale, h);
 
-    newImage.resize(  scale * newImage.getWidth(), scale * newImage.getHeight());
-    newImage.crop(x, y, w, h);;
+    //newImage.resize(  scale * newImage.getWidth(), scale * newImage.getHeight());
+    
 
 }
 
@@ -117,7 +120,6 @@ void Layer_collage_generative::loadImages()
 
         images.emplace_back(move(newPatch));
         ofImage & image = images.back()->getImageReference();
-
         imageLoader->loadFromDisk(image, image_paths[index]);
     }
 }

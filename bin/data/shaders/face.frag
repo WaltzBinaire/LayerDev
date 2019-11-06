@@ -8,10 +8,8 @@ out vec4 outputColor;
 
 void main()
 {
-
-    vec3 col = fragColor.rgb;
-    
+    //vec3 col = fragColor.rgb;    
     //col = vec3( float(col.r > 0.5));
     
-    outputColor = vec4(col, 1.0);
+    outputColor = vec4(1.0, 1.0, 1.0, 1.0);
 }  

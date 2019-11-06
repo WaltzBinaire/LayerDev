@@ -78,9 +78,8 @@ void threadedImageLoader::update(ofEventArgs & a){
     // Load 1 image per update so we don't block the gl thread for too long
 	ofImageLoaderEntry entry;
 	if (images_to_update.tryReceive(entry)) {
-
-        if (entry.b_resize) {
-            
+        ofLogNotice() << "Thread loaded: " << entry.filename;
+        if (entry.b_resize) {            
             glm::vec2 size;
             float aspect_ratio = entry.image->getWidth() / entry.image->getHeight();
             if (aspect_ratio > 1.0) {
@@ -95,7 +94,6 @@ void threadedImageLoader::update(ofEventArgs & a){
                     entry.size
                 );
             }
-
             entry.image->resize(size.x, size.y);
         }
 		entry.image->setUseTexture(true);

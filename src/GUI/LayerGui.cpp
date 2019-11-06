@@ -322,6 +322,9 @@ void LayerGui::drawLayerMenu(ImVec2 pos, ImVec2 size)
 
             if (layer == manager->active_layer) label += "*";
 
+            label += " " +  ofToString(layer->getUpdateTime());
+            label += " " +  ofToString(layer->getDrawTime());
+
             if (ImGui::Button(label.c_str(), ImVec2(200, 0))) {
                 manager->setActiveLayer(layer);
             }
