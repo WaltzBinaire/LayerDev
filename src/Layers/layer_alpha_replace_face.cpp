@@ -1,4 +1,5 @@
 #include "Layers\layer_alpha_replace_face.h"
+#include "GUI/SingleLayerGui.h"
 
 REGISTER_TYPE(Layer_alpha_replace_face, Face Replace)
 
@@ -22,12 +23,39 @@ void Layer_alpha_replace_face::onDestroy()
 #endif // !NDEBUG  
 }
 
+void Layer_alpha_replace_face::onDraw(const ofTexture & _baseTex) const
+{
+    if (p_useMask) {
+        Layer_filter_alpha_replace::onDraw(_baseTex);
+    }
+    else {
+        #ifdef NDEBUG
+        if (image.isAllocated())
+            image.draw(faceRect);
+#endif
+    }
+
+}
+
+void Layer_alpha_replace_face::onDrawGui()
+{
+    Layer_filter_alpha_replace::onDrawGui();
+    SingleLayerGui::specialisedDrawGui<Layer_alpha_replace_face>(this); 
+}
+
 void Layer_alpha_replace_face::onResize()
 {
     Layer_filter_alpha_replace::onResize();
     setupFaceFbo();
 
     setupDetectionFbo();
+}
+
+void Layer_alpha_replace_face::onSetupParams()
+{
+    Layer_filter_alpha_replace::onSetupParams();
+    p_useMask.set("Mask Face", true);
+    params.add(p_useMask);
 }
 
 void Layer_alpha_replace_face::setupDetectionFbo()
@@ -39,10 +67,11 @@ void Layer_alpha_replace_face::setupDetectionFbo()
 
 void Layer_alpha_replace_face::onRender(const ofTexture & _baseTex) const
 {
-   updateFace(_baseTex);
+    if (p_useMask) {
+        updateFace(_baseTex);
+    }
 
    renderReplacmentFbo();
-
 }
 
 void Layer_alpha_replace_face::setupShader()
@@ -56,7 +85,7 @@ void Layer_alpha_replace_face::setupShader()
 
 void Layer_alpha_replace_face::renderReplacmentFbo() const
 {
-
+#ifdef NDEBUG
     replacementPosition = glm::vec2(
         ofClamp(
             replacementPosition.x, 
@@ -69,6 +98,7 @@ void Layer_alpha_replace_face::renderReplacmentFbo() const
             faceRect.getCenter().y + 0.5 * faceRect.getHeight()
         )
     );  
+#endif
 
     replacementFbo.begin();
     ofClear(0.0);

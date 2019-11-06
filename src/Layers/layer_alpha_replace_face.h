@@ -19,8 +19,12 @@ protected:
 
     virtual void onSetup()  override;
     virtual void onRender(const ofTexture & _baseTex) const override;
-    virtual void onDestroy() override;
-    virtual void onResize()  override;
+    virtual void onDestroy()     override;
+    virtual void onDraw(const ofTexture & _baseTex) const override;
+    
+    virtual void onDrawGui()        override;
+    virtual void onResize()      override;
+    virtual void onSetupParams() override;
 
     void setupDetectionFbo();
 
@@ -32,14 +36,13 @@ protected:
     void setupFaceFbo();
     void updateFace(const ofTexture & _baseTex) const;
 
+    ofParameter<bool> p_useMask;
+
     mutable ofFbo faceFbo;
     shared_ptr<AutoShader> face_shader;
 private:
     ofEventListener l_onFaceShaderLoad;
-
-
-    float getDetectionTextureScale();
-    
+    float getDetectionTextureScale();    
     float detectionScale;
 
 #ifdef NDEBUG

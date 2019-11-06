@@ -22,6 +22,7 @@ public:
     template<> static void specialisedDrawGui( Layer_file_aiCollage * layer);
 
     template<> static void specialisedDrawGui( Layer_filter_chromatic_aberation * layer);
+    template<> static void specialisedDrawGui( Layer_alpha_replace_face         * layer);
     template<> static void specialisedDrawGui( Layer_filter_alpha_replace       * layer);
     template<> static void specialisedDrawGui( Layer_alpha_replace_channel      * layer);
     template<> static void specialisedDrawGui( Layer_filter_mpeg_glitch         * layer);
@@ -263,3 +264,8 @@ static void SingleLayerGui::specialisedDrawGui(Layer_paint * layer) {
 
 };
 
+template<> 
+void SingleLayerGui::specialisedDrawGui(Layer_alpha_replace_face * layer) {
+    ofParameter<bool>  & p_useMask    = layer->params.get("Mask Face"           ).cast<bool>();  
+    IconToggle(p_useMask, "Mask", "!Mask");
+};

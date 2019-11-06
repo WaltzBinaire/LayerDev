@@ -10,6 +10,7 @@ void Layer_collage_manual::onSetupListeners()
 
 void Layer_collage_manual::setupPatch(CollagePatch & _patch, int _idx)
 {
+        _patch.setup(size * 0.5, 1.0, 0.0);
 }
 
 //--------------------------------------------------------------
@@ -31,10 +32,12 @@ void Layer_collage_manual::onFileDragEvent(ofDragInfo & _fileInfo)
     ofImage newImage = ofImage(file.getAbsolutePath());
 
     if (newImage.isAllocated()) {
-        images.emplace_back();
-        active_image = images.back();
-        active_image->setup(glm::vec2(0, 0), 1.0, 0.0);
+        images.emplace_back( new CollagePatch() );
+        active_image = images.back();        
+        setupPatch(*active_image, 0);
         active_image->getImageReference() = newImage;
+
+
         setMode(Mode::EDITING);
 
         ofLogVerbose() << "Added image: " << file.path();
@@ -45,7 +48,6 @@ void Layer_collage_manual::onMouseMoved(ofMouseEventArgs & _args)
 {
     if (mode == Mode::EDITING) {
         active_image->setCenter( glm::vec2(_args.x, _args.y));
-
     }
 }
 
