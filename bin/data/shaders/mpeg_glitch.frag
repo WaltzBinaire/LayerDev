@@ -3,12 +3,12 @@
 
 uniform sampler2D u_imageTex;
 uniform sampler2D u_noiseTex;
-uniform float u_sizeOfKernel;
-uniform float u_stopAmount;
-uniform float u_globalStrength;
-uniform float u_resolution;
-uniform int   u_greyScale;
-uniform float u_time;
+uniform float     u_sizeOfKernel;
+uniform float     u_stopAmount;
+uniform float     u_globalStrength;
+uniform vec2      u_resolution;
+uniform int       u_greyScale;
+uniform float     u_time;
 
 in vec2 texCoordVarying;
 
@@ -65,7 +65,7 @@ vec3 getGlitchRGBLines(vec2 uv,vec2 uv_noise,vec3 color,float block_thresh,float
 	if (texture(u_noiseTex, uv_noise).g * amount < block_thresh ||
 		texture(u_noiseTex, vec2(uv_noise.y, 0.0)).g * amount*2 < line_thresh) {
 		
-		float lines = fract((uv*u_resolution).y / 9.0);
+		float lines = fract( (uv*u_resolution).y / 9.0);
 		vec3 mask = vec3(3.0, 0.0, 0.0);
 			
 		if (lines > 0.333)
@@ -110,15 +110,14 @@ float getSizeofBlocks(float size,float noiseTime) {
 
 void main()
 {
-	float time = u_time / 1000;
+	float time = u_time;
 	vec2 uv = texCoordVarying;
     outputColor = texture(u_imageTex, uv);
 
-	float noiseTime  = getNoisedTime(u_stopAmount, time);
+    float noiseTime    = getNoisedTime(u_stopAmount, time);
 	float sizeOfBlocks = getSizeofBlocks(u_sizeOfKernel, noiseTime);
 	
-	
-	vec2 block = floor(uv*u_resolution / vec2(sizeOfBlocks,sizeOfBlocks));
+	vec2 block = floor(uv * u_resolution / vec2( sizeOfBlocks, sizeOfBlocks));
 	vec2 uv_noise = block / vec2(256.0,256.0);
 	
 	

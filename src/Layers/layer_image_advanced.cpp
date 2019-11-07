@@ -154,4 +154,6 @@ void Layer_image_advanced::setupBodyMask(const string & _path)
     bodyMask.endQuad();
 
     masks.insert_or_assign("Body Mask", &bodyMask);
+
+    bodyMask.setEnabled(true);
 }

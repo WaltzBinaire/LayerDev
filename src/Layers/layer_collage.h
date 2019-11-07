@@ -86,7 +86,6 @@ protected:
     void onFileDragEvent(ofDragInfo & _fileInfo);
     void onLoadFolder(bool & _loadFolder);
 
-
     void setupQuad();
     void setQuad(const CollagePatch &colImage) const;
 
