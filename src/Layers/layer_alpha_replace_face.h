@@ -18,9 +18,9 @@ public:
 protected:
 
     virtual void onSetup()  override;
-    virtual void onRender(const ofTexture & _baseTex) const override;
+    virtual void onRender(const ofTexture & _baseTex, bool _forced = false) const override;
     virtual void onDestroy()     override;
-    virtual void onDraw(const ofTexture & _baseTex) const override;
+    virtual void onDraw (const ofTexture & _baseTex, bool _forced = false) const override;
     
     virtual void onDrawGui()        override;
     virtual void onResize()      override;
@@ -36,7 +36,13 @@ protected:
     void setupFaceFbo();
     void updateFace(const ofTexture & _baseTex) const;
 
+    void onHFlipChanged(bool & _val);
+
     ofParameter<bool> p_useMask;
+    ofParameter<bool> p_hFlip;
+    ofParameter<bool> p_lock;
+
+    ofEventListener on_hFlipChanged;
 
     mutable ofFbo faceFbo;
     shared_ptr<AutoShader> face_shader;
@@ -44,6 +50,7 @@ private:
     ofEventListener l_onFaceShaderLoad;
     float getDetectionTextureScale();    
     float detectionScale;
+    mutable bool b_faceMaskInitialised;
 
 #ifdef NDEBUG
     mutable ofxFaceTracker2 tracker;
@@ -51,7 +58,6 @@ private:
 #endif // !NDEBUG    
 
     mutable ofPixels pixels;
-
     mutable ofFbo detectionFbo;
 };
 

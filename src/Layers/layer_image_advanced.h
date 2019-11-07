@@ -170,7 +170,7 @@ public:
 protected:
     virtual void onSetup()       override;
     virtual void onDrawGui()     override;
-    virtual void onRender()      const override;
+    virtual void onRender(bool _forced = false)      const override;
     virtual void onResize()      override;
     virtual void onDestroy()     override;
 

@@ -44,7 +44,7 @@ void Layer_image_advanced::handle_file(const string & _path)
     }
 }
 
-void Layer_image_advanced::onRender() const
+void Layer_image_advanced::onRender(bool _forced) const
 {
     if (needsRedraw() ) {
 

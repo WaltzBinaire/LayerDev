@@ -17,15 +17,17 @@ public:
 
     ~CollagePatch() {}
 
-    ofImage & getImageReference() { return image;  }
+    ofImage & getImageReference()        { return image;  }
     const ofTexture & getTexture() const { return image.getTexture(); }
 
-    float getImageWidth() const { return  image.getWidth();}
-    float getImageHeight() const { return image.getHeight();}
+    float getImageWidth()  const { return  image.getWidth();}
+    float getImageHeight() const { return  image.getHeight();}
 
-    float getScale()  const { return scale; }
-    glm::vec2 getCenter() const { return center; }
-    float getAngle() const  { return angle; }
+    float     getScale()    const { return scale;  }
+    glm::vec2 getCenter()   const { return center; }
+    float     getAngle()    const { return angle;  }
+    glm::vec2 getPosition() const { return center - 0.5 * getSize(); }
+    glm::vec2 getSize()     const {   return glm::vec2(getImageWidth(),getImageHeight()) * scale; }
 
     
     void setScale(float _scale)       { scale  = _scale;  }
@@ -74,7 +76,7 @@ protected:
     virtual void onSetupListeners() override ;
     virtual void onSetup()          override ;
     virtual void onSetupParams()    override ;
-    virtual void onDraw()  const    override ;
+    virtual void onDraw(bool _forced = false)  const    override ;
     virtual void onDrawGui()        override ;
     virtual void onUpdate()         override ;
     virtual void onReset()          override ;    
@@ -86,8 +88,8 @@ protected:
     void onFileDragEvent(ofDragInfo & _fileInfo);
     void onLoadFolder(bool & _loadFolder);
 
-    void setupQuad();
-    void setQuad(const CollagePatch &colImage) const;
+    //void setupQuad();
+    //void setQuad(const CollagePatch &colImage) const;
 
     void setMode(Mode _mode);
 
@@ -121,7 +123,7 @@ protected:
 private:
 
     mutable shared_ptr<AutoShader> collageShader;
-    mutable ofMesh   drawQuad;
+    //mutable ofMesh   drawQuad;
 
 
 

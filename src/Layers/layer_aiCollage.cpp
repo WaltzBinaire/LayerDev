@@ -32,14 +32,14 @@ void Layer_file_aiCollage::onDeactivate()
     p_mode.set((int)MODE::NONE);
 }
 
-void Layer_file_aiCollage::onRender() const
+void Layer_file_aiCollage::onRender(bool _forced) const
 {
     if (m_collage.isLoaded()) {
          m_collage.render(false, scale);
     }
 }
 
-void Layer_file_aiCollage::onDraw() const
+void Layer_file_aiCollage::onDraw(bool _forced) const
 {
     if (m_collage.isLoaded()) {
         glm::vec2 size = scale * glm::vec2(m_collage.getWidth(), m_collage.getHeight());

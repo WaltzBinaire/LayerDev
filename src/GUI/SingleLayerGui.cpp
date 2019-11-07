@@ -17,34 +17,51 @@ void SingleLayerGui::baseDrawGui(Layer_base * layer)
 
     ImGui::Text(layer->get_display_name().c_str());
 
-    IconToggle(pause,   ICON_MDI_PAUSE, ICON_MDI_PLAY);
+    IconToggle(pause,   ICON_MDI_PAUSE, ICON_MDI_PLAY, "Pause/Play");
     ImGui::SameLine();
-    IconButton(reset,   ICON_MDI_SYNC);
+    IconButton(reset,   ICON_MDI_SYNC, "Reset layer");
     ImGui::SameLine();
-    IconToggle(disable, ICON_MDI_EYE, ICON_MDI_EYE);
+    IconToggle(disable, ICON_MDI_EYE, ICON_MDI_EYE, "Toggle visibility");
     ImGui::SameLine();
-    IconButton(redraw,  ICON_MDI_BRUSH);
+    IconButton(redraw,  ICON_MDI_BRUSH, "Redraw layer");
     ImGui::SameLine();
-    IconToggle(mask, ICON_MDI_SELECTION, ICON_MDI_SELECT_OFF);
+    IconToggle(mask, ICON_MDI_SELECTION, ICON_MDI_SELECT_OFF, "Toggle mask");
     ImGui::SameLine();
 
     static string ArtSaveLabel = ofToString(ICON_MDI_CONTENT_SAVE) + "##ArtworkSave";
     if (ImGui::Button( ArtSaveLabel.c_str() )) layer->saveLayer();
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted("Save Layer");
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+
 
     // Mask
-
-    IconButton(loadMask, ICON_MDI_WALLPAPER);
+    IconButton(loadMask, ICON_MDI_WALLPAPER, "Load mask from file");
     ImGui::SameLine();
-    IconButton(clearMask, ICON_MDI_BLOCK_HELPER);
+    IconButton(clearMask, ICON_MDI_BLOCK_HELPER, "Reset mask");
     ImGui::SameLine();
-    IconToggle(editMask , ICON_MDI_PENCIL, ICON_MDI_PENCIL_OFF);
+    IconToggle(editMask , ICON_MDI_PENCIL, ICON_MDI_PENCIL_OFF, "Edit mask");
     ImGui::SameLine();
-    IconToggle(invertMask, ICON_MDI_INVERT_COLORS_OFF, ICON_MDI_INVERT_COLORS);
+    IconToggle(invertMask, ICON_MDI_INVERT_COLORS_OFF, ICON_MDI_INVERT_COLORS, "Invert mask");
     ImGui::SameLine();
-    IconToggle(showMask, ICON_MDI_EYE_OUTLINE, ICON_MDI_EYE_OFF_OUTLINE);
+    IconToggle(showMask, ICON_MDI_EYE_OUTLINE, ICON_MDI_EYE_OFF_OUTLINE, "Show mask");
     ImGui::SameLine();
 
     static string MaskSaveLabel = ofToString(ICON_MDI_CONTENT_SAVE) + "##MaskSave";
     if (ImGui::Button(MaskSaveLabel.c_str())) layer->saveMask();
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted("Save Mask");
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
 
+    ImGui::Separator();
 }

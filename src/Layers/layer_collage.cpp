@@ -1,5 +1,7 @@
 #include "Layers\layer_collage.h"
 #include "GUI/SingleLayerGui.h"
+#include "LayerUtils.h"
+
 
 void Layer_collage::onSetupListeners()
 {    
@@ -10,7 +12,6 @@ void Layer_collage::onSetupListeners()
 void Layer_collage::onSetup()
 {
     collageShader = Shader_lib::get_collage_shader();
-    setupQuad();
 }
 
 //--------------------------------------------------------------
@@ -29,7 +30,7 @@ void Layer_collage::onSetupParams()
 }
 
 //--------------------------------------------------------------
-void Layer_collage::onDraw() const
+void Layer_collage::onDraw(bool _forced) const
 {
     ofPushStyle();
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
@@ -37,11 +38,14 @@ void Layer_collage::onDraw() const
     collageShader->begin();
     collageShader->setUniform2f("u_alphaRange", p_alphaRange);
 
+    auto quad = LayerUtils::UVQuad::getInstance();
+
     for(const auto  & colImage : images) {
         if (colImage->isSetup()) {
             collageShader->setUniformTexture("tex0", colImage->getTexture(), 0);
-            setQuad(*colImage);
-            drawQuad.draw();
+            
+            quad.draw(colImage->getPosition(), colImage->getSize());
+            
         }
     }
 
@@ -168,42 +172,42 @@ void Layer_collage::populate_images(const string & _path)
     }
 }
 
-//--------------------------------------------------------------
-void Layer_collage::setupQuad()
-{
-    drawQuad.addVertex(glm::vec3(0));
-    drawQuad.addVertex(glm::vec3(0));
-    drawQuad.addVertex(glm::vec3(0));
-    drawQuad.addVertex(glm::vec3(0));
-
-    drawQuad.addTexCoord(glm::vec2(0.0, 0.0));
-    drawQuad.addTexCoord(glm::vec2(1.0, 0.0));
-    drawQuad.addTexCoord(glm::vec2(1.0, 1.0));
-    drawQuad.addTexCoord(glm::vec2(0.0, 1.0));
-
-    drawQuad.addIndex(0);
-    drawQuad.addIndex(1);
-    drawQuad.addIndex(2);
-
-    drawQuad.addIndex(2);
-    drawQuad.addIndex(3);
-    drawQuad.addIndex(0);
-}
-
-//--------------------------------------------------------------
-void Layer_collage::setQuad(const CollagePatch &colImage) const
-{
-    glm::vec2 imageSize = glm::vec2(colImage.getImageWidth(), colImage.getImageHeight());
-    glm::vec2 size  = imageSize * colImage.getScale();
-    glm::vec2 pos   = colImage.getCenter() - size * 0.5;
-    
-    glm::vec3 pos_00 = glm::vec3(pos.x, pos.y, 0);
-    glm::vec3 pos_10 = glm::vec3(pos.x + size.x, pos.y, 0);
-    glm::vec3 pos_11 = glm::vec3(pos.x + size.x, pos.y + size.y, 0);
-    glm::vec3 pos_01 = glm::vec3(pos.x, pos.y + size.y, 0);
-
-    drawQuad.setVertex(0, pos_00);
-    drawQuad.setVertex(1, pos_10);
-    drawQuad.setVertex(2, pos_11);
-    drawQuad.setVertex(3, pos_01);
-}
+////--------------------------------------------------------------
+//void Layer_collage::setupQuad()
+//{
+//    drawQuad.addVertex(glm::vec3(0));
+//    drawQuad.addVertex(glm::vec3(0));
+//    drawQuad.addVertex(glm::vec3(0));
+//    drawQuad.addVertex(glm::vec3(0));
+//
+//    drawQuad.addTexCoord(glm::vec2(0.0, 0.0));
+//    drawQuad.addTexCoord(glm::vec2(1.0, 0.0));
+//    drawQuad.addTexCoord(glm::vec2(1.0, 1.0));
+//    drawQuad.addTexCoord(glm::vec2(0.0, 1.0));
+//
+//    drawQuad.addIndex(0);
+//    drawQuad.addIndex(1);
+//    drawQuad.addIndex(2);
+//
+//    drawQuad.addIndex(2);
+//    drawQuad.addIndex(3);
+//    drawQuad.addIndex(0);
+//}
+//
+////--------------------------------------------------------------
+//void Layer_collage::setQuad(const CollagePatch &colImage) const
+//{
+//    glm::vec2 imageSize = glm::vec2(colImage.getImageWidth(), colImage.getImageHeight());
+//    glm::vec2 size  = imageSize * colImage.getScale();
+//    glm::vec2 pos   = colImage.getCenter() - size * 0.5;
+//    
+//    glm::vec3 pos_00 = glm::vec3(pos.x, pos.y, 0);
+//    glm::vec3 pos_10 = glm::vec3(pos.x + size.x, pos.y, 0);
+//    glm::vec3 pos_11 = glm::vec3(pos.x + size.x, pos.y + size.y, 0);
+//    glm::vec3 pos_01 = glm::vec3(pos.x, pos.y + size.y, 0);
+//
+//    drawQuad.setVertex(0, pos_00);
+//    drawQuad.setVertex(1, pos_10);
+//    drawQuad.setVertex(2, pos_11);
+//    drawQuad.setVertex(3, pos_01);
+//}

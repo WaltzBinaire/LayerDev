@@ -86,10 +86,11 @@ namespace LayerUtils {
     class UVQuad {
     public:
         static UVQuad & getInstance() {
-            static UVQuad quad;
-            
+            static UVQuad quad;            
             return quad;
         }
+
+        void draw(glm::vec2 pos, glm::vec2 size) { draw(pos.x, pos.y, size.x, size.y);  }
 
         void draw(float x, float y, float w, float h) {
             mesh.setVertex(0, glm::vec3( x    , y    , 0 ));

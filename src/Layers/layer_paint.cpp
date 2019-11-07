@@ -43,7 +43,7 @@ void Layer_paint::onSetup()
     ofDisableArbTex();
 }
 
-void Layer_paint::onRender(const ofTexture & _baseTex) const
+void Layer_paint::onRender(const ofTexture & _baseTex, bool _forced) const
 {
     if (!b_active) return;
 
@@ -67,13 +67,12 @@ void Layer_paint::onRender(const ofTexture & _baseTex) const
     ofDisableArbTex();
 }
 
-void Layer_paint::onDraw(const ofTexture & _baseTex) const
+void Layer_paint::onDraw(const ofTexture & _baseTex, bool _forced) const
 {
     ofEnableArbTex();
 
     _baseTex.draw(0, 0);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
-    //fluidFlow->getOutput().draw(0, 0, size.x, size.y);
     paintingFbo->draw(0, 0, size.x, size.y);
 
 

@@ -8,6 +8,7 @@ void Layer_alpha_replace_face::onSetup()
     Layer_filter_alpha_replace::onSetup();
 
     setupDetectionFbo();
+    b_faceMaskInitialised = false;
 
 #ifdef NDEBUG
     tracker.setup();
@@ -16,22 +17,47 @@ void Layer_alpha_replace_face::onSetup()
     setupFaceFbo();
 }
 
+void Layer_alpha_replace_face::onSetupParams()
+{
+    Layer_filter_alpha_replace::onSetupParams();
+
+    on_hFlipChanged = p_hFlip.newListener(this, &Layer_alpha_replace_face::onHFlipChanged);
+
+    p_useMask.set("Mask Face", true);
+    p_lock.set   ("Lock"     , true);
+    p_hFlip.set  ("H Flip"   , false);
+    params.add(
+        p_useMask,
+        p_lock,
+        p_hFlip
+    );
+}
+
 void Layer_alpha_replace_face::onDestroy()
 {
 #ifdef NDEBUG
     tracker.stop();
 #endif // !NDEBUG  
 }
+void Layer_alpha_replace_face::onRender(const ofTexture & _baseTex, bool _forced) const
+{
+    if ((p_useMask && _forced && !p_lock) || !b_faceMaskInitialised ) {
+        updateFace(_baseTex);
+    }
 
-void Layer_alpha_replace_face::onDraw(const ofTexture & _baseTex) const
+   renderReplacmentFbo();
+}
+
+void Layer_alpha_replace_face::onDraw(const ofTexture & _baseTex, bool _forced) const
 {
     if (p_useMask) {
         Layer_filter_alpha_replace::onDraw(_baseTex);
     }
     else {
-        #ifdef NDEBUG
+#ifdef NDEBUG
         if (image.isAllocated())
-            image.draw(faceRect);
+            _baseTex.draw(0, 0);
+            replacementFbo.draw(0, 0);
 #endif
     }
 
@@ -51,27 +77,11 @@ void Layer_alpha_replace_face::onResize()
     setupDetectionFbo();
 }
 
-void Layer_alpha_replace_face::onSetupParams()
-{
-    Layer_filter_alpha_replace::onSetupParams();
-    p_useMask.set("Mask Face", true);
-    params.add(p_useMask);
-}
-
 void Layer_alpha_replace_face::setupDetectionFbo()
 {
     detectionScale = getDetectionTextureScale();
     detectionFbo.allocate(detectionScale * size.x, detectionScale * size.y, GL_RGBA);
     pixels.allocate(detectionScale * size.x, detectionScale * size.y, GL_RGBA);
-}
-
-void Layer_alpha_replace_face::onRender(const ofTexture & _baseTex) const
-{
-    if (p_useMask) {
-        updateFace(_baseTex);
-    }
-
-   renderReplacmentFbo();
 }
 
 void Layer_alpha_replace_face::setupShader()
@@ -158,7 +168,7 @@ void Layer_alpha_replace_face::updateFace(const ofTexture & _baseTex) const
             faceRect.width  /= detectionScale;
             faceRect.height /= detectionScale;
 
-
+            b_faceMaskInitialised = true;
         }
 #endif // !NDEBUG    
         ofPopStyle();
@@ -167,8 +177,11 @@ void Layer_alpha_replace_face::updateFace(const ofTexture & _baseTex) const
         faceFbo.end();
     }
 
+}
 
-
+void Layer_alpha_replace_face::onHFlipChanged(bool & _val)
+{
+    image.mirror(false, true);
 }
 
 float Layer_alpha_replace_face::getDetectionTextureScale() {

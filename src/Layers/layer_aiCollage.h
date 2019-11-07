@@ -25,8 +25,8 @@ protected:
     virtual void onSetupParams()    override ;
     virtual void onSetupListeners() override ;
     virtual void onDeactivate()  override;
-    virtual void onRender()      const override;    
-    virtual void onDraw()        const override;  
+    virtual void onRender(bool _forced = false) const override;    
+    virtual void onDraw  (bool _forced = false) const override;  
     virtual void onDrawOverlay() override;  
     virtual void onDrawGui()     override;
     virtual void onUpdate()      override;

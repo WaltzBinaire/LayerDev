@@ -218,8 +218,8 @@ public:
     bool draw(pingPongFbo & mainFbo, bool _forceRedraw = false) const override;
 
 protected:
-    virtual void onDraw()   const {};
-    virtual void onRender() const {};
+    virtual void onDraw  (bool _forced = false) const {};
+    virtual void onRender(bool _forced = false) const {};
     virtual void onMask()   const;
 };
 
@@ -229,8 +229,8 @@ public:
     Filter_base(string name, int instance, Layer_Manager * layer_manager) : Layer_base(name, instance, layer_manager) { redraw(); };
     bool draw(pingPongFbo & mainFbo, bool _forceRedraw = false) const override;
 protected:
-    virtual void onDraw  (const ofTexture & _baseTex) const {};
-    virtual void onRender(const ofTexture & _baseTex) const {};
+    virtual void onDraw  (const ofTexture & _baseTex, bool _forced = false) const {};
+    virtual void onRender(const ofTexture & _baseTex, bool _forced = false) const {};
     virtual void onMask  (const ofTexture & _baseTex) const;
 
 };

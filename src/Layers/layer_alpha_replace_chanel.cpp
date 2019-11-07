@@ -3,7 +3,7 @@
 
 REGISTER_TYPE(Layer_alpha_replace_channel, Channel Apha)
 
-void Layer_alpha_replace_channel::onRender(const ofTexture & _baseTex) const
+void Layer_alpha_replace_channel::onRender(const ofTexture & _baseTex, bool _forced) const
 {
     renderReplacmentFbo();
     update_alpha_texture(_baseTex);

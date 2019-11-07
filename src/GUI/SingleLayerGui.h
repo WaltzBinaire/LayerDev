@@ -26,6 +26,7 @@ public:
     template<> static void specialisedDrawGui( Layer_filter_alpha_replace       * layer);
     template<> static void specialisedDrawGui( Layer_alpha_replace_channel      * layer);
     template<> static void specialisedDrawGui( Layer_filter_mpeg_glitch         * layer);
+    template<> static void specialisedDrawGui( Layer_filter_adjustment          * layer);
     template<> static void specialisedDrawGui( Layer_filter_distort             * layer);
     template<> static void specialisedDrawGui( Layer_paint                      * layer);
 
@@ -266,6 +267,26 @@ static void SingleLayerGui::specialisedDrawGui(Layer_paint * layer) {
 
 template<> 
 void SingleLayerGui::specialisedDrawGui(Layer_alpha_replace_face * layer) {
-    ofParameter<bool>  & p_useMask    = layer->params.get("Mask Face"           ).cast<bool>();  
-    IconToggle(p_useMask, "Mask", "!Mask");
+    ofParameter<bool>  & p_useMask  = layer->params.get("Mask Face" ).cast<bool>();  
+    ofParameter<bool>  & p_lock     = layer->params.get("Lock"      ).cast<bool>();  
+    ofParameter<bool>  & p_hFlip    = layer->params.get("H Flip"    ).cast<bool>();  
+    IconToggle(p_useMask, "Mask" , "!Mask" ); 
+    IconToggle(p_hFlip  , "HFlip", "!HFlip");
+    IconToggle(p_lock   , "Lock" , "!Lock" );
+};
+
+template<> 
+void SingleLayerGui::specialisedDrawGui(Layer_filter_adjustment * layer) {
+
+    ofParameter<float> p_brightness   = layer->params.get( "Brightness"  ).cast<float>();
+    ofParameter<float> p_contrast     = layer->params.get( "Contrast"    ).cast<float>();
+    ofParameter<float> p_saturation   = layer->params.get( "Saturation"  ).cast<float>();
+    ofParameter<float> p_vibrance     = layer->params.get( "Vibrance"    ).cast<float>();
+    ofParameter<float> p_hue          = layer->params.get( "Hue"         ).cast<float>();
+
+     Slider(p_brightness );
+     Slider(p_contrast   );
+     Slider(p_saturation );
+     Slider(p_vibrance   );
+     Slider(p_hue        );
 };

@@ -3,7 +3,7 @@
 
 REGISTER_TYPE(Layer_filter_distort, Glitch Distort)
 
-void Layer_filter_distort::onRender(const ofTexture & _baseTex) const
+void Layer_filter_distort::onRender(const ofTexture & _baseTex, bool _forced) const
 {
     drawBrush(_baseTex);
 }

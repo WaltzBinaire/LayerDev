@@ -322,12 +322,25 @@ void LayerGui::drawLayerMenu(ImVec2 pos, ImVec2 size)
 
             if (layer == manager->active_layer) label += "*";
 
-            label += " " +  ofToString(layer->getUpdateTime());
-            label += " " +  ofToString(layer->getDrawTime());
+            float perf = max(layer->getUpdateTime(), layer->getDrawTime());
+            ofColor perfCol = (ofColor::forestGreen).getLerped(ofColor::indianRed,  ofMap(perf, 0.0, 66.0, 0.0, 1.0, true));
 
-            if (ImGui::Button(label.c_str(), ImVec2(200, 0))) {
+            if (ImGui::Button(label.c_str(), ImVec2(170, 0))) {
                 manager->setActiveLayer(layer);
             }
+
+            ImGui::PushStyleColor(ImGuiCol_Button       , (ImVec4)perfCol);
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)perfCol);
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive , (ImVec4)perfCol);
+            ImGui::SameLine();
+            const char * speedometer;
+            if (perf < 0.33)      speedometer = ICON_MDI_SPEEDOMETER;
+            else if( perf < 0.66) speedometer = ICON_MDI_SPEEDOMETER_MEDIUM;
+            else                  speedometer = ICON_MDI_SPEEDOMETER_SLOW;
+            ImGui::Button(speedometer);
+            ImGui::PopStyleColor(3);
+
+
             ImGui::SameLine();
             if (ImGui::Button((ICON_MDI_ARROW_UP_BOLD + id_label).c_str())) {
                 manager->move_layer(layer, Layer_Manager::UP);

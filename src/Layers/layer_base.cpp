@@ -352,11 +352,11 @@ bool Static_base::draw(pingPongFbo & mainFbo, bool _forceRedraw) const
     }
     else if (needsRedraw() || _forceRedraw) {
 
-        onRender();
+        onRender(_forceRedraw);
 
         fbo.begin();
         ofClear(0);
-        onDraw();
+        onDraw(_forceRedraw);
         fbo.end();
         
         setRedraw(false);
@@ -389,11 +389,11 @@ bool Filter_base::draw(pingPongFbo & mainFbo, bool _forceRedraw) const
     } else if (needsRedraw() || _forceRedraw) {
         mainFbo.swap();
 
-        onRender(mainFbo.getBackTexture());
+        onRender(mainFbo.getBackTexture(), _forceRedraw);
 
         fbo.begin();
         ofClear(0);
-        onDraw(mainFbo.getBackTexture());
+        onDraw(mainFbo.getBackTexture(), _forceRedraw);
         fbo.end();
 
         setRedraw(false);

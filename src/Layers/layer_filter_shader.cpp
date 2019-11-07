@@ -1,7 +1,7 @@
 #include "Layers\layer_filter_shader.h"
 
 
-void Layer_filter_shader::onDraw(const ofTexture & _baseTex) const
+void Layer_filter_shader::onDraw(const ofTexture & _baseTex, bool _forced) const
 {
     
     if (!shader->isLoaded()) {

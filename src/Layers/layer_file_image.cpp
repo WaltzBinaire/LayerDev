@@ -3,7 +3,7 @@
 
 REGISTER_TYPE(Layer_file_image, Image)
 
-void Layer_file_image::onDraw() const
+void Layer_file_image::onDraw(bool _forced) const
 {
     if (img.isAllocated()) {
         glm::vec2 size = scale * glm::vec2(getFileWidth(), getFileHeight());

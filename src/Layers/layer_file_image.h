@@ -11,7 +11,7 @@ public:
 
 protected:
 
-    virtual void onDraw() const override;
+    virtual void onDraw(bool _forced = false) const override;
     virtual void onReset() override;
 
     

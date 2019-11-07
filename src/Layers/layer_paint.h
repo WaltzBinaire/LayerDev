@@ -22,8 +22,8 @@ protected:
     virtual void onSetup()          override;
     virtual void onSetupParams()    override;
 
-    virtual void onDraw  (const ofTexture & _baseTex) const override;
-    virtual void onRender(const ofTexture & _baseTex) const override;
+    virtual void onDraw  (const ofTexture & _baseTex, bool _forced = false) const override;
+    virtual void onRender(const ofTexture & _baseTex, bool _forced = false) const override;
     
     virtual void onDrawOverlay()    override;
 

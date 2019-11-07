@@ -16,14 +16,22 @@ namespace ImGuiHelpers {
         };
     }
 
-    void IconButton(ofParameter<bool>& var, const char * label)
+    void IconButton(ofParameter<bool>& var, const char * label, const char* tooltip)
     {
         if (ImGui::Button(label)) {
             var.set(true);
         }
+        if (ImGui::IsItemHovered() && tooltip != nullptr)
+        {
+            ImGui::BeginTooltip();
+            ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+            ImGui::TextUnformatted(tooltip);
+            ImGui::PopTextWrapPos();
+            ImGui::EndTooltip();
+        }
     }
 
-    void IconToggle(ofParameter<bool>& var, const char * onLabel, const char * offLabel)
+    void IconToggle(ofParameter<bool>& var, const char * onLabel, const char * offLabel, const char* tooltip)
     {
         if (var.get()) {
             if (ImGui::Button(offLabel)) {
@@ -34,6 +42,14 @@ namespace ImGuiHelpers {
             if (ImGui::Button(onLabel)) {
                 var.set(true);
             }
+        }
+        if (ImGui::IsItemHovered() && tooltip != nullptr)
+        {
+            ImGui::BeginTooltip();
+            ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+            ImGui::TextUnformatted(tooltip);
+            ImGui::PopTextWrapPos();
+            ImGui::EndTooltip();
         }
     }
 

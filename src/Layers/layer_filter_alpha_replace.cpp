@@ -14,7 +14,7 @@ void Layer_filter_alpha_replace::onSetup()
     currentPath = imagePaths.end();
 }
 
-void Layer_filter_alpha_replace::onRender(const ofTexture & _baseTex) const
+void Layer_filter_alpha_replace::onRender(const ofTexture & _baseTex, bool _forced) const
 {
     renderReplacmentFbo();
 }
@@ -132,7 +132,7 @@ void Layer_filter_alpha_replace::onMouseScrolled(ofMouseEventArgs & args)
         replacementScale = max(0.1f, replacementScale);
         redraw();
     }
-    else {
+    else if(imagePaths.size() > 1) {
         switch ((int)args.scrollY) {
         case 1:
             currentPath++;

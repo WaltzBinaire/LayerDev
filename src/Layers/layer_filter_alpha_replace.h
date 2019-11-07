@@ -9,7 +9,7 @@ public:
 
 protected:
     virtual void onSetup()  override;
-    virtual void onRender(const ofTexture & _baseTex) const override;
+    virtual void onRender(const ofTexture & _baseTex, bool _forced = false) const override;
     virtual void onSetupParams()    override;
     virtual void onReset();
     virtual void onSetupListeners() override;
@@ -40,7 +40,7 @@ protected:
     vector<string>::iterator currentPath;
     vector<string> imagePaths;
 
-    ofImage image;
+    mutable ofImage image;
 
    mutable glm::vec2 replacementPosition;
    mutable float     replacementScale;
