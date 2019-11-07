@@ -377,26 +377,26 @@ void Layer_Manager::drawFancyCursor() const
 
 void Layer_Manager::drawGui()
 {
-    auto srtTime = ofGetSystemTimeMillis();
+    //auto srtTime = ofGetSystemTimeMillis();
 
     gui->draw(this);
     b_mouseOverGui = gui->mouseOverGui();
 
-    auto uptTime = ofGetSystemTimeMillis() - srtTime;
-    ofLogNotice(__FUNCTION__) << "GUI draw: " << uptTime;
+    //auto uptTime = ofGetSystemTimeMillis() - srtTime;
+    //ofLogNotice(__FUNCTION__) << "GUI draw: " << uptTime;
 
 }
 
 void Layer_Manager::update()
 {
-        auto srtTime = ofGetSystemTimeMillis();
+    //auto srtTime = ofGetSystemTimeMillis();
 
     for (auto & layer : layers) {
         layer->update();
     }
     
-    auto uptTime = ofGetSystemTimeMillis() - srtTime;
-    ofLogNotice(__FUNCTION__) << "Update: " << uptTime;
+    //auto uptTime = ofGetSystemTimeMillis() - srtTime;
+    //ofLogNotice(__FUNCTION__) << "Update: " << uptTime;
 }
 
 void Layer_Manager::saveAs() const
