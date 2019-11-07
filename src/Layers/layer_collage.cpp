@@ -11,7 +11,14 @@ void Layer_collage::onSetupListeners()
 //--------------------------------------------------------------
 void Layer_collage::onSetup()
 {
-    collageShader = Shader_lib::get_collage_shader();
+    collageShader = Shader_lib::get_collage_shader();    
+    setupCollageFbo();
+    active_patch != nullptr;
+}
+
+void Layer_collage::onUpdate()
+{
+    if (!b_allDrawn || active_patch != nullptr) redraw();
 }
 
 //--------------------------------------------------------------
@@ -32,6 +39,28 @@ void Layer_collage::onSetupParams()
 //--------------------------------------------------------------
 void Layer_collage::onDraw(bool _forced) const
 {
+    collageFbo.draw(0, 0);
+
+    if (active_patch != nullptr) {
+        if (active_patch->isReady()) {
+            ofPushStyle();
+            ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+
+            collageShader->begin();
+            collageShader->setUniform2f("u_alphaRange", p_alphaRange);
+
+            auto quad = LayerUtils::UVQuad::getInstance();
+            collageShader->setUniformTexture("tex0", active_patch->getTexture(), 0);
+            quad.draw(active_patch->getPosition(), active_patch->getSize());
+            collageShader->end();
+            ofPopStyle();
+        }
+    }
+}
+
+void Layer_collage::onRender(bool _forced) const
+{
+    collageFbo.begin();
     ofPushStyle();
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
 
@@ -40,18 +69,20 @@ void Layer_collage::onDraw(bool _forced) const
 
     auto quad = LayerUtils::UVQuad::getInstance();
 
-    for(const auto  & colImage : images) {
-        if (colImage->isSetup()) {
-            collageShader->setUniformTexture("tex0", colImage->getTexture(), 0);
-            
-            quad.draw(colImage->getPosition(), colImage->getSize());
-            
+    b_allDrawn = true;
+    for(const auto  & colImage : patches) {
+        if (colImage->isReady()) {
+            if (colImage != active_patch) {
+                collageShader->setUniformTexture("tex0", colImage->getTexture(), 0);
+                quad.draw(colImage->getPosition(), colImage->getSize());
+                colImage->setDrawn();
+            }
         }
+        b_allDrawn &= !colImage->isPending() || colImage->isDrawn();
     }
-
     collageShader->end();
-
     ofPopStyle();
+    collageFbo.end();
 }
 
 void Layer_collage::onDrawGui()
@@ -60,76 +91,35 @@ void Layer_collage::onDrawGui()
 }
 
 //--------------------------------------------------------------
-void Layer_collage::onUpdate()
-{
-    switch (mode) {
-    case Mode::EDITING:
-        redraw();
-        break;
-    case Mode::VIEWING:
-    default:
-        break;
-    }
-
-    if ( patchInfo.nSetup != images.size() ) {
-        updatePatches();
-    }
-}
-
-void Layer_collage::updatePatches()
-{
-    patchInfo.reset();
-
-    vector<shared_ptr<CollagePatch>> needSetup;
-
-    for (auto & colImage : images) {
-        patchInfo.nTotal++;
-        if (colImage->needsSetup()) {
-            patchInfo.nNeedsSetup++;
-            needSetup.push_back(colImage);
-        }
-        else if (colImage->isSetup()) {
-            patchInfo.nSetup++;
-        }
-        else {
-            patchInfo.nLoading++;
-        }
-    }
-
-    if (patchInfo.nNeedsSetup > 0) redraw();
-
-    for (auto colImage : needSetup) {
-        setupPatch(*colImage, patchInfo.nSetup );
-        patchInfo.nNeedsSetup--;
-        patchInfo.nSetup++;
-    }
-}
-
-//--------------------------------------------------------------
 void Layer_collage::onReset()
 {
-    patchInfo.reset();
-    images.clear();
-    image_paths.clear();
+    if (imageLoader != nullptr) {
+        imageLoader->forceStop();
+    }
+    active_patch = nullptr;
+    patches.clear();
+    setupCollageFbo();
+}
+
+void Layer_collage::onResize()
+{
+    setupCollageFbo();
+}
+
+void Layer_collage::setupCollageFbo()
+{
+    collageFbo.allocate(size.x, size.y, GL_RGBA);
+    collageFbo.begin();
+    ofClear(0.0);
+    collageFbo.end();
 }
 
 
-//--------------------------------------------------------------
-void Layer_collage::setMode(Mode _mode)
+void Layer_collage::onDestroy()
 {
-    switch (_mode) {
-    case Mode::EDITING:
-        onModeEditing();
-        redraw();
-        break;
-    case Mode::VIEWING:
-        onModeViewing();
-        break;
-    default:
-        break;
+    if (imageLoader != nullptr) {
+        imageLoader->forceStop();
     }
-
-    mode = _mode;
 }
 
 void Layer_collage::onAlphaRangeChanged(glm::vec2 & _val)
@@ -142,20 +132,20 @@ void Layer_collage::onFileDragEvent(ofDragInfo & _fileInfo)
 {
     if (_fileInfo.files.size() > 1) ofLogWarning(__FUNCTION__) << "Can't add multiple images.";
     string file_path = _fileInfo.files[0];
-    populate_images(file_path); // Needs to handle more cases!!
+    replace_images(file_path); // Needs to handle more cases!!
 
 }
 
 void Layer_collage::onLoadFolder(bool & _loadFolder)
 {
     if (_loadFolder) {
-        LayerUtils::loadFolderDialogue(this, &Layer_collage::populate_images);        
+        LayerUtils::loadFolderDialogue(this, &Layer_collage::replace_images);        
     }return;
     _loadFolder = false;
 
 }
 
-void Layer_collage::populate_images(const string & _path)
+void Layer_collage::append_images(const string & _path)
 {
     ofDirectory dir(_path);
     if (!dir.exists()) {
@@ -166,48 +156,28 @@ void Layer_collage::populate_images(const string & _path)
 
     dir.listDir();
 
-    image_paths.clear();
     for (auto file : dir) {
-        image_paths.push_back(file.path());
+        patches.emplace_back(make_shared<CollagePatch>(file.path()));
     }
 }
 
-////--------------------------------------------------------------
-//void Layer_collage::setupQuad()
-//{
-//    drawQuad.addVertex(glm::vec3(0));
-//    drawQuad.addVertex(glm::vec3(0));
-//    drawQuad.addVertex(glm::vec3(0));
-//    drawQuad.addVertex(glm::vec3(0));
-//
-//    drawQuad.addTexCoord(glm::vec2(0.0, 0.0));
-//    drawQuad.addTexCoord(glm::vec2(1.0, 0.0));
-//    drawQuad.addTexCoord(glm::vec2(1.0, 1.0));
-//    drawQuad.addTexCoord(glm::vec2(0.0, 1.0));
-//
-//    drawQuad.addIndex(0);
-//    drawQuad.addIndex(1);
-//    drawQuad.addIndex(2);
-//
-//    drawQuad.addIndex(2);
-//    drawQuad.addIndex(3);
-//    drawQuad.addIndex(0);
-//}
-//
-////--------------------------------------------------------------
-//void Layer_collage::setQuad(const CollagePatch &colImage) const
-//{
-//    glm::vec2 imageSize = glm::vec2(colImage.getImageWidth(), colImage.getImageHeight());
-//    glm::vec2 size  = imageSize * colImage.getScale();
-//    glm::vec2 pos   = colImage.getCenter() - size * 0.5;
-//    
-//    glm::vec3 pos_00 = glm::vec3(pos.x, pos.y, 0);
-//    glm::vec3 pos_10 = glm::vec3(pos.x + size.x, pos.y, 0);
-//    glm::vec3 pos_11 = glm::vec3(pos.x + size.x, pos.y + size.y, 0);
-//    glm::vec3 pos_01 = glm::vec3(pos.x, pos.y + size.y, 0);
-//
-//    drawQuad.setVertex(0, pos_00);
-//    drawQuad.setVertex(1, pos_10);
-//    drawQuad.setVertex(2, pos_11);
-//    drawQuad.setVertex(3, pos_01);
-//}
+void Layer_collage::loadAllImages()
+{
+    if (imageLoader != nullptr) {
+        imageLoader->forceStop();
+    }
+
+    imageLoader = make_shared<threadedImageLoader>();
+    for (auto & patch : patches) {
+        patch->loadImage(imageLoader);
+    }
+    redraw();
+}
+
+void Layer_collage::loadImage(const shared_ptr<CollagePatch>& patch)
+{
+    if (imageLoader == nullptr) {
+        imageLoader = make_shared<threadedImageLoader>();
+    }
+    patch->loadImage(imageLoader);
+}

@@ -7,21 +7,46 @@
 
 class CollagePatch {
 public:
-    CollagePatch() :
+    CollagePatch(string & _path) :
+        path(_path),
         center(0.0),
         angle(0.0),
         scale(1.0),
-        b_positionSet(false)
+        b_drawn(false),
+        b_pending(false)
     {
+        image = new ofImage();
     }
 
-    ~CollagePatch() {}
+    ~CollagePatch() {
+        delete image;
+    }
 
-    ofImage & getImageReference()        { return image;  }
-    const ofTexture & getTexture() const { return image.getTexture(); }
+    void loadImage(shared_ptr<threadedImageLoader> imageLoader) {
+        image->clear();
+        b_pending = true;
+        imageLoader->loadFromDisk(*image, path);
+    }
 
-    float getImageWidth()  const { return  image.getWidth();}
-    float getImageHeight() const { return  image.getHeight();}
+    void unload() {
+        image->clear();
+        b_pending = false;
+    }
+
+    void setDrawn() {
+        b_drawn = true;
+        b_pending = false;
+        unload();
+    }
+
+    ofImage & getImageReference()        { return *image;  }
+    const ofTexture & getTexture() const { return image->getTexture(); }
+    
+    void setScale(float _scale)       { scale  = _scale;  b_drawn =  false; }
+    void setCenter(glm::vec2 _center) { center = _center; b_drawn =  false; }
+
+    float getImageWidth()  const { return  image->getWidth();}
+    float getImageHeight() const { return  image->getHeight();}
 
     float     getScale()    const { return scale;  }
     glm::vec2 getCenter()   const { return center; }
@@ -29,33 +54,32 @@ public:
     glm::vec2 getPosition() const { return center - 0.5 * getSize(); }
     glm::vec2 getSize()     const {   return glm::vec2(getImageWidth(),getImageHeight()) * scale; }
 
-    
-    void setScale(float _scale)       { scale  = _scale;  }
-    void setCenter(glm::vec2 _center) { center = _center; }
+    bool isReady()    const { 
+        return image->isUsingTexture() && image->isAllocated();  
+    }
 
-    bool isSetup()    const { 
-        return image.isUsingTexture() && b_positionSet && image.isAllocated();  
-    }
-    bool needsSetup() const {
-        return !b_positionSet && image.isUsingTexture() && image.isAllocated(); 
-    }
+    bool isDrawn()   const { return b_drawn;  }
+    bool isPending() const { return b_pending;  }
 
     void setup(glm::vec2 _center, float _scale, float _angle) {
+        b_drawn =  false;
         center  = _center;
         angle   = _angle;
         scale   = _scale;
-        b_positionSet = true;
     }
 
     CollagePatch(const CollagePatch&) = delete;
     CollagePatch& operator=(const CollagePatch&) = delete;
 
 private:
-    ofImage image;
+    string path;
+    ofImage * image;
     glm::vec2 center;
     float angle;
     float scale;
-    bool b_positionSet;
+
+    bool b_drawn;
+    bool b_pending;
 };
 
 class Layer_collage : public Static_base
@@ -64,67 +88,43 @@ public:
 
     Layer_collage(string name, int instance, Layer_Manager * _layer_manager)  : Static_base(name, instance, _layer_manager) {};
 
-    void onAlphaRangeChanged(glm::vec2 & _val);
-    void populate_images(const string & _path);
+    void append_images(const string & _path);
+    void replace_images(const string & _path) { onReset();  append_images(_path); }
 protected:
 
-    enum class Mode {
-        VIEWING = 0,
-        EDITING
-    };
-
-    virtual void onSetupListeners() override ;
-    virtual void onSetup()          override ;
+    virtual void onSetupListeners() override;
+    virtual void onSetup()          override;
+    virtual void onUpdate()         override;
     virtual void onSetupParams()    override ;
-    virtual void onDraw(bool _forced = false)  const    override ;
+    virtual void onDraw(bool _forced = false)   const  override ;
+    virtual void onRender(bool _forced = false) const  override ;
     virtual void onDrawGui()        override ;
-    virtual void onUpdate()         override ;
-    virtual void onReset()          override ;    
+    virtual void onDestroy();
+    virtual void onReset()          override;    
+    virtual void onResize()         override;
 
-    virtual void setupPatch(CollagePatch & _patch, int _idx) = 0;
+    void setupCollageFbo();
 
-    void updatePatches();
+    void loadAllImages();
+    void loadImage(const shared_ptr<CollagePatch> & patch);
 
     void onFileDragEvent(ofDragInfo & _fileInfo);
+    void onAlphaRangeChanged(glm::vec2 & _val);
     void onLoadFolder(bool & _loadFolder);
 
-    //void setupQuad();
-    //void setQuad(const CollagePatch &colImage) const;
+    mutable ofFbo collageFbo;
 
-    void setMode(Mode _mode);
-
-    virtual void onModeViewing() {};
-    virtual void onModeEditing() {};
-
-    Mode mode;
+    mutable bool b_allDrawn;
 
     ofParameter<glm::vec2> p_alphaRange;
     ofParameter<bool>      p_loadFolder;
 
-    vector<string> image_paths;
-    vector<shared_ptr<CollagePatch>> images;
-
-    struct {
-        int nSetup;
-        int nNeedsSetup;
-        int nLoading;
-        int nTotal;
-
-        void reset() {
-            nSetup      = 0;
-            nNeedsSetup = 0;
-            nLoading    = 0;
-            nTotal      = 0;
-        }
-    } patchInfo;
-
-    shared_ptr<CollagePatch> active_image;
+    vector<shared_ptr<CollagePatch>> patches;
+    shared_ptr<CollagePatch>         active_patch;
 
 private:
-
-    mutable shared_ptr<AutoShader> collageShader;
-    //mutable ofMesh   drawQuad;
-
+    mutable shared_ptr<AutoShader>  collageShader;
+    shared_ptr<threadedImageLoader> imageLoader;
 
 
 };

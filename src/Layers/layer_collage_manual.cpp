@@ -2,80 +2,121 @@
 
 REGISTER_TYPE(Layer_collage_manual, Manual Collage)
 
-void Layer_collage_manual::onSetupListeners()
+void  Layer_collage_manual::onSetupListeners()
 {
-    l_onFileDragged = ofEvents().fileDragEvent.newListener( this, &Layer_collage_manual::onFileDragEvent);
+    l_onKeyPressed  = ofEvents().keyPressed.newListener( this, & Layer_collage_manual::onKeyPressed );
+    
+    l_onMousePressed  = layer_manager->canvasMousePressed.newListener ( this, & Layer_collage_manual::onMousePressed );
+    l_onMouseMoved    = layer_manager->canvasMouseMoved.newListener   ( this, & Layer_collage_manual::onMouseMoved );
+    l_onMouseScrolled = layer_manager->canvasMouseScrolled.newListener( this, & Layer_collage_manual::onMouseScrolled);
 }
 
 
-void Layer_collage_manual::setupPatch(CollagePatch & _patch, int _idx)
-{
-        _patch.setup(size * 0.5, 1.0, 0.0);
-}
-
-//--------------------------------------------------------------
-void Layer_collage_manual::onFileDragEvent(ofDragInfo & _fileInfo)
-{
-
-    glm::vec2 pos = _fileInfo.position;
-
-    if (_fileInfo.files.size() > 1) ofLogWarning() << "Can't add multiple images.";
-
-    string file_path = _fileInfo.files[0];
-
-    ofFile file(file_path);
-
-    ofLogVerbose() << "File dragged " << file.getExtension() ;
-
-    if (!file.exists())          return;
-
-    ofImage newImage = ofImage(file.getAbsolutePath());
-
-    if (newImage.isAllocated()) {
-        images.emplace_back( new CollagePatch() );
-        active_image = images.back();        
-        setupPatch(*active_image, 0);
-        active_image->getImageReference() = newImage;
-
-
-        setMode(Mode::EDITING);
-
-        ofLogVerbose() << "Added image: " << file.path();
-    }
-}
 //--------------------------------------------------------------
 void Layer_collage_manual::onMouseMoved(ofMouseEventArgs & _args)
 {
-    if (mode == Mode::EDITING) {
-        active_image->setCenter( glm::vec2(_args.x, _args.y));
+    switch (mode) {
+        case MODE::NONE:
+            break;
+        case MODE::PLACING:
+            if (active_patch != nullptr) {
+                active_patch->setCenter(glm::vec2(_args.x, _args.y));
+            }
+            break;
     }
 }
 
 //--------------------------------------------------------------
 void Layer_collage_manual::onMousePressed(ofMouseEventArgs & _args)
 {
-    setMode(Mode::VIEWING);
+    if (_args.button == 0) {
+        switch (mode) {
+        case MODE::NONE:
+            if (patches.size() > 0) {
+                active_patch = patches.at(activePatchIndex);
+                loadImage(active_patch);
+                active_patch->setCenter(glm::vec2(_args.x, _args.y));
+                mode = MODE::PLACING;
+                redraw();
+            }            
+            break;
+        case MODE::PLACING:                                    
+            mode = MODE::NONE;
+            if (active_patch != nullptr) {
+                active_patch = nullptr;
+                redraw();
+            }
+            break;
+        }
+    }
+    else {
+        switch (mode) {
+        case MODE::NONE:
+            break;
+        case MODE::PLACING:                        
+            mode = MODE::NONE;
+            if (active_patch != nullptr) {
+                active_patch->unload();
+                active_patch = nullptr;
+                redraw();
+            }
+            break;
+        }
+    }
+}
+//--------------------------------------------------------------
+void Layer_collage_manual::onKeyPressed(ofKeyEventArgs & _args)
+{
+    if (_args.key == ' ') {
+        if (active_patch != nullptr && patches.size() > 1) {
+            if (active_patch->isReady()) {
+                glm::vec2 pos = active_patch->getCenter();
+
+                active_patch->unload();
+                activePatchIndex = (activePatchIndex + 1) % patches.size();
+                active_patch = patches.at(activePatchIndex);
+            
+                active_patch->setCenter(pos);
+                loadImage(active_patch);
+                redraw();
+            }
+        }
+    }
 }
 
 //--------------------------------------------------------------
 void Layer_collage_manual::onMouseScrolled(ofMouseEventArgs & _args)
 {
-    active_image->setScale( active_image->getScale() + _args.scrollY / 20.0f);
-}
+    switch (mode) {
+        case MODE::NONE:
+            break;
+        case MODE::PLACING:
 
-//--------------------------------------------------------------
-void Layer_collage_manual::onModeViewing()
-{
-    ofRemoveListener(layer_manager->canvasMouseMoved   , this, &Layer_collage_manual::onMouseMoved);
-    ofRemoveListener(layer_manager->canvasMousePressed , this, &Layer_collage_manual::onMousePressed);
-    ofRemoveListener(layer_manager->canvasMouseScrolled, this, &Layer_collage_manual::onMouseScrolled);
+            if (ofGetKeyPressed(OF_KEY_CONTROL)) {
+                if (active_patch != nullptr && patches.size() > 1) {
+                    if (active_patch->isReady()) {
+                        active_patch->unload();
 
-}
+                        activePatchIndex = (activePatchIndex + (int)_args.scrollY) % patches.size();
+                        active_patch = patches.at(activePatchIndex);
+                        active_patch->setCenter(glm::vec2(_args.x, _args.y));
+                        loadImage(active_patch);
+                        redraw();
+                    }
+                }
+            }
+            else {
 
-//--------------------------------------------------------------
-void Layer_collage_manual::onModeEditing()
-{
-    ofAddListener(layer_manager->canvasMouseMoved   , this, &Layer_collage_manual::onMouseMoved);
-    ofAddListener(layer_manager->canvasMousePressed , this, &Layer_collage_manual::onMousePressed);
-    ofAddListener(layer_manager->canvasMouseScrolled, this, &Layer_collage_manual::onMouseScrolled);
+                if (active_patch != nullptr) {
+                    float scale = active_patch->getScale();
+                    scale += _args.scrollY * 0.05;
+                    scale = max(0.1f, scale);
+                    active_patch->setScale(scale);
+                    active_patch->setCenter(glm::vec2(_args.x, _args.y));
+                    redraw();
+                }
+            }
+
+            break;
+    }
 }

@@ -126,6 +126,14 @@ void Layer_Manager::onProjectLoaded(bool & _val)
         specialLayers.insert_or_assign("Collage", func);
     }
 
+    // Add Collage Layer
+    if (projectManager().getResource(RESOURCE_TYPE::SEGMENTED) != nullptr) {
+        std::function<void(bool)> func = [=](bool _activate) {
+            this->addManualCollageLayer(_activate);
+        };
+        specialLayers.insert_or_assign("Manual Collage", func);
+    }
+
     // Add AI Collage Layer
     if (projectManager().getResource(RESOURCE_TYPE::COLLAGE) != nullptr) {
         std::function<void(bool)> func = [=](bool _activate) {
@@ -187,7 +195,27 @@ void Layer_Manager::addCollageLayer(bool _activate)
             return;
         }
 
-        img_layer->populate_images(targets->getDirectoryPath());
+        img_layer->replace_images(targets->getDirectoryPath());
+    }
+}
+
+void Layer_Manager::addManualCollageLayer(bool _activate)
+{
+    const string layer_name = "Manual Collage";
+
+    auto targets = projectManager().getResource(RESOURCE_TYPE::SEGMENTED);
+
+    auto layer_type = find(layer_types.begin(), layer_types.end(), layer_name);
+    if (layer_type != layer_types.end()) {
+        Layer_base * layer = add_layer(layer_name, _activate);
+        Layer_collage_manual * img_layer = dynamic_cast<Layer_collage_manual *>(layer);
+
+        if (img_layer == nullptr) {
+            delete_layer(layer);
+            return;
+        }
+
+        img_layer->replace_images(targets->getDirectoryPath());
     }
 }
 

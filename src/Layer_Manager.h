@@ -58,6 +58,7 @@ private:
     void onProjectLoaded(bool & _val);
     void addPortraitLayer(bool _activate);
     void addCollageLayer(bool _activate);
+    void addManualCollageLayer(bool _activate);
     void addAICollageLayer(bool _activate);
     void addFaceSwapLayer(bool _activate);
 

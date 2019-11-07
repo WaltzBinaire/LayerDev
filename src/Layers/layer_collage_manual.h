@@ -10,17 +10,19 @@ public:
 
 protected:
 
-    virtual void onSetupListeners()  override ;
-    
-    virtual void setupPatch(CollagePatch & _patch, int _idx) override;
+    enum class MODE {NONE, PLACING} mode = MODE::NONE;
 
-    void onFileDragEvent(ofDragInfo & _fileInfo);
+    virtual void onSetupListeners()  override ;
 
     void onMouseMoved(ofMouseEventArgs & _args);
     void onMousePressed(ofMouseEventArgs & _args);
     void onMouseScrolled(ofMouseEventArgs & _args);
+    void onKeyPressed(ofKeyEventArgs & _args);
 
-    virtual void onModeViewing() override;
-    virtual void onModeEditing() override;
+    int activePatchIndex = 0;
+
+    
+    ofEventListener l_onKeyPressed;
+
 };
 

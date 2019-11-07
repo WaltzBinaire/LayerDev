@@ -23,63 +23,45 @@ void Layer_collage_generative::onSetupParams()
     );
 }
 
-void Layer_collage_generative::onReset()
-{
-    if (imageLoader != nullptr) {
-        imageLoader->forceStop();
-        delete imageLoader;
-    }
-    Layer_collage::onReset();
-}
-
-void Layer_collage_generative::onDestroy()
-{
-    if (imageLoader != nullptr) {
-        imageLoader->forceStop();
-        delete imageLoader;
-    }
-}
-
-void Layer_collage_generative::setupPatch(CollagePatch & _patch, int _idx)
+void Layer_collage_generative::setupPatches()
 {
     MODE mode = (MODE)p_mode.get();
 
-    switch (mode) {
-    case MODE::LINES:
-        setupPatchLines(_patch, _idx);
-        break;
-    case MODE::RANDOM:
-        setupPatchRandom(_patch, _idx);
-        break;
+    for (int i = 0; i < patches.size(); i++) {
+        switch (mode) {
+        case MODE::LINES:
+            setupPatchLines(patches[i], i);
+            break;
+        case MODE::RANDOM:
+            setupPatchRandom(patches[i], i);
+            break;
+        }
     }
 }
 
-void Layer_collage_generative::setupPatchRandom(CollagePatch & _patch, int _idx)
+void Layer_collage_generative::setupPatchRandom(shared_ptr<CollagePatch> _patch, int _idx)
 {
     glm::vec2 center = glm::vec2( ofRandom(0.0, size.x), ofRandom(0.0, size.y));
     float scale = ofRandom(0.5 * p_scale, p_scale);
     float angle = 1.0;
 
-    _patch.setup(center, scale, angle);
+    _patch->setup(center, scale, angle);
 }
 
-void Layer_collage_generative::setupPatchLines(CollagePatch & _patch, int _idx)
+void Layer_collage_generative::setupPatchLines(shared_ptr<CollagePatch> _patch, int _idx)
 {
     int w  = floor(size.x / p_number);
     int h  = size.y;
-    int x  = floor(ofRandom(0.0, _patch.getImageWidth() - w));
+    int x  = floor(ofRandom(0.0, _patch->getImageWidth() - w));
     int y  = 0.0;
 
-    float scale = size.y / _patch.getImageHeight();
+    float scale = size.y / _patch->getImageHeight();
     glm::vec2 center((_idx + 0.5) * w, h * 0.5);
 
-    _patch.setup(center, 2.0 * scale, 0.0);
+    _patch->setup(center, 2.0 * scale, 0.0);
 
-    ofImage & newImage = _patch.getImageReference();
+    ofImage & newImage = _patch->getImageReference();
     newImage.crop(x, y, w / scale, h);
-
-    //newImage.resize(  scale * newImage.getWidth(), scale * newImage.getHeight());
-    
 
 }
 
@@ -88,38 +70,15 @@ void Layer_collage_generative::onGenerate(bool & _generate)
     if (!_generate) return;
     _generate = false;
 
-    if (image_paths.size() == 0) return;
+    setupCollageFbo();
 
-    std::random_shuffle(image_paths.begin(), image_paths.end());
-    loadImages();
-    redraw();
+    std::random_shuffle(patches.begin(), patches.end());
+    setupPatches();
+    loadAllImages();
 }
 
 void Layer_collage_generative::onDrawGui()
 {
     Layer_collage::onDrawGui();    
     SingleLayerGui::specialisedDrawGui<Layer_collage_generative>(this); 
-}
-
-void Layer_collage_generative::loadImages()
-{
-    if (imageLoader != nullptr) {
-        imageLoader->forceStop();
-        delete imageLoader;
-    }
-    images.clear();
-    patchInfo.reset();
-
-    imageLoader = new threadedImageLoader();
-
-    images.reserve(p_number);
-    for (int i = 0; i < p_number; i++) {
-        int index = i % image_paths.size();
-
-        shared_ptr<CollagePatch> newPatch = make_shared<CollagePatch>();
-
-        images.emplace_back(move(newPatch));
-        ofImage & image = images.back()->getImageReference();
-        imageLoader->loadFromDisk(image, image_paths[index]);
-    }
 }

@@ -20,24 +20,18 @@ public:
 protected:
     
     virtual void onSetupParams() override ;
-    virtual void onReset()   override;
-    virtual void onDestroy() override;
-
-    virtual void setupPatch(CollagePatch & _patch, int _idx) override;
-    void setupPatchRandom(CollagePatch & _patch, int _idx);
-    void setupPatchLines(CollagePatch & _patch, int _idx);
-
-    void onGenerate(bool & _generate);
     virtual void onDrawGui()     override ;
 
-    void loadImages();
+    void onGenerate(bool & _generate);
 
+    virtual void setupPatches();
+    void setupPatchRandom(shared_ptr<CollagePatch> _patch, int _idx);
+    void setupPatchLines (shared_ptr<CollagePatch> _patch, int _idx);
 
     ofParameter<bool>  p_generate;
     ofParameter<float> p_scale;
     ofParameter<int>   p_number;
     ofParameter<int>   p_mode;
 
-    threadedImageLoader* imageLoader = nullptr;
 };
 
