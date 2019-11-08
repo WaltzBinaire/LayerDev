@@ -122,7 +122,7 @@ void Layer_file_aiCollage::handle_file(const string & _path)
     m_collage.load(_path);
     if (m_collage.isLoaded()) redraw(); 
 
-    Layer_file * img_layer = dynamic_cast<Layer_image_advanced *>(layer_manager->keyLayer);
+    auto img_layer = dynamic_pointer_cast<Layer_image_advanced>(layer_manager->keyLayer);
     if (img_layer != nullptr) {
         position = img_layer->getPosition();
 

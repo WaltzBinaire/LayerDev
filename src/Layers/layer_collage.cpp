@@ -145,6 +145,15 @@ void Layer_collage::onLoadFolder(bool & _loadFolder)
 
 }
 
+void Layer_collage::stopImageLoader()
+{
+    if (imageLoader != nullptr) {
+        imageLoader->forceStop();
+    }
+    
+    imageLoader = make_shared<threadedImageLoader>();
+}
+
 void Layer_collage::append_images(const string & _path)
 {
     ofDirectory dir(_path);
@@ -157,19 +166,19 @@ void Layer_collage::append_images(const string & _path)
     dir.listDir();
 
     for (auto file : dir) {
-        patches.emplace_back(make_shared<CollagePatch>(file.path()));
+        paths.push_back(file.path());
     }
 }
 
 void Layer_collage::loadAllImages()
 {
-    if (imageLoader != nullptr) {
-        imageLoader->forceStop();
-    }
+    stopImageLoader();
 
-    imageLoader = make_shared<threadedImageLoader>();
     for (auto & patch : patches) {
-        patch->loadImage(imageLoader);
+        if (patch->isSetup()) {
+            patch->loadImage(imageLoader);
+        }
+
     }
     redraw();
 }

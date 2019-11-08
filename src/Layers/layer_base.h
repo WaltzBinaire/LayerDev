@@ -71,7 +71,7 @@ public:
     void saveMask();
 
     static void registerType(const string& name, Layer_factory *factory);
-    static Layer_base *create(const string &name, Layer_Manager * _layer_manager);
+    static shared_ptr<Layer_base> create(const string &name, Layer_Manager * _layer_manager);
 
     static bool isFilter(const string &name);
 
@@ -238,7 +238,7 @@ protected:
 class Layer_factory
 {
 public:
-    virtual Layer_base *create(Layer_Manager * _layer_manager) = 0;
+    virtual shared_ptr<Layer_base> create(Layer_Manager * _layer_manager) = 0;
     virtual bool isFilter() = 0;
 protected:
     string class_name;
@@ -255,8 +255,9 @@ protected:
             class_name   = #klass; \
             display_name = #name; \
         } \
-        virtual Layer_base *create(Layer_Manager * _layer_manager) { \
-            return new klass( display_name, instance++ , _layer_manager); \
+        virtual shared_ptr<Layer_base> create(Layer_Manager * _layer_manager) { \
+            shared_ptr<klass> ptr = make_shared<klass>(display_name, instance++ , _layer_manager); \
+            return dynamic_pointer_cast<Layer_base>(ptr); \
         } \
         virtual bool isFilter() { \
             return std::is_base_of<Filter_base, klass>::value; \

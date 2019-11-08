@@ -11,7 +11,7 @@ threadedImageLoader::threadedImageLoader(){
 }
 
 threadedImageLoader::~threadedImageLoader(){
-
+    close();
 }
 
 // Load an image from disk.
@@ -54,11 +54,17 @@ void threadedImageLoader::threadedFunction() {
 
         if (!isThreadRunning()) close();
 
-		if(entry.image->load(entry.filename) )  {
-			images_to_update.send(entry);
-		}else{
-			ofLogError("threadedImageLoader") << "couldn't load file: \"" << entry.filename << "\"";
-		}
+        if (entry.image != nullptr) {
+            if(entry.image->load(entry.filename) )  {
+			    images_to_update.send(entry);
+		    }else{
+			    ofLogError("threadedImageLoader") << "couldn't load file: \"" << entry.filename << "\"";
+		    }
+        }
+        else {
+			    ofLogError("threadedImageLoader") << "Image no longer exists: \"" << entry.filename << "\"";
+        }
+
 	}
 	ofLogVerbose("threadedImageLoader") << "finishing thread on closed queue";
 }
@@ -68,7 +74,7 @@ void threadedImageLoader::close()
 {
     images_to_load_from_disk.close();
 	images_to_update.close();
-	waitForThread(true);
+	waitForThread(true, INFINITE_JOIN_TIMEOUT);
     ofRemoveListener(ofEvents().update, this, &threadedImageLoader::update);
 }
 
@@ -77,26 +83,31 @@ void threadedImageLoader::close()
 void threadedImageLoader::update(ofEventArgs & a){
     // Load 1 image per update so we don't block the gl thread for too long
 	ofImageLoaderEntry entry;
-	if (images_to_update.tryReceive(entry)) {
-        ofLogNotice() << "Thread loaded: " << entry.filename;
-        if (entry.b_resize) {            
-            glm::vec2 size;
-            float aspect_ratio = entry.image->getWidth() / entry.image->getHeight();
-            if (aspect_ratio > 1.0) {
-                size = glm::vec2(
-                    entry.size,
-                    entry.size / aspect_ratio
-                );
+    if (images_to_update.tryReceive(entry)) {
+
+        if (entry.image != nullptr) {
+            if (entry.b_resize) {
+                glm::vec2 size;
+                float aspect_ratio = entry.image->getWidth() / entry.image->getHeight();
+                if (aspect_ratio > 1.0) {
+                    size = glm::vec2(
+                        entry.size,
+                        entry.size / aspect_ratio
+                    );
+                }
+                else {
+                    size = glm::vec2(
+                        entry.size  * aspect_ratio,
+                        entry.size
+                    );
+                }
+                entry.image->resize(size.x, size.y);
             }
-            else {
-                size = glm::vec2 (
-                    entry.size  * aspect_ratio,
-                    entry.size
-                );
-            }
-            entry.image->resize(size.x, size.y);
+            entry.image->setUseTexture(true);
+            entry.image->update();
         }
-		entry.image->setUseTexture(true);
-		entry.image->update();
-	}
+        else {
+			ofLogError("threadedImageLoader") << "Image no longer exists: \"" << entry.filename << "\"";
+        }
+    }
 }

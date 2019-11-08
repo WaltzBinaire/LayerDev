@@ -31,29 +31,29 @@ const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_name
 
 ProjectResource::~ProjectResource()
 {
-    imageLoader.forceStop();
-    
-    for (ofImage* & img : thumbnail_images) {
-        delete(img);
-    }
+    //imageLoader.forceStop();
+    //
+    //for (ofImage* & img : thumbnail_images) {
+    //    delete(img);
+    //}
 }
 
-const vector<ofTexture>& ProjectResource::getThumbnails() const
-{
-    if (thumbnail_images.size() == thumbnail_textures.size()) {
-        return thumbnail_textures;
-    }
-    else {
-        thumbnail_textures.clear();
-
-        for (ofImage* img : thumbnail_images) {
-            if (img->isUsingTexture()) {
-                thumbnail_textures.push_back(img->getTexture());
-            }
-        }
-        return thumbnail_textures;
-    }
-}
+//const vector<ofTexture>& ProjectResource::getThumbnails() const
+//{
+//    if (thumbnail_images.size() == thumbnail_textures.size()) {
+//        return thumbnail_textures;
+//    }
+//    else {
+//        thumbnail_textures.clear();
+//
+//        for (ofImage* img : thumbnail_images) {
+//            if (img->isUsingTexture()) {
+//                thumbnail_textures.push_back(img->getTexture());
+//            }
+//        }
+//        return thumbnail_textures;
+//    }
+//}
 
 bool ProjectResource::setup(const string & _path)
 {
@@ -81,10 +81,10 @@ bool ProjectResource::setup(const string & _path)
         case ProjectResource::RESOURCE_TYPE::TARGET:
         case ProjectResource::RESOURCE_TYPE::MASKS:
         case ProjectResource::RESOURCE_TYPE::FACES:
-            loadThumbnails();
+            //loadThumbnails();
             break;
         case RESOURCE_TYPE::COLLAGE:
-            loadCollageThumbnails();
+            //loadCollageThumbnails();
             break;
         default:
             break;
@@ -137,32 +137,32 @@ inline void ProjectResource::scanDir(ofDirectory & dir, const vector<string>& al
     }
 }
 
-void ProjectResource::loadThumbnails()
-{
-    for (const string & file : filePaths) {
-        thumbnail_images.push_back( new ofImage() );
-        imageLoader.loadFromDisk(*thumbnail_images.back(), file, THUMBNAIL_SIZE);
-    }
-}
+//void ProjectResource::loadThumbnails()
+//{
+//    for (const string & file : filePaths) {
+//        thumbnail_images.push_back( new ofImage() );
+//        imageLoader.loadFromDisk(*thumbnail_images.back(), file, THUMBNAIL_SIZE);
+//    }
+//}
 
-void ProjectResource::loadCollageThumbnails()
-{
-    for (const string & file : filePaths) {
-
-        string imagePath(file);
-
-        if (imagePath.size() > 5) {
-            imagePath.replace(imagePath.end()-3, imagePath.end(), "png");
-
-            ofFile imageFile(imagePath);
-            if (imageFile.exists()) {
-                ofLogNotice(__FUNCTION__) << imagePath;
-                thumbnail_images.push_back( new ofImage() );
-                imageLoader.loadFromDisk(*thumbnail_images.back(), imagePath, THUMBNAIL_SIZE);
-            }
-        }
-    }
-}
+//void ProjectResource::loadCollageThumbnails()
+//{
+//    for (const string & file : filePaths) {
+//
+//        string imagePath(file);
+//
+//        if (imagePath.size() > 5) {
+//            imagePath.replace(imagePath.end()-3, imagePath.end(), "png");
+//
+//            ofFile imageFile(imagePath);
+//            if (imageFile.exists()) {
+//                ofLogNotice(__FUNCTION__) << imagePath;
+//                thumbnail_images.push_back( new ofImage() );
+//                imageLoader.loadFromDisk(*thumbnail_images.back(), imagePath, THUMBNAIL_SIZE);
+//            }
+//        }
+//    }
+//}
 
 
 //---------------------------------------------------------------------------------------

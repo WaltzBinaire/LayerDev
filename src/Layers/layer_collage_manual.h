@@ -19,7 +19,7 @@ protected:
     void onMouseScrolled(ofMouseEventArgs & _args);
     void onKeyPressed(ofKeyEventArgs & _args);
 
-    int activePatchIndex = 0;
+    int pathIndex = 0;
 
     
     ofEventListener l_onKeyPressed;

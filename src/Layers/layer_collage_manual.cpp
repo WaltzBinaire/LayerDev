@@ -4,6 +4,8 @@ REGISTER_TYPE(Layer_collage_manual, Manual Collage)
 
 void  Layer_collage_manual::onSetupListeners()
 {
+    Layer_collage::onSetupListeners();
+
     l_onKeyPressed  = ofEvents().keyPressed.newListener( this, & Layer_collage_manual::onKeyPressed );
     
     l_onMousePressed  = layer_manager->canvasMousePressed.newListener ( this, & Layer_collage_manual::onMousePressed );
@@ -32,13 +34,15 @@ void Layer_collage_manual::onMousePressed(ofMouseEventArgs & _args)
     if (_args.button == 0) {
         switch (mode) {
         case MODE::NONE:
-            if (patches.size() > 0) {
-                active_patch = patches.at(activePatchIndex);
+            if (paths.size() > 0) {
+                patches.emplace_back(make_shared<CollagePatch>(paths[pathIndex % paths.size()]));
+                active_patch = patches.back();
                 loadImage(active_patch);
+
                 active_patch->setCenter(glm::vec2(_args.x, _args.y));
                 mode = MODE::PLACING;
-                redraw();
-            }            
+                redraw(); 
+            }         
             break;
         case MODE::PLACING:                                    
             mode = MODE::NONE;
@@ -70,13 +74,7 @@ void Layer_collage_manual::onKeyPressed(ofKeyEventArgs & _args)
     if (_args.key == ' ') {
         if (active_patch != nullptr && patches.size() > 1) {
             if (active_patch->isReady()) {
-                glm::vec2 pos = active_patch->getCenter();
-
-                active_patch->unload();
-                activePatchIndex = (activePatchIndex + 1) % patches.size();
-                active_patch = patches.at(activePatchIndex);
-            
-                active_patch->setCenter(pos);
+                active_patch->setNewPath(paths[pathIndex++ % paths.size()]);
                 loadImage(active_patch);
                 redraw();
             }
@@ -95,11 +93,7 @@ void Layer_collage_manual::onMouseScrolled(ofMouseEventArgs & _args)
             if (ofGetKeyPressed(OF_KEY_CONTROL)) {
                 if (active_patch != nullptr && patches.size() > 1) {
                     if (active_patch->isReady()) {
-                        active_patch->unload();
-
-                        activePatchIndex = (activePatchIndex + (int)_args.scrollY) % patches.size();
-                        active_patch = patches.at(activePatchIndex);
-                        active_patch->setCenter(glm::vec2(_args.x, _args.y));
+                        active_patch->setNewPath(paths[pathIndex++ % paths.size()]);
                         loadImage(active_patch);
                         redraw();
                     }

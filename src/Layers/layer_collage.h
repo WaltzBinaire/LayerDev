@@ -13,23 +13,27 @@ public:
         angle(0.0),
         scale(1.0),
         b_drawn(false),
-        b_pending(false)
+        b_pending(false),
+        b_isSetup(false)
     {
-        image = new ofImage();
     }
 
     ~CollagePatch() {
-        delete image;
     }
 
     void loadImage(shared_ptr<threadedImageLoader> imageLoader) {
-        image->clear();
+        image.clear();
         b_pending = true;
-        imageLoader->loadFromDisk(*image, path);
+        imageLoader->loadFromDisk(image, path);
+    }
+
+    void setNewPath(string _path) {
+        unload();
+        path = _path;
     }
 
     void unload() {
-        image->clear();
+        image.clear();
         b_pending = false;
     }
 
@@ -39,33 +43,35 @@ public:
         unload();
     }
 
-    ofImage & getImageReference()        { return *image;  }
-    const ofTexture & getTexture() const { return image->getTexture(); }
+    ofImage & getImageReference()        { return image;  }
+    const ofTexture & getTexture() const { return image.getTexture(); }
     
     void setScale(float _scale)       { scale  = _scale;  b_drawn =  false; }
     void setCenter(glm::vec2 _center) { center = _center; b_drawn =  false; }
 
-    float getImageWidth()  const { return  image->getWidth();}
-    float getImageHeight() const { return  image->getHeight();}
+    float getImageWidth()  const  { return  image.getWidth();}
+    float getImageHeight() const  { return  image.getHeight();}
 
     float     getScale()    const { return scale;  }
     glm::vec2 getCenter()   const { return center; }
     float     getAngle()    const { return angle;  }
     glm::vec2 getPosition() const { return center - 0.5 * getSize(); }
-    glm::vec2 getSize()     const {   return glm::vec2(getImageWidth(),getImageHeight()) * scale; }
+    glm::vec2 getSize()     const { return glm::vec2(getImageWidth(),getImageHeight()) * scale; }
 
     bool isReady()    const { 
-        return image->isUsingTexture() && image->isAllocated();  
+        return image.isUsingTexture() && image.isAllocated();  
     }
 
-    bool isDrawn()   const { return b_drawn;  }
-    bool isPending() const { return b_pending;  }
+    bool isDrawn()   const { return b_drawn;   }
+    bool isPending() const { return b_pending; }
+    bool isSetup()  const  { return b_isSetup; }
 
     void setup(glm::vec2 _center, float _scale, float _angle) {
-        b_drawn =  false;
-        center  = _center;
-        angle   = _angle;
-        scale   = _scale;
+        b_drawn   =  false;
+        b_isSetup =  true;
+        center    = _center;
+        angle     = _angle;
+        scale     = _scale;
     }
 
     CollagePatch(const CollagePatch&) = delete;
@@ -73,12 +79,13 @@ public:
 
 private:
     string path;
-    ofImage * image;
+    ofImage image;
     glm::vec2 center;
     float angle;
     float scale;
 
     bool b_drawn;
+    bool b_isSetup;
     bool b_pending;
 };
 
@@ -89,7 +96,7 @@ public:
     Layer_collage(string name, int instance, Layer_Manager * _layer_manager)  : Static_base(name, instance, _layer_manager) {};
 
     void append_images(const string & _path);
-    void replace_images(const string & _path) { onReset();  append_images(_path); }
+    void replace_images(const string & _path) { paths.clear();  append_images(_path); }
 protected:
 
     virtual void onSetupListeners() override;
@@ -112,6 +119,8 @@ protected:
     void onAlphaRangeChanged(glm::vec2 & _val);
     void onLoadFolder(bool & _loadFolder);
 
+    void stopImageLoader();
+
     mutable ofFbo collageFbo;
 
     mutable bool b_allDrawn;
@@ -120,6 +129,7 @@ protected:
     ofParameter<bool>      p_loadFolder;
 
     vector<shared_ptr<CollagePatch>> patches;
+    vector<string>                   paths;
     shared_ptr<CollagePatch>         active_patch;
 
 private:

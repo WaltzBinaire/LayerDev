@@ -106,7 +106,7 @@ void Layer_base::registerType(const string & name, Layer_factory * factory)
     (Layer_base::GetFactoryDirectory())->insert_or_assign(name, factory);
 }
 
-Layer_base * Layer_base::create(const string & name, Layer_Manager * _layer_manager )
+shared_ptr<Layer_base> Layer_base::create(const string & name, Layer_Manager * _layer_manager )
 {
     return (Layer_base::GetFactoryDirectory())->at(name)->create(_layer_manager);
 }

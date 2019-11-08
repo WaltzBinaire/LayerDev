@@ -10,7 +10,7 @@ void Layer_collage_generative::onSetupParams()
     p_generate.set("Generate", false);
     p_generate.addListener(this, &Layer_collage_generative::onGenerate);
 
-    p_number.set("Number", 40, 1, 300);
+    p_number.set("Number", 40, 1, 500);
     p_scale.set ("Scale" , 4.0, 0.1, 10);
 
     p_mode.set("Mode", (int)MODE::RANDOM, (int)MODE::RANDOM, (int)MODE::LINES);
@@ -26,14 +26,19 @@ void Layer_collage_generative::onSetupParams()
 void Layer_collage_generative::setupPatches()
 {
     MODE mode = (MODE)p_mode.get();
+    patches.clear();    
+    patches.reserve(p_number);
+    for (int i = 0; i < p_number; i++) {
 
-    for (int i = 0; i < patches.size(); i++) {
+        string filePath = paths[i % paths.size()];
+        patches.emplace_back(make_shared<CollagePatch>(filePath));
+
         switch (mode) {
         case MODE::LINES:
-            setupPatchLines(patches[i], i);
+            setupPatchLines(patches.back(), i);
             break;
         case MODE::RANDOM:
-            setupPatchRandom(patches[i], i);
+            setupPatchRandom(patches.back(), i);
             break;
         }
     }
@@ -58,11 +63,7 @@ void Layer_collage_generative::setupPatchLines(shared_ptr<CollagePatch> _patch, 
     float scale = size.y / _patch->getImageHeight();
     glm::vec2 center((_idx + 0.5) * w, h * 0.5);
 
-    _patch->setup(center, 2.0 * scale, 0.0);
-
-    ofImage & newImage = _patch->getImageReference();
-    newImage.crop(x, y, w / scale, h);
-
+    _patch->setup(center, scale, 0.0 );
 }
 
 void Layer_collage_generative::onGenerate(bool & _generate)
@@ -70,9 +71,13 @@ void Layer_collage_generative::onGenerate(bool & _generate)
     if (!_generate) return;
     _generate = false;
 
+    if (paths.size() == 0) return;
+
+    stopImageLoader();  
+
     setupCollageFbo();
 
-    std::random_shuffle(patches.begin(), patches.end());
+    std::random_shuffle(paths.begin(), paths.end());
     setupPatches();
     loadAllImages();
 }

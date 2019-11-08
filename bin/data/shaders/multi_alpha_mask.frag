@@ -23,7 +23,7 @@ void main()
     float i = alpha.r > 0.01 ? 1.0 : 0.0;
     vec3 col = mix(base.rgb, replacement.rgb, i);  
     
-    outputColor = vec4( col, base.a );
+    outputColor = vec4( col, 1.0 );
 
     //outputColor = base;
     //outputColor = alpha;

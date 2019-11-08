@@ -316,7 +316,7 @@ void LayerGui::drawLayerMenu(ImVec2 pos, ImVec2 size)
     if (ImGui::Begin("Layers", NULL, sidebarFlags)) {
 
         for (auto itr = manager->layers.rbegin(); itr != manager->layers.rend(); ++itr) {
-            Layer_base* layer = (*itr);
+            shared_ptr<Layer_base> layer = (*itr);
             string label = layer->get_display_name();
             string id_label = "##" + layer->get_name();
 
@@ -365,7 +365,7 @@ void LayerGui::drawLayerMenu(ImVec2 pos, ImVec2 size)
 //---------------------------------------------------------
 void LayerGui::drawActiveLayerMenu(ImVec2 pos, ImVec2 size) 
 {
-    Layer_base * layer = manager->active_layer;
+    shared_ptr<Layer_base> layer = manager->active_layer;
     if (layer == nullptr) return;
 
     static ImGuiWindowFlags sidebarFlags = 
@@ -502,26 +502,26 @@ void LayerGui::drawProjectMenu(ImVec2 pos, ImVec2 size)
             ImGui::BeginChild("Images##", ImVec2(0, 0), false);
             if (resource != nullptr) {
 
-                ostringstream str;
-                str << resource->getNumLoadedFiles() << "/" << resource->getNumFiles();
-                ImGui::Text(str.str().c_str());
+                //ostringstream str;
+                //str << resource->getNumLoadedFiles() << "/" << resource->getNumFiles();
+                //ImGui::Text(str.str().c_str());
 
-                const vector<ofTexture> & thumbnails = resource->getThumbnails();
+                //const vector<ofTexture> & thumbnails = resource->getThumbnails();
 
-                int numPerLine = floor(ImGui::GetWindowWidth() / THUMBNAIL_SIZE);
+                //int numPerLine = floor(ImGui::GetWindowWidth() / THUMBNAIL_SIZE);
 
-                int it = 0;
-                for (int i = 0; i < thumbnails.size(); i++)
-                {
-                    ImTextureID tex_id;
-                    
-                    if (getTextureId(thumbnails[i], tex_id) ){
-                        ImGui::Image(tex_id, ImVec2(THUMBNAIL_SIZE, THUMBNAIL_SIZE));
+                //int it = 0;
+                //for (int i = 0; i < thumbnails.size(); i++)
+                //{
+                //    ImTextureID tex_id;
+                //    
+                //    if (getTextureId(thumbnails[i], tex_id) ){
+                //        ImGui::Image(tex_id, ImVec2(THUMBNAIL_SIZE, THUMBNAIL_SIZE));
 
-                        if (it++ % numPerLine == numPerLine - 1) continue;
-                        ImGui::SameLine();
-                    }
-                }
+                //        if (it++ % numPerLine == numPerLine - 1) continue;
+                //        ImGui::SameLine();
+                //    }
+                //}
             }
             ImGui::EndChild();
 

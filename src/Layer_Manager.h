@@ -37,13 +37,13 @@ public:
     void save()         const;
     void exportLayers() const;
 
-    Layer_base *  add_layer(string name, bool _activate = true);
+    shared_ptr<Layer_base> add_layer(string name, bool _activate = true);
     
     vector<string> get_layer_names();
     void redrawAll();
 
     map<string, std::function<void(bool)>> specialLayers;
-    Layer_base * keyLayer = nullptr;
+    shared_ptr<Layer_base> keyLayer;
 
 private:
 
@@ -70,17 +70,17 @@ private:
     void onCanvasResized(glm::vec2 & _size);
     void onBackgroundChanged(bool & _var);
 
-    deque<Layer_base*>::iterator findLayer(Layer_base* _layer);
-    void setActiveLayer(Layer_base* _layer);
-    void delete_layer(Layer_base* _layer);
-    void move_layer(Layer_base* _layer, DIRECTION _dir);
+    deque<shared_ptr<Layer_base>>::iterator findLayer(shared_ptr<Layer_base> _layer);
+    void setActiveLayer(shared_ptr<Layer_base> _layer);
+    void delete_layer(shared_ptr<Layer_base> _layer);
+    void move_layer(shared_ptr<Layer_base> _layer, DIRECTION _dir);
 
     mutable Canvas canvas;
     glm::vec2 mousePosition;
     vector<string> layer_types;
 
-    deque<Layer_base*> layers;
-    Layer_base* active_layer;
+    deque<shared_ptr<Layer_base>> layers;
+    shared_ptr<Layer_base> active_layer;
     
 
     // Gui

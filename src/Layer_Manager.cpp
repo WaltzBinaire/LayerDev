@@ -22,13 +22,9 @@ Layer_Manager::~Layer_Manager()
     removeListeners();
 
     if (gui != nullptr) delete(gui);
-
-    for (auto layer = layers.begin(); layer < layers.end(); layer++) {
-        if (*layer != nullptr) delete(*layer);
-    }
 }
 
-Layer_base * Layer_Manager::add_layer(string name, bool _activate)
+shared_ptr<Layer_base> Layer_Manager::add_layer(string name, bool _activate)
 {
     if (std::find(layer_types.begin(), layer_types.end(), name) == layer_types.end()) {
         ofLogWarning() << name << " is not an available layer type";
@@ -126,7 +122,7 @@ void Layer_Manager::onProjectLoaded(bool & _val)
         specialLayers.insert_or_assign("Collage", func);
     }
 
-    // Add Collage Layer
+    // Add Manual Collage Layer
     if (projectManager().getResource(RESOURCE_TYPE::SEGMENTED) != nullptr) {
         std::function<void(bool)> func = [=](bool _activate) {
             this->addManualCollageLayer(_activate);
@@ -142,7 +138,7 @@ void Layer_Manager::onProjectLoaded(bool & _val)
         specialLayers.insert_or_assign("AI Collage", func);
     }
 
-    // Add AI Collage Layer
+    // Add Face Swap
     if (projectManager().getResource(RESOURCE_TYPE::FACES) != nullptr) {
         std::function<void(bool)> func = [=](bool _activate) {
             this->addFaceSwapLayer(_activate);
@@ -160,8 +156,8 @@ void Layer_Manager::addPortraitLayer(bool _activate)
 
     auto layer_type = find(layer_types.begin(), layer_types.end(), layer_name);
     if (layer_type != layer_types.end()) {
-        Layer_base * layer = add_layer(layer_name, _activate);
-        Layer_image_advanced * img_layer = dynamic_cast<Layer_image_advanced *>(layer);
+        shared_ptr<Layer_base> layer = add_layer(layer_name, _activate);
+        auto img_layer = dynamic_pointer_cast<Layer_image_advanced>(layer);
 
         if (img_layer == nullptr) {
             delete_layer(layer);
@@ -187,8 +183,8 @@ void Layer_Manager::addCollageLayer(bool _activate)
 
     auto layer_type = find(layer_types.begin(), layer_types.end(), layer_name);
     if (layer_type != layer_types.end()) {
-        Layer_base * layer = add_layer(layer_name, _activate);
-        Layer_collage_generative * img_layer = dynamic_cast<Layer_collage_generative *>(layer);
+        auto layer = add_layer(layer_name, _activate);
+        auto img_layer = dynamic_pointer_cast<Layer_collage_generative>(layer);
 
         if (img_layer == nullptr) {
             delete_layer(layer);
@@ -207,8 +203,8 @@ void Layer_Manager::addManualCollageLayer(bool _activate)
 
     auto layer_type = find(layer_types.begin(), layer_types.end(), layer_name);
     if (layer_type != layer_types.end()) {
-        Layer_base * layer = add_layer(layer_name, _activate);
-        Layer_collage_manual * img_layer = dynamic_cast<Layer_collage_manual *>(layer);
+        shared_ptr<Layer_base> layer = add_layer(layer_name, _activate);
+        auto img_layer = dynamic_pointer_cast<Layer_collage_manual>(layer);
 
         if (img_layer == nullptr) {
             delete_layer(layer);
@@ -227,8 +223,8 @@ void Layer_Manager::addAICollageLayer(bool _activate)
 
     auto layer_type = find(layer_types.begin(), layer_types.end(), layer_name);
     if (layer_type != layer_types.end()) {
-        Layer_base * layer = add_layer(layer_name, _activate);
-        Layer_file_aiCollage * collage_layer = dynamic_cast<Layer_file_aiCollage *>(layer);
+        shared_ptr<Layer_base> layer = add_layer(layer_name, _activate);
+        auto collage_layer = dynamic_pointer_cast<Layer_file_aiCollage>(layer);
 
         if (collage_layer == nullptr) {
             delete_layer(layer);
@@ -247,8 +243,8 @@ void Layer_Manager::addFaceSwapLayer(bool _activate)
 
     auto layer_type = find(layer_types.begin(), layer_types.end(), layer_name);
     if (layer_type != layer_types.end()) {
-        Layer_base * layer = add_layer(layer_name, _activate);
-        Layer_alpha_replace_face * collage_layer = dynamic_cast<Layer_alpha_replace_face *>(layer);
+        shared_ptr<Layer_base> layer = add_layer(layer_name, _activate);
+        auto collage_layer = dynamic_pointer_cast<Layer_alpha_replace_face>(layer);
 
         if (collage_layer == nullptr) {
             delete_layer(layer);
@@ -300,7 +296,7 @@ void Layer_Manager::onBackgroundChanged(bool & _var)
     redrawAll();
 }
 
-void Layer_Manager::setActiveLayer(Layer_base* _layer)
+void Layer_Manager::setActiveLayer(shared_ptr<Layer_base> _layer)
 {
     if(active_layer != nullptr) active_layer->deactivate();
     if (active_layer != _layer) {
@@ -313,7 +309,7 @@ void Layer_Manager::setActiveLayer(Layer_base* _layer)
 
 }
 
-deque<Layer_base*>::iterator Layer_Manager::findLayer(Layer_base * _layer)
+deque<shared_ptr<Layer_base>>::iterator Layer_Manager::findLayer(shared_ptr<Layer_base> _layer)
 {
     for (auto layer = layers.begin(); layer < layers.end(); layer++) {
         if (*layer == _layer) return layer;
@@ -321,19 +317,17 @@ deque<Layer_base*>::iterator Layer_Manager::findLayer(Layer_base * _layer)
     return layers.end();
 }
 
-void Layer_Manager::delete_layer(Layer_base* _layer)
+void Layer_Manager::delete_layer(shared_ptr<Layer_base> _layer)
 {
     auto layer_itr = findLayer(_layer);
     if (layer_itr != layers.end()) {
         layers.erase(layer_itr);
 
         if (active_layer == _layer) active_layer = nullptr;
-        _layer->destroy();
-        delete _layer;
     }
 }
 
-void Layer_Manager::move_layer(Layer_base* _layer, DIRECTION _dir)
+void Layer_Manager::move_layer(shared_ptr<Layer_base> _layer, DIRECTION _dir)
 {
     if (layers.size() <= 1) return;
 
@@ -367,12 +361,12 @@ void Layer_Manager::draw() const
     bool forceRedraw = false;
     for (auto & layer : layers) {
         
-        Static_base * s_layer = dynamic_cast<Static_base *>(layer);
+        auto s_layer = dynamic_pointer_cast<Static_base>(layer);
         if (s_layer) {
             forceRedraw |= s_layer->draw(canvas.getFbo());
         }
         else {
-            Filter_base * f_layer = dynamic_cast<Filter_base *>(layer);
+            auto f_layer = dynamic_pointer_cast<Filter_base>(layer);
             if (f_layer) {
 
                 forceRedraw |= f_layer->draw(canvas.getFbo(), forceRedraw);
