@@ -312,7 +312,7 @@ void Layer_base::drawMaskBrush() const
 
 
     ofSetColor(ofColor::grey);
-    ofSetLineWidth(2.0);
+    ofSetLineWidth(4.0);
     ofDrawLine(points[0], points[1]);
     ofDrawLine(points[1], points[2]);
     ofDrawLine(points[2], points[3]);

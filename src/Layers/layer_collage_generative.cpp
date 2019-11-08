@@ -62,7 +62,7 @@ void Layer_collage_generative::setupPatchLines(shared_ptr<CollagePatch> _patch, 
 
     float scale = size.y / _patch->getImageHeight();
     glm::vec2 center((_idx + 0.5) * w, h * 0.5);
-
+    
     _patch->setup(center, scale, 0.0 );
 }
 
