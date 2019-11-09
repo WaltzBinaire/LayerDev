@@ -96,23 +96,41 @@ template<>
 void SingleLayerGui::specialisedDrawGui(Layer_filter_alpha_replace * layer)
 {
     ofParameter<bool> & p_load        = layer->params.get("Load").cast<bool>();   
+    ofParameter<bool>  & p_hFlip    = layer->params.get("H Flip"    ).cast<bool>();  
+
     LoadButton(p_load);
+    ImGui::SameLine();
+    int numLoaded = layer->getNumPaths();
+    string infoText = ofToString(numLoaded) + " files loaded";
+    ImGui::Text(infoText.c_str());
+    Checkbox(p_hFlip  );
+
 
 }
 template<>
 void SingleLayerGui::specialisedDrawGui(Layer_alpha_replace_channel * layer)
-{
-    ofParameter<bool> & p_load        = layer->params.get("Load").cast<bool>();   
-    ofParameter<bool> & p_invert      = layer->params.get("Invert").cast<bool>();   
+{  
+    ofParameter<bool> & p_invert      = layer->params.get("Invert").cast<bool>(); 
     ofParameter<int>  & p_blurPasses  = layer->params.get("Blur Passes").cast<int>();  
     ofParameter<glm::vec2>& p_thresh      = layer->params.get("Threshold").cast<glm::vec2>();  
     ofParameter<glm::vec4>& p_channelMix = layer->params.get("Channel Mix").cast<glm::vec4>();  
 
-    LoadButton(p_load);
     SliderVec2(p_thresh);
     Slider(p_blurPasses);
-    ColorPicker(p_channelMix);
+    ColorPicker(p_channelMix);    
+    Checkbox(p_invert);
 }
+
+
+template<> 
+void SingleLayerGui::specialisedDrawGui(Layer_alpha_replace_face * layer) {
+    ofParameter<bool>  & p_useMask  = layer->params.get("Mask Face" ).cast<bool>();  
+    ofParameter<bool>  & p_lock     = layer->params.get("Lock"      ).cast<bool>();  
+
+
+    Checkbox(p_useMask); 
+    Checkbox(p_lock   );
+};
 
 template<>
 void SingleLayerGui::specialisedDrawGui(Layer_filter_mpeg_glitch * layer)
@@ -126,7 +144,7 @@ void SingleLayerGui::specialisedDrawGui(Layer_filter_mpeg_glitch * layer)
     Slider(p_sizeOfKernel  );
     Slider(p_stopAmount    );
     Slider(p_globalStrength);
-    IconToggle(p_greyScale, "Greyscale", "!Greyscale");
+    Checkbox(p_greyScale);
 
     Button(p_forceUpdate);
 }
@@ -265,15 +283,6 @@ static void SingleLayerGui::specialisedDrawGui(Layer_paint * layer) {
 
 };
 
-template<> 
-void SingleLayerGui::specialisedDrawGui(Layer_alpha_replace_face * layer) {
-    ofParameter<bool>  & p_useMask  = layer->params.get("Mask Face" ).cast<bool>();  
-    ofParameter<bool>  & p_lock     = layer->params.get("Lock"      ).cast<bool>();  
-    ofParameter<bool>  & p_hFlip    = layer->params.get("H Flip"    ).cast<bool>();  
-    IconToggle(p_useMask, "Mask" , "!Mask" ); 
-    IconToggle(p_hFlip  , "HFlip", "!HFlip");
-    IconToggle(p_lock   , "Lock" , "!Lock" );
-};
 
 template<> 
 void SingleLayerGui::specialisedDrawGui(Layer_filter_adjustment * layer) {

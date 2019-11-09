@@ -21,15 +21,13 @@ void Layer_alpha_replace_face::onSetupParams()
 {
     Layer_filter_alpha_replace::onSetupParams();
 
-    on_hFlipChanged = p_hFlip.newListener(this, &Layer_alpha_replace_face::onHFlipChanged);
 
     p_useMask.set("Mask Face", true);
     p_lock.set   ("Lock"     , true);
-    p_hFlip.set  ("H Flip"   , false);
+
     params.add(
         p_useMask,
-        p_lock,
-        p_hFlip
+        p_lock
     );
 }
 
@@ -177,11 +175,6 @@ void Layer_alpha_replace_face::updateFace(const ofTexture & _baseTex) const
         faceFbo.end();
     }
 
-}
-
-void Layer_alpha_replace_face::onHFlipChanged(bool & _val)
-{
-    image.mirror(false, true);
 }
 
 float Layer_alpha_replace_face::getDetectionTextureScale() {

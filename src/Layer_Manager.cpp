@@ -27,7 +27,7 @@ Layer_Manager::~Layer_Manager()
 shared_ptr<Layer_base> Layer_Manager::add_layer(string name, bool _activate)
 {
     if (std::find(layer_types.begin(), layer_types.end(), name) == layer_types.end()) {
-        ofLogWarning() << name << " is not an available layer type";
+        ofLogWarning(__FUNCTION__) << name << " is not an available layer type";
     }
 
     auto layer = Layer_base::create(name, this);
@@ -125,9 +125,9 @@ void Layer_Manager::onProjectLoaded(bool & _val)
     // Add Manual Collage Layer
     if (projectManager().getResource(RESOURCE_TYPE::SEGMENTED) != nullptr) {
         std::function<void(bool)> func = [=](bool _activate) {
-            this->addManualCollageLayer(_activate);
+            this->addSingleCollageLayer(_activate);
         };
-        specialLayers.insert_or_assign("Manual Collage", func);
+        specialLayers.insert_or_assign("Single Collage", func);
     }
 
     // Add AI Collage Layer
@@ -184,34 +184,34 @@ void Layer_Manager::addCollageLayer(bool _activate)
     auto layer_type = find(layer_types.begin(), layer_types.end(), layer_name);
     if (layer_type != layer_types.end()) {
         auto layer = add_layer(layer_name, _activate);
-        auto img_layer = dynamic_pointer_cast<Layer_collage_generative>(layer);
+        auto collage_layer = dynamic_pointer_cast<Layer_collage_generative>(layer);
 
-        if (img_layer == nullptr) {
+        if (collage_layer == nullptr) {
             delete_layer(layer);
             return;
         }
-
-        img_layer->replace_images(targets->getDirectoryPath());
+        collage_layer->set_display_name(layer_name + " (Preset)" );
+        collage_layer->replace_images(targets->getDirectoryPath());
     }
 }
 
-void Layer_Manager::addManualCollageLayer(bool _activate)
+void Layer_Manager::addSingleCollageLayer(bool _activate)
 {
-    const string layer_name = "Manual Collage";
+    const string layer_name = "Single Collage";
 
     auto targets = projectManager().getResource(RESOURCE_TYPE::SEGMENTED);
 
     auto layer_type = find(layer_types.begin(), layer_types.end(), layer_name);
     if (layer_type != layer_types.end()) {
         shared_ptr<Layer_base> layer = add_layer(layer_name, _activate);
-        auto img_layer = dynamic_pointer_cast<Layer_collage_manual>(layer);
+        auto collage_layer = dynamic_pointer_cast<Layer_collage_single>(layer);
 
-        if (img_layer == nullptr) {
+        if (collage_layer == nullptr) {
             delete_layer(layer);
             return;
         }
-
-        img_layer->replace_images(targets->getDirectoryPath());
+        collage_layer->set_display_name(layer_name + " (Preset)" );
+        collage_layer->replace_images(targets->getDirectoryPath());
     }
 }
 
@@ -230,7 +230,7 @@ void Layer_Manager::addAICollageLayer(bool _activate)
             delete_layer(layer);
             return;
         }
-
+        collage_layer->set_display_name(layer_name + " (Preset)" );
         collage_layer->handle_file(targets->getFilePath(0));
     }
 }
@@ -244,15 +244,17 @@ void Layer_Manager::addFaceSwapLayer(bool _activate)
     auto layer_type = find(layer_types.begin(), layer_types.end(), layer_name);
     if (layer_type != layer_types.end()) {
         shared_ptr<Layer_base> layer = add_layer(layer_name, _activate);
-        auto collage_layer = dynamic_pointer_cast<Layer_alpha_replace_face>(layer);
+        auto face_layer = dynamic_pointer_cast<Layer_alpha_replace_face>(layer);
 
-        if (collage_layer == nullptr) {
+        if (face_layer == nullptr) {
             delete_layer(layer);
             return;
         }
         for (int i = 0; i < targets->size(); i++) {
-            collage_layer->handle_file(targets->getFilePath(i));
+            face_layer->handle_file(targets->getFilePath(i));
         }
+        face_layer->set_display_name(layer_name + " (Preset)" );
+        face_layer->set_placing();
     }
 }
 
@@ -385,8 +387,13 @@ void Layer_Manager::draw() const
 void Layer_Manager::drawFancyCursor() const
 {
     ofPushStyle();
-    string str = "x " + ofToString(mousePosition.x) +  "\ny " + ofToString(mousePosition.y);
-    ofSetColor(ofColor::grey);
+    string str = "x " + ofToString(mousePosition.x) +  "\ny " + ofToString(mousePosition.y) + "\n";
+
+    if (active_layer != nullptr) {
+        str += active_layer->getCursorData();
+    }
+
+    ofSetColor(ofColor::white);
     ofDrawBitmapString(str, ofGetMouseX() + 30, ofGetMouseY() + 30);
     ofPopStyle();
 }
@@ -427,21 +434,28 @@ void Layer_Manager::exportLayers() const
 {
     string newPath;
     if (LayerUtils::saveFolderDialogue(newPath)) {
-        string name = "output_" + ofGetTimestampString();
+
+        ProjectManager & projectManager = ProjectManager::getInstance();
+
+
+        string name;
+        if (projectManager.isLoaded()) name = projectManager.getName() + "_" + ofGetTimestampString();
+        else                           name = "output_" + ofGetTimestampString();
+
         string folderPath = ofFilePath::join(newPath, name);
         
         ofDirectory dir(folderPath);
 
         if (!dir.exists()) dir.create();
 
-        string imageName = name + ".png";
+        string imageName = name + "_Beauty.png";
         string imagePath = ofFilePath::join(folderPath, imageName);
         LayerUtils::saveImage(imagePath, canvas.getPixels());
 
 
         int index = 0;
         for (auto & layer : layers) {
-            string layerName = "Layer_" + ofToString(index++) + "_" + name + ".png";
+            string layerName = name + "_L" + ofToString(index++) +  ".png";
             string layerPath = ofFilePath::join(folderPath, layerName);
             layer->saveLayer(layerPath);
         }

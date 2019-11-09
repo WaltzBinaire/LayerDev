@@ -48,7 +48,7 @@ void Layer_collage_generative::setupPatchRandom(shared_ptr<CollagePatch> _patch,
 {
     glm::vec2 center = glm::vec2( ofRandom(0.0, size.x), ofRandom(0.0, size.y));
     float scale = ofRandom(0.5 * p_scale, p_scale);
-    float angle = 1.0;
+    float angle = 0.0;
 
     _patch->setup(center, scale, angle);
 }

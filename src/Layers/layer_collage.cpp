@@ -169,6 +169,15 @@ void Layer_collage::append_images(const string & _path)
     }
 }
 
+string Layer_collage::getCursorData() const {
+    if (active_patch != nullptr) {
+        return "s " + ofToString(active_patch->getScale());
+    }
+    else {
+        return "";
+    }
+}
+
 void Layer_collage::loadAllImages()
 {
     stopImageLoader();

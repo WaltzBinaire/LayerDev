@@ -2,9 +2,11 @@
 
 namespace ImGuiHelpers {
 
-    void LoadButton(ofParameter<bool> & load)
+    void LoadButton(ofParameter<bool> & load, std::string _name)
     {
-        if (ImGui::Button("Load File")) {
+        std::string buttonName = ( _name == "") ? "Load File" : _name;
+
+        if (ImGui::Button(buttonName.c_str())) {
             load.set(true);
         };
     }

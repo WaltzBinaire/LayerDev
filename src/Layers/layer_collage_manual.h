@@ -14,15 +14,17 @@ protected:
 
     virtual void onSetupListeners()  override ;
 
-    void onMouseMoved(ofMouseEventArgs & _args);
-    void onMousePressed(ofMouseEventArgs & _args);
-    void onMouseScrolled(ofMouseEventArgs & _args);
-    void onKeyPressed(ofKeyEventArgs & _args);
+    virtual void onMouseMoved(ofMouseEventArgs & _args);
+    virtual void onMousePressed(ofMouseEventArgs & _args);
+    virtual void onMouseScrolled(ofMouseEventArgs & _args);
+    virtual void onKeyPressed(ofKeyEventArgs & _args);
 
     int pathIndex = 0;
 
     
     ofEventListener l_onKeyPressed;
 
+
+    glm::vec2 lastMousePosition;
 };
 

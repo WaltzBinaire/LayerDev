@@ -23,6 +23,7 @@ void Layer_collage_manual::onMouseMoved(ofMouseEventArgs & _args)
         case MODE::PLACING:
             if (active_patch != nullptr) {
                 active_patch->setCenter(glm::vec2(_args.x, _args.y));
+                lastMousePosition = glm::vec2(_args.x, _args.y);
             }
             break;
     }
@@ -40,6 +41,7 @@ void Layer_collage_manual::onMousePressed(ofMouseEventArgs & _args)
                 loadImage(active_patch);
 
                 active_patch->setCenter(glm::vec2(_args.x, _args.y));
+                lastMousePosition = glm::vec2(_args.x, _args.y);
                 mode = MODE::PLACING;
                 redraw(); 
             }         
@@ -99,6 +101,14 @@ void Layer_collage_manual::onMouseScrolled(ofMouseEventArgs & _args)
                         loadImage(active_patch);
                         redraw();
                     }
+                }
+            }
+            else if (ofGetKeyPressed(OF_KEY_ALT)) {
+                if (active_patch != nullptr) {
+                    //glm::vec2 vector = glm::vec2(_args.x, _args.y) - lastMousePosition;
+                    //float angle = atan2(vector.y, vector.x);
+                    float rotation = active_patch->getAngle() + _args.scrollY * TWO_PI * 0.04 ;
+                    active_patch->setRotation(rotation);
                 }
             }
             else {

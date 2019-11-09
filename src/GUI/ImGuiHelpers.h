@@ -4,7 +4,7 @@
 
 namespace ImGuiHelpers {
 
-    void LoadButton (ofParameter<bool> & load);
+    void LoadButton (ofParameter<bool> & load, std::string _name = "");
     void Button     (ofParameter<bool> & load);
     void IconButton (ofParameter<bool> & var, const char* label, const char* tooltip = nullptr);
     void IconToggle (ofParameter<bool> & var, const char* onLabel, const char* offLabel, const char* tooltip = nullptr);

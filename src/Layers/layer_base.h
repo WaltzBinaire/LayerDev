@@ -118,6 +118,7 @@ public:
     uint64_t getUpdateTime() const { return updatePerfCounter.getTimeMillis(); }
     uint64_t getDrawTime() const   { return drawPerfCounter.getTimeMillis();   }
 
+    virtual string getCursorData() const {  return ""; }
     ofParameterGroup params;
 
 protected:
@@ -136,6 +137,8 @@ protected:
     virtual void onDeactivate()    {};
     virtual void onDestroy()       {};
     virtual void onResize()        {};
+
+
 
     virtual void handle_mask(const string & _path);
 

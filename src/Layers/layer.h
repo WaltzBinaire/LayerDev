@@ -5,6 +5,7 @@
 #include "Layers/layer_collage.h"
 #include "Layers/layer_collage_generative.h"
 #include "Layers/layer_collage_manual.h"
+#include "Layers/layer_collage_single.h"
 
 #include "Layers/layer_file.h"
 #include "Layers/layer_file_image.h"

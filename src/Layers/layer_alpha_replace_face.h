@@ -36,13 +36,9 @@ protected:
     void setupFaceFbo();
     void updateFace(const ofTexture & _baseTex) const;
 
-    void onHFlipChanged(bool & _val);
-
     ofParameter<bool> p_useMask;
-    ofParameter<bool> p_hFlip;
     ofParameter<bool> p_lock;
 
-    ofEventListener on_hFlipChanged;
 
     mutable ofFbo faceFbo;
     shared_ptr<AutoShader> face_shader;

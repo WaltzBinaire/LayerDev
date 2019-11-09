@@ -25,7 +25,7 @@
 
 ### GUI
   [ ] Better "New layer" interface
-  [ ] Tooltips
+  [x] Tooltips
   [ ] Meaningful figures on monitor
   [x] Add face extractor tool
 
@@ -39,7 +39,7 @@
 
 ### Filter Layers
   [ ] Add banding to Alpha replace
-  [ ] Add face replace layer
+  [x] Add face replace layer
   [ ] Add PixelSorting Layer
   [ ] Look into alpha blending for image layers
   [x] Change default settings in glitch distort layer
@@ -65,7 +65,21 @@
   [x] Filter layers show mask when redrawing
   [x] Generative collage sometime has blank patches
   [x] Can't delete generative collage during build up
-  [ ] Cursor location slightly off dureing selection
+  [x] Cursor location slightly off dureing selection
   [x] Manual collage cycling
-  [ ] AI COllage sometime not selectable
+  [!] AI Collage sometime not selectable
+  [!] click layer somtimes doesnt activate
   [x] Manual collage start a bit wrong...
+  
+  
+### Interaction Tweaks
+  
+  [x] Ctrl scroll for faces
+  [x] alt scroll 
+- uniform frame  + size typo
+  [x] always Name in title in export layer
+  [x] in export layer call main image beaty...png
+  [ ] click manual collage - visualize selected image - outlines white maybe?
+  [x] More obvious mask box
+  [x] Single collage
+  [x] F to flip

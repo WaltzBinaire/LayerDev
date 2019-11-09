@@ -91,7 +91,7 @@ bool ProjectResource::setup(const string & _path)
 
         }
 
-        ofLogNotice() << filePaths.size() << " files found";
+        ofLogNotice(__FUNCTION__) << filePaths.size() << " files found";
         return true;
     }
     else {
@@ -228,7 +228,10 @@ void ProjectManager::loadProject(const string & _root_path)
     clear();
 
     root_path = _root_path;
-    name = ofFilePath::getEnclosingDirectory(root_path);
+    auto s = ofSplitString(root_path, "\\", true) ;
+    name = *(s.end() - 1);
+
+    ofLogNotice(__FUNCTION__) << "Loading: " << name << " from: " << root_path;
 
     for (auto & resource_path : ProjectResource::resource_rel_paths) {
         createResource(resource_path.first, resource_path.second );

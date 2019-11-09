@@ -2,7 +2,6 @@
 #include "Utils\LayerUtils.h"
 #include "GUI/SingleLayerGui.h"
 
-
 void Layer_filter_alpha_replace::onSetup()
 {
     Layer_filter_shader::onSetup();
@@ -21,11 +20,15 @@ void Layer_filter_alpha_replace::onRender(const ofTexture & _baseTex, bool _forc
 
 void Layer_filter_alpha_replace::onSetupParams()
 {    
-    p_loadFile.set("Load", false);
     p_loadFile.addListener(this, &Layer_filter_alpha_replace::onLoadFile);
+    on_hFlipChanged = p_hFlip.newListener(this, &Layer_alpha_replace_face::onHFlipChanged);
 
+    p_loadFile.set("Load", false);
+    p_hFlip.set  ("H Flip"   , false);    
+    
     params.add(
-        p_loadFile
+        p_loadFile,        
+        p_hFlip
     );
 }
 
@@ -43,9 +46,10 @@ void Layer_filter_alpha_replace::setupShader()
 void Layer_filter_alpha_replace::onSetupListeners()
 {    
     l_onFileDragged   = ofEvents().fileDragEvent.newListener          ( this, &Layer_filter_alpha_replace::onFileDragEvent);
-    l_onMousePressed  = layer_manager->canvasMousePressed.newListener ( this, &Layer_filter_alpha_replace::onMousePressed);
+    l_onKeyPressed    = ofEvents().keyPressed.newListener             ( this, &Layer_filter_alpha_replace::onKeyPressed   );
+    l_onMousePressed  = layer_manager->canvasMousePressed.newListener ( this, &Layer_filter_alpha_replace::onMousePressed );
     l_onMouseScrolled = layer_manager->canvasMouseScrolled.newListener( this, &Layer_filter_alpha_replace::onMouseScrolled);
-    l_onMouseMoved    = layer_manager->canvasMouseMoved.newListener   ( this, &Layer_filter_alpha_replace::onMouseMoved);
+    l_onMouseMoved    = layer_manager->canvasMouseMoved.newListener   ( this, &Layer_filter_alpha_replace::onMouseMoved   );
 
 }
 
@@ -53,6 +57,7 @@ void Layer_filter_alpha_replace::onDrawGui()
 {
     SingleLayerGui::specialisedDrawGui<Layer_filter_alpha_replace>(this); 
 }
+
 
 void Layer_filter_alpha_replace::onResize()
 {
@@ -118,6 +123,11 @@ void Layer_filter_alpha_replace::onFileDragEvent(ofDragInfo & _fileInfo)
     handle_file(file.path());
 }
 
+void Layer_filter_alpha_replace::onKeyPressed(ofKeyEventArgs & _args)
+{
+    p_hFlip.set(!p_hFlip);
+}
+
 void Layer_filter_alpha_replace::onMousePressed(ofMouseEventArgs & args)
 {
     b_placing = !b_placing;
@@ -128,28 +138,32 @@ void Layer_filter_alpha_replace::onMousePressed(ofMouseEventArgs & args)
 void Layer_filter_alpha_replace::onMouseScrolled(ofMouseEventArgs & args)
 {
     if (b_placing) {
-        replacementScale += args.scrollY * 0.05;
-        replacementScale = max(0.1f, replacementScale);
-        redraw();
-    }
-    else if(imagePaths.size() > 1) {
-        switch ((int)args.scrollY) {
-        case 1:
-            currentPath++;
-            if (currentPath >= imagePaths.end())   currentPath = imagePaths.begin();
-            break;
-        case -1:
-            if (currentPath == imagePaths.begin()) {
-                currentPath = imagePaths.end() - 1;
+        if (ofGetKeyPressed(OF_KEY_CONTROL)) {
+            if (imagePaths.size() > 1) {
+                switch ((int)args.scrollY) {
+                case 1:
+                    currentPath++;
+                    if (currentPath >= imagePaths.end())   currentPath = imagePaths.begin();
+                    break;
+                case -1:
+                    if (currentPath == imagePaths.begin()) {
+                        currentPath = imagePaths.end() - 1;
+                    }
+                    else {
+                        currentPath--;
+                    }
+                    break;
+                }
+
+                image.load(*currentPath);
+                redraw();
             }
-            else {
-                currentPath--;
-            }
-            break;
         }
-        
-        image.load(*currentPath);
-        redraw();
+        else {
+            replacementScale += args.scrollY * 0.05;
+            replacementScale = max(0.1f, replacementScale);
+            redraw();
+        }
     }
 }
 
@@ -169,9 +183,17 @@ void Layer_filter_alpha_replace::onLoadFile(bool & _loadFile)
     _loadFile = false;
 }
 
+
+void Layer_filter_alpha_replace::onHFlipChanged(bool & _val)
+{
+    image.mirror(false, true);
+}
+
+
 void Layer_filter_alpha_replace::handle_file(const string & _path)
 {
     imagePaths.emplace_back(_path);
     currentPath = imagePaths.end() - 1;
-    redraw();
+
 }
+

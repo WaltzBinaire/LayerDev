@@ -310,13 +310,17 @@ void Layer_base::drawMaskBrush() const
         {edges[0], edges[3]}
     };
 
+    ofSetColor(ofColor(255, 255, 255, 192));
+    ofDrawRectangle(points[0], points[2].x - points[0].x, points[2].y - points[0].y);
 
-    ofSetColor(ofColor::grey);
-    ofSetLineWidth(4.0);
+    ofSetColor(ofColor::white);
+    ofSetLineWidth(8.0);
     ofDrawLine(points[0], points[1]);
     ofDrawLine(points[1], points[2]);
     ofDrawLine(points[2], points[3]);
     ofDrawLine(points[3], points[0]);
+
+
 
     ofPopStyle();
 }

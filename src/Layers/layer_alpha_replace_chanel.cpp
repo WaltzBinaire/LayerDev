@@ -11,6 +11,7 @@ void Layer_alpha_replace_channel::onRender(const ofTexture & _baseTex, bool _for
 
 void Layer_alpha_replace_channel::onDrawGui()
 {
+    Layer_filter_alpha_replace::onDrawGui();
     SingleLayerGui::specialisedDrawGui<Layer_alpha_replace_channel>(this); 
 }
 

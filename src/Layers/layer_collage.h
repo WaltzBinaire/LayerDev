@@ -49,18 +49,21 @@ public:
     void draw() {
         auto quad = LayerUtils::UVQuad::getInstance();
         if (!b_isSubsection) {
-            quad.draw(getPosition(), getSize());
+            ofPushMatrix();
+            ofTranslate(getCenter());
+            ofRotateRad(getAngle());
+            quad.draw(-getSize() * 0.5, getSize());
+            ofPopMatrix();
         }
         else {
             float uvW= (size.x / size.y) / (image.getWidth() / image.getHeight());
-
             glm::vec2 uvX = glm::vec2(0.5 - 0.5 * uvW,  0.5 + 0.5 * uvW );
-
             quad.draw(getPosition(), getSize(), uvX);
         }
     }
 
     void setScale(float _scale)       { scale  = _scale;  b_drawn =  false; }
+    void setRotation(float _angle)    { angle  = _angle;  b_drawn =  false; }
     void setCenter(glm::vec2 _center) { center = _center; b_drawn =  false; }
 
 
@@ -86,7 +89,7 @@ public:
     }
     void setupLine(glm::vec2 _center, glm::vec2 _size) {
         b_drawn        =  false;
-        b_isSubsection = true;
+        b_isSubsection =  true;
         b_isSetup      =  true;
         center         = _center;
         angle          = 0.0;
@@ -136,6 +139,9 @@ public:
 
     void append_images(const string & _path);
     void replace_images(const string & _path) { paths.clear();  append_images(_path); }
+
+    virtual string getCursorData() const  override;
+    
 protected:
 
     virtual void onSetupListeners() override;
@@ -170,9 +176,9 @@ protected:
     vector<shared_ptr<CollagePatch>> patches;
     vector<string>                   paths;
     shared_ptr<CollagePatch>         active_patch;
-
-private:
     mutable shared_ptr<AutoShader>  collageShader;
+private:
+
     shared_ptr<threadedImageLoader> imageLoader;
 
 

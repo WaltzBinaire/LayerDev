@@ -99,8 +99,6 @@ namespace LayerUtils {
 	        mesh.setVertex(2, glm::vec3( x + w, y + h, 0 ));
 	        mesh.setVertex(3, glm::vec3( x    , y + h, 0 ));
 
-            ofLogNotice() << uvx_0 << ", " << uvx_1;
-
             mesh.setTexCoord(0, glm::vec2(uvx_0, 0.0));
         	mesh.setTexCoord(1, glm::vec2(uvx_1, 0.0));
         	mesh.setTexCoord(2, glm::vec2(uvx_1, 1.0));

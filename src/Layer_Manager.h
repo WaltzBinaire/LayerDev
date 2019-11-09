@@ -47,18 +47,18 @@ public:
 
 private:
 
-    void onMouseMoved(ofMouseEventArgs & _args);
-    void onMouseDragged(ofMouseEventArgs & _args);
-    void onMousePressed(ofMouseEventArgs & _args);
+    void onMouseMoved   (ofMouseEventArgs & _args);
+    void onMouseDragged (ofMouseEventArgs & _args);
+    void onMousePressed (ofMouseEventArgs & _args);
     void onMouseReleased(ofMouseEventArgs & _args);
     void onMouseScrolled(ofMouseEventArgs & _args);
-    void onMouseEntered(ofMouseEventArgs & _args);
-    void onMouseExited(ofMouseEventArgs & _args);
+    void onMouseEntered (ofMouseEventArgs & _args);
+    void onMouseExited  (ofMouseEventArgs & _args);
 
     void onProjectLoaded(bool & _val);
     void addPortraitLayer(bool _activate);
     void addCollageLayer(bool _activate);
-    void addManualCollageLayer(bool _activate);
+    void addSingleCollageLayer(bool _activate);
     void addAICollageLayer(bool _activate);
     void addFaceSwapLayer(bool _activate);
 
