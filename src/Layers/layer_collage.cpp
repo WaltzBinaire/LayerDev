@@ -1,6 +1,6 @@
 #include "Layers\layer_collage.h"
 #include "GUI/SingleLayerGui.h"
-#include "LayerUtils.h"
+
 
 
 void Layer_collage::onSetupListeners()
@@ -49,9 +49,8 @@ void Layer_collage::onDraw(bool _forced) const
             collageShader->begin();
             collageShader->setUniform2f("u_alphaRange", p_alphaRange);
 
-            auto quad = LayerUtils::UVQuad::getInstance();
             collageShader->setUniformTexture("tex0", active_patch->getTexture(), 0);
-            quad.draw(active_patch->getPosition(), active_patch->getSize());
+            active_patch->draw();
             collageShader->end();
             ofPopStyle();
         }
@@ -74,7 +73,7 @@ void Layer_collage::onRender(bool _forced) const
         if (colImage->isReady()) {
             if (colImage != active_patch) {
                 collageShader->setUniformTexture("tex0", colImage->getTexture(), 0);
-                quad.draw(colImage->getPosition(), colImage->getSize());
+                colImage->draw();
                 colImage->setDrawn();
             }
         }

@@ -55,15 +55,11 @@ void Layer_collage_generative::setupPatchRandom(shared_ptr<CollagePatch> _patch,
 
 void Layer_collage_generative::setupPatchLines(shared_ptr<CollagePatch> _patch, int _idx)
 {
-    int w  = floor(size.x / p_number);
-    int h  = size.y;
-    int x  = floor(ofRandom(0.0, _patch->getImageWidth() - w));
-    int y  = 0.0;
-
-    float scale = size.y / _patch->getImageHeight();
-    glm::vec2 center((_idx + 0.5) * w, h * 0.5);
+    int tw  = floor(size.x / p_number);
+    int th  = size.y;
+    glm::vec2 center((_idx + 0.5) * tw, th * 0.5);
     
-    _patch->setup(center, scale, 0.0 );
+    _patch->setupLine(center, glm::vec2(tw, th));
 }
 
 void Layer_collage_generative::onGenerate(bool & _generate)

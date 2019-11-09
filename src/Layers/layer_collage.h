@@ -4,7 +4,6 @@
 #include "Utils/shader_base.h"
 #include "Utils/LayerUtils.h"
 
-
 class CollagePatch {
 public:
     CollagePatch(string & _path) :
@@ -46,17 +45,28 @@ public:
     ofImage & getImageReference()        { return image;  }
     const ofTexture & getTexture() const { return image.getTexture(); }
     
+
+    void draw() {
+        auto quad = LayerUtils::UVQuad::getInstance();
+        if (!b_isSubsection) {
+            quad.draw(getPosition(), getSize());
+        }
+        else {
+            float uvW= (size.x / size.y) / (image.getWidth() / image.getHeight());
+
+            glm::vec2 uvX = glm::vec2(0.5 - 0.5 * uvW,  0.5 + 0.5 * uvW );
+
+            quad.draw(getPosition(), getSize(), uvX);
+        }
+    }
+
     void setScale(float _scale)       { scale  = _scale;  b_drawn =  false; }
     void setCenter(glm::vec2 _center) { center = _center; b_drawn =  false; }
 
-    float getImageWidth()  const  { return  image.getWidth();}
-    float getImageHeight() const  { return  image.getHeight();}
 
     float     getScale()    const { return scale;  }
     glm::vec2 getCenter()   const { return center; }
     float     getAngle()    const { return angle;  }
-    glm::vec2 getPosition() const { return center - 0.5 * getSize(); }
-    glm::vec2 getSize()     const { return glm::vec2(getImageWidth(),getImageHeight()) * scale; }
 
     bool isReady()    const { 
         return image.isUsingTexture() && image.isAllocated();  
@@ -67,26 +77,55 @@ public:
     bool isSetup()  const  { return b_isSetup; }
 
     void setup(glm::vec2 _center, float _scale, float _angle) {
+        b_isSubsection = false;
         b_drawn   =  false;
         b_isSetup =  true;
         center    = _center;
         angle     = _angle;
         scale     = _scale;
     }
+    void setupLine(glm::vec2 _center, glm::vec2 _size) {
+        b_drawn        =  false;
+        b_isSubsection = true;
+        b_isSetup      =  true;
+        center         = _center;
+        angle          = 0.0;
+        size           = _size;
+    }
 
     CollagePatch(const CollagePatch&) = delete;
     CollagePatch& operator=(const CollagePatch&) = delete;
 
 private:
+
+    glm::vec2 getPosition() const { return center - 0.5 * getSize(); }
+
+    glm::vec2 getSize()     const { 
+        return glm::vec2(getImageWidth(),getImageHeight()) * scale; 
+    }
+    
+    float getImageWidth()  const  { 
+        if (b_isSubsection)  return size.x;
+        else return  image.getWidth();
+    }
+    float getImageHeight() const  {
+        if (b_isSubsection)  return size.y;
+        else return  image.getHeight();
+    }
+
+
     string path;
     ofImage image;
     glm::vec2 center;
     float angle;
     float scale;
+    glm::vec2 size;
+    float offset;
 
     bool b_drawn;
     bool b_isSetup;
     bool b_pending;
+    bool b_isSubsection;
 };
 
 class Layer_collage : public Static_base

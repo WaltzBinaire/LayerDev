@@ -63,5 +63,9 @@
   [x] Facedetector layers crash when deleted
   [x] Facedetector crashes sometimes;
   [x] Filter layers show mask when redrawing
-  [ ] Generative collage sometime has blank patches
-  [ ] Can't delete generative collage during build up
+  [x] Generative collage sometime has blank patches
+  [x] Can't delete generative collage during build up
+  [ ] Cursor location slightly off dureing selection
+  [x] Manual collage cycling
+  [ ] AI COllage sometime not selectable
+  [x] Manual collage start a bit wrong...
