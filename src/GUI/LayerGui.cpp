@@ -318,26 +318,32 @@ void LayerGui::drawLayerMenu(ImVec2 pos, ImVec2 size)
         for (auto itr = manager->layers.rbegin(); itr != manager->layers.rend(); ++itr) {
             shared_ptr<Layer_base> layer = (*itr);
             string label = layer->get_display_name();
-            string id_label = "##" + layer->get_name();
+            string id_label = "##" + layer->get_unique_name();
 
-            if (layer == manager->active_layer) label += "*";
+            bool isActive = layer == manager->active_layer;
+
+            if (isActive) {
+                ImGui::PushStyleColor(ImGuiCol_Button       , (ImVec4)ofColor::black);
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ofColor::black);
+                ImGui::PushStyleColor(ImGuiCol_ButtonActive , (ImVec4)ofColor::black);
+            }
+            if (ImGui::Button((label + id_label).c_str(), ImVec2(170, 0))) {
+                manager->setActiveLayer(layer);
+            }
+
 
             float perf = max(layer->getUpdateTime(), layer->getDrawTime());
             ofColor perfCol = (ofColor::forestGreen).getLerped(ofColor::indianRed,  ofMap(perf, 0.0, 66.0, 0.0, 1.0, true));
-
-            if (ImGui::Button(label.c_str(), ImVec2(170, 0))) {
-                manager->setActiveLayer(layer);
-            }
 
             ImGui::PushStyleColor(ImGuiCol_Button       , (ImVec4)perfCol);
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)perfCol);
             ImGui::PushStyleColor(ImGuiCol_ButtonActive , (ImVec4)perfCol);
             ImGui::SameLine();
-            const char * speedometer;
+            string speedometer;
             if (perf < 0.33)      speedometer = ICON_MDI_SPEEDOMETER;
             else if( perf < 0.66) speedometer = ICON_MDI_SPEEDOMETER_MEDIUM;
             else                  speedometer = ICON_MDI_SPEEDOMETER_SLOW;
-            ImGui::Button(speedometer);
+            ImGui::Button((speedometer + id_label).c_str());
             ImGui::PopStyleColor(3);
 
 
@@ -356,6 +362,8 @@ void LayerGui::drawLayerMenu(ImVec2 pos, ImVec2 size)
                 manager->delete_layer(layer);
                 break;
             }
+
+            if (isActive) ImGui::PopStyleColor(3);
         }
         ImGui::End();
     }

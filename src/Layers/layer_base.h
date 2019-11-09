@@ -108,7 +108,7 @@ public:
 
     void resize( int width, int height);
 
-    const string get_name() const { return name + ofToString(instance); }
+    const string get_unique_name() const { return name + ofToString(instance); }
     const string get_display_name() const { 
         if(customName == "" ) return name; 
         else                  return customName;
@@ -246,7 +246,11 @@ public:
 protected:
     string class_name;
     string display_name;
-    int    instance;
+
+    int getInstance() {
+        static int instance = 0;
+        return instance++;
+    }
 };
 
 #define REGISTER_TYPE(klass, name) \
@@ -259,7 +263,9 @@ protected:
             display_name = #name; \
         } \
         virtual shared_ptr<Layer_base> create(Layer_Manager * _layer_manager) { \
-            shared_ptr<klass> ptr = make_shared<klass>(display_name, instance++ , _layer_manager); \
+            int id =  getInstance(); \
+            shared_ptr<klass> ptr = make_shared<klass>(display_name, id , _layer_manager); \
+            ofLogNotice(__FUNCTION__) << "Creating " << #name  << " " << id; \
             return dynamic_pointer_cast<Layer_base>(ptr); \
         } \
         virtual bool isFilter() { \
