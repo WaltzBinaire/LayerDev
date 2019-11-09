@@ -320,7 +320,7 @@ void LayerGui::drawLayerMenu(ImVec2 pos, ImVec2 size)
             string label = layer->get_display_name();
             string id_label = "##" + layer->get_unique_name();
 
-            bool isActive = layer == manager->active_layer;
+            bool isActive = (layer == manager->active_layer);
 
             if (isActive) {
                 ImGui::PushStyleColor(ImGuiCol_Button       , (ImVec4)ofColor::black);
@@ -349,16 +349,19 @@ void LayerGui::drawLayerMenu(ImVec2 pos, ImVec2 size)
 
             ImGui::SameLine();
             if (ImGui::Button((ICON_MDI_ARROW_UP_BOLD + id_label).c_str())) {
+                if (isActive) ImGui::PopStyleColor(3);
                 manager->move_layer(layer, Layer_Manager::UP);
                 break;
             }
             ImGui::SameLine();
             if (ImGui::Button((ICON_MDI_ARROW_DOWN_BOLD + id_label).c_str())) {
+                if (isActive) ImGui::PopStyleColor(3);
                 manager->move_layer(layer, Layer_Manager::DOWN);
                 break;
             }
             ImGui::SameLine();
             if (ImGui::Button((ICON_MDI_TRASH_CAN + id_label).c_str())) {
+                if (isActive) ImGui::PopStyleColor(3);
                 manager->delete_layer(layer);
                 break;
             }

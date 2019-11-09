@@ -167,6 +167,10 @@ void Layer_alpha_replace_face::updateFace(const ofTexture & _baseTex) const
             faceRect.height /= detectionScale;
 
             b_faceMaskInitialised = true;
+
+            if (p_lock) {
+                tracker.stop();
+            }
         }
 #endif // !NDEBUG    
         ofPopStyle();

@@ -149,6 +149,7 @@ protected:
     virtual void onUpdate()         override;
     virtual void onSetupParams()    override ;
     virtual void onDraw(bool _forced = false)   const  override ;
+    virtual void onDrawOverlay()    override;
     virtual void onRender(bool _forced = false) const  override ;
     virtual void onDrawGui()        override ;
     virtual void onDestroy();
@@ -178,6 +179,7 @@ protected:
     shared_ptr<CollagePatch>         active_patch;
     mutable shared_ptr<AutoShader>  collageShader;
 private:
+    mutable shared_ptr<AutoShader>  collageOverlayShader;
 
     shared_ptr<threadedImageLoader> imageLoader;
 

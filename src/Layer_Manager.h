@@ -22,6 +22,9 @@ public:
 	ofEvent<ofMouseEventArgs> canvasMouseEntered;
 	ofEvent<ofMouseEventArgs> canvasMouseExited;
 
+    ofEvent<ofKeyEventArgs>   canvasKeyPressed;
+	ofEvent<ofKeyEventArgs>   canvasKeyReleased;
+
     Layer_Manager();
     ~Layer_Manager();
 
@@ -55,6 +58,9 @@ private:
     void onMouseEntered (ofMouseEventArgs & _args);
     void onMouseExited  (ofMouseEventArgs & _args);
 
+    void onKeyPressed (ofKeyEventArgs & _args);
+    void onKeyReleased (ofKeyEventArgs & _args);
+
     void onProjectLoaded(bool & _val);
     void addPortraitLayer(bool _activate);
     void addCollageLayer(bool _activate);
@@ -82,6 +88,7 @@ private:
     deque<shared_ptr<Layer_base>> layers;
     shared_ptr<Layer_base> active_layer;
     
+    bool b_drawOverlay = true;
 
     // Gui
     LayerGui * gui;

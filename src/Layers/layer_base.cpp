@@ -199,6 +199,8 @@ void Layer_base::clearListeners()
     l_onMouseEntered.unsubscribe();
     l_onMouseExited.unsubscribe();
     l_onFileDragged.unsubscribe();
+    l_onKeyPressed.unsubscribe();;
+    l_onKeyReleased.unsubscribe();
 }
 
 void Layer_base::clearMaskFbo() const

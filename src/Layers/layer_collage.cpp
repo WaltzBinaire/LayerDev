@@ -11,7 +11,8 @@ void Layer_collage::onSetupListeners()
 //--------------------------------------------------------------
 void Layer_collage::onSetup()
 {
-    collageShader = Shader_lib::get_collage_shader();    
+    collageShader        = Shader_lib::get_collage_shader();    
+    collageOverlayShader = Shader_lib::get_collage_overlay_shader();    
     setupCollageFbo();
     active_patch != nullptr;
 }
@@ -55,6 +56,15 @@ void Layer_collage::onDraw(bool _forced) const
             ofPopStyle();
         }
     }
+}
+
+void Layer_collage::onDrawOverlay()
+{
+    collageOverlayShader->begin();
+    collageOverlayShader->setUniformTexture("u_imageTex", collageFbo.getTexture(), 0);
+    collageOverlayShader->setUniform2f("u_resolution", size);
+    LayerUtils::UVQuad::getInstance().draw(0, 0, size.x, size.y);
+    collageOverlayShader->end();
 }
 
 void Layer_collage::onRender(bool _forced) const

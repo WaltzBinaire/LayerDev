@@ -176,6 +176,9 @@ protected:
     ofEventListener l_onMouseExited;
     ofEventListener l_onFileDragged;
 
+    ofEventListener l_onKeyPressed;
+    ofEventListener l_onKeyReleased;
+
     glm::vec2 size;
     mutable pingPongFbo fbo;
     mutable ofFbo maskFbo;

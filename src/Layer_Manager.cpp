@@ -95,6 +95,20 @@ void Layer_Manager::onMouseExited(ofMouseEventArgs & _args) {
     if (!b_mouseOverGui) canvasMouseExited.notify(this, args); 
 }
 
+void Layer_Manager::onKeyPressed(ofKeyEventArgs & _args)
+{
+    if (_args.key == 'o') {
+        b_drawOverlay = !b_drawOverlay;
+    }
+
+    canvasKeyPressed.notify(_args);
+}
+
+void Layer_Manager::onKeyReleased(ofKeyEventArgs & _args)
+{
+    canvasKeyReleased.notify(_args);
+}
+
 
 void Layer_Manager::onProjectLoaded(bool & _val)
 {
@@ -269,6 +283,8 @@ void Layer_Manager::addListeners()
     ofAddListener(ofEvents().mouseScrolled , this, &Layer_Manager::onMouseScrolled);
     ofAddListener(ofEvents().mouseEntered  , this, &Layer_Manager::onMouseEntered );
     ofAddListener(ofEvents().mouseExited   , this, &Layer_Manager::onMouseExited  );
+    ofAddListener(ofEvents().keyPressed    , this, &Layer_Manager::onKeyPressed   );
+    ofAddListener(ofEvents().keyReleased   , this, &Layer_Manager::onKeyReleased  );
     ofAddListener(projectManager().onLoaded, this, &Layer_Manager::onProjectLoaded);
 }
 
@@ -376,7 +392,7 @@ void Layer_Manager::draw() const
         }
     }
 
-    if (active_layer != nullptr) {
+    if (active_layer != nullptr && b_drawOverlay) {
         active_layer->drawOverlay(canvas.getOverlayFbo());
     }
 
