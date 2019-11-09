@@ -106,15 +106,12 @@ void Layer_file_aiCollage::setListeners()
 
 void Layer_file_aiCollage::onMouseMovedCollage(ofMouseEventArgs & _args)
 {
-    ofRectangle collageDrawRect( position - size * 0.5, size.x, size.y );
-
-    if (collageDrawRect.inside(_args.x, _args.y)) {
-        glm::vec2 adjustedMousePos = glm::vec2(
-            (_args.x - collageDrawRect.x) * getFileWidth()   / size.x,
-            (_args.y - collageDrawRect.y) * getFileHeight()  / size.y 
-        );
-        m_collage.updateCursor(adjustedMousePos);
-    }
+    glm::vec2 size = scale * glm::vec2(m_collage.getWidth(), m_collage.getHeight());
+    glm::vec2 adjustedMousePos = glm::vec2(
+        ((_args.x - (position.x - size.x * 0.5))  / scale),
+        ((_args.y - (position.y - size.y * 0.5))  / scale) 
+    );
+    m_collage.updateCursor(adjustedMousePos);
 }
 
 void Layer_file_aiCollage::handle_file(const string & _path)
