@@ -8,13 +8,14 @@ public:
     Layer_filter_distort(string name, int instance, Layer_Manager * _layer_manager) : Layer_filter_shader(name, instance, _layer_manager) {};
 
     enum class SHAPE {
-        CIRCLE    = 0,
-        LINE      = 1,
-        RECTANGLE = 2,
+        CIRCLE     = 0,
+        HLINE      = 1,
+        VLINE      = 2,
+        RECTANGLE  = 3,
     };
 
     static const vector<string> & getModeNames() {
-        static const vector<string> modeNames{ "Circle", "Line", "Square" };
+        static const vector<string> modeNames{ "Circle", "Horizontal Line", "Vertical Line", "Square" };
         return modeNames;
     }
 
@@ -22,6 +23,7 @@ protected:
     virtual void onRender(const ofTexture & _baseTex, bool _forced = false) const override;
     virtual void onDrawGui()        override;
     virtual void onSetup()          override;
+    virtual void onDrawOverlay()    override;
     virtual void onReset()          override;
     virtual void onUpdate()         override;
     virtual void onSetupParams()    override;
@@ -46,6 +48,7 @@ protected:
 
     mutable pingPongFbo brushFbo;
     shared_ptr<AutoShader> uv_draw_shader;
+    shared_ptr<AutoShader> uv_overlay_shader;
 
     ofParameter<float> p_blur;
     ofParameter<float> p_size;

@@ -26,6 +26,7 @@ protected:
     virtual void onSetupParams()    override;
     virtual void onReset();
     virtual void onSetupListeners() override;
+    virtual void onDrawOverlay()    override;
     virtual void onDrawGui()        override;
     virtual void onResize()         override;
 

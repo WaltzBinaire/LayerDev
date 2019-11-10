@@ -177,7 +177,7 @@ protected:
     vector<shared_ptr<CollagePatch>> patches;
     vector<string>                   paths;
     shared_ptr<CollagePatch>         active_patch;
-    mutable shared_ptr<AutoShader>  collageShader;
+    mutable shared_ptr<AutoShader>   collageShader;
 private:
     mutable shared_ptr<AutoShader>  collageOverlayShader;
 

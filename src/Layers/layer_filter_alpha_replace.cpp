@@ -53,6 +53,35 @@ void Layer_filter_alpha_replace::onSetupListeners()
 
 }
 
+void Layer_filter_alpha_replace::onDrawOverlay()
+{
+    glm::vec2 points[4]{
+        { // 0,0
+            replacementPosition.x - 0.5 * replacementScale * image.getWidth(), 
+            replacementPosition.y - 0.5 * replacementScale * image.getHeight()
+        },
+        { // 1,0
+            replacementPosition.x + 0.5 * replacementScale * image.getWidth(), 
+            replacementPosition.y - 0.5 * replacementScale * image.getHeight()
+        },
+        {// 1,1
+            replacementPosition.x + 0.5 * replacementScale * image.getWidth(), 
+            replacementPosition.y + 0.5 * replacementScale * image.getHeight()
+        }, 
+        {  // 0,1
+            replacementPosition.x - 0.5 * replacementScale * image.getWidth(), 
+            replacementPosition.y + 0.5 * replacementScale * image.getHeight()
+        }
+    };
+    float w =  5;
+    ofSetColor(ofColor::green);
+    ofDrawRectangle(ofRectangle(points[0] + glm::vec2(0.0,  w ), points[1] + glm::vec2(0.0, -w )));
+    ofDrawRectangle(ofRectangle(points[3] + glm::vec2(0.0,  w ), points[2] + glm::vec2(0.0, -w )));
+    ofDrawRectangle(ofRectangle(points[0] + glm::vec2( -w, 0.0), points[3] + glm::vec2( w, 0.0 )));
+    ofDrawRectangle(ofRectangle(points[1] + glm::vec2( -w, 0.0), points[2] + glm::vec2( w, 0.0 )));
+
+}
+
 void Layer_filter_alpha_replace::onDrawGui()
 {
     SingleLayerGui::specialisedDrawGui<Layer_filter_alpha_replace>(this); 
@@ -125,7 +154,8 @@ void Layer_filter_alpha_replace::onFileDragEvent(ofDragInfo & _fileInfo)
 
 void Layer_filter_alpha_replace::onKeyPressed(ofKeyEventArgs & _args)
 {
-    p_hFlip.set(!p_hFlip);
+    if( _args.key == 'f')
+        p_hFlip.set(!p_hFlip);
 }
 
 void Layer_filter_alpha_replace::onMousePressed(ofMouseEventArgs & args)

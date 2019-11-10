@@ -19,6 +19,10 @@ void Layer_filter_distort::onSetup()
     setupBrushFbo();
 }
 
+void Layer_filter_distort::onDrawOverlay()
+{
+}
+
 void Layer_filter_distort::onReset()
 {
     brushFbo.clearAll();
@@ -91,8 +95,9 @@ void Layer_filter_distort::onMouseScrolled(ofMouseEventArgs & _args)
 
 void Layer_filter_distort::setupShader()
 {
-    shader         = Shader_lib::get_uv_distort_shader();
-    uv_draw_shader = Shader_lib::get_uv_draw_shader();
+    shader            = Shader_lib::get_uv_distort_shader();
+    uv_draw_shader    = Shader_lib::get_uv_draw_shader();
+    uv_overlay_shader = Shader_lib::get_uv_overlay_shader();
     l_onUvShaderLoad = uv_draw_shader->onLoad.newListener([&](bool &) {return  b_brushFboInitialised = false;  this->redraw(); });
 }
 
