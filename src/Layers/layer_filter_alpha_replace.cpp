@@ -101,7 +101,7 @@ void Layer_filter_alpha_replace::setupReplacementFbo()
 void Layer_filter_alpha_replace::renderReplacmentFbo() const
 {
     replacementFbo.begin();
-    ofClear(0.0);
+    ofClear(0.0, 0.0);
     if (image.isAllocated()) {
         image.draw(
             replacementPosition.x - replacementScale * 0.5 * image.getWidth(),

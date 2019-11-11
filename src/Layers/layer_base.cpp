@@ -42,6 +42,8 @@ void Layer_base::setup(int  _width, int _height) {
     p_showMask.set  ( "Show Mask"  , false);
     p_mask.set      ( "Mask"       , false);
     p_invertMask.set( "Invert Mask", false);
+    p_maskSnap.set  ( "Snap Mask"  , true);
+    p_maskShape.set ( "Mask Shape" , true);
 
     params.add(
         p_reset,
@@ -51,6 +53,8 @@ void Layer_base::setup(int  _width, int _height) {
         p_clearMask,
         p_showMask,
         p_editMask,
+        p_maskSnap,
+        p_maskShape,
         p_mask,
         p_invertMask,
         p_pause
@@ -74,7 +78,7 @@ void Layer_base::drawOverlay(ofFbo & overlayFbo)
     overlayFbo.begin();
 
     if (p_showMask) maskFbo.draw(0, 0);
-    if (p_editMask) drawMaskBrush();
+    if (p_editMask) drawMaskBrushOverlay();
 
     onDrawOverlay();
     overlayFbo.end();
@@ -275,12 +279,23 @@ void Layer_base::drawMaskEditBrush(ofMouseEventArgs & _args)
     else                   ofSetColor(ofColor::white);
 
     maskFbo.begin();
-    ofDrawRectangle(
-        maskBrushPosition.x - maskBrushSize * 0.5,
-        maskBrushPosition.y - maskBrushSize * 0.5,
-        maskBrushSize,
-        maskBrushSize
-    );
+
+    if (p_maskShape) {
+        ofDrawRectangle(
+            maskBrushPosition.x - maskBrushSize * 0.5,
+            maskBrushPosition.y - maskBrushSize * 0.5,
+            maskBrushSize,
+            maskBrushSize
+        );
+    }
+    else {
+        ofDrawCircle(
+            maskBrushPosition.x - maskBrushSize * 0.5,
+            maskBrushPosition.y - maskBrushSize * 0.5,
+            maskBrushSize * 0.5
+        );
+    }
+
 
     maskFbo.end();
 
@@ -291,36 +306,54 @@ void Layer_base::drawMaskEditBrush(ofMouseEventArgs & _args)
 void Layer_base::updateMaskBrushPosition(ofMouseEventArgs & _args)
 {
     maskBrushPosition = glm::vec2(_args.x, _args.y);
-    maskBrushPosition = maskBrushSize * glm::floor((glm::vec2(maskBrushSize * 0.5) + maskBrushPosition) / maskBrushSize);
+    if(p_maskSnap)
+        maskBrushPosition = maskBrushSize * glm::floor((glm::vec2(maskBrushSize * 0.25) + maskBrushPosition) / maskBrushSize);
 }
 
-void Layer_base::drawMaskBrush() const
+void Layer_base::drawMaskBrushOverlay() const
 {
     ofPushStyle();
 
-    float edges[4]{
-        maskBrushPosition.x - maskBrushSize * 0.5,
-        maskBrushPosition.y - maskBrushSize * 0.5,
-        maskBrushPosition.x + maskBrushSize * 0.5,
-        maskBrushPosition.y + maskBrushSize * 0.5,
-    };
+    if (p_maskShape) {
+        float edges[4]{
+            maskBrushPosition.x - maskBrushSize * 0.5,
+            maskBrushPosition.y - maskBrushSize * 0.5,
+            maskBrushPosition.x + maskBrushSize * 0.5,
+            maskBrushPosition.y + maskBrushSize * 0.5,
+        };
 
-    glm::vec2 points[4]{
-        {edges[0], edges[1]},
-        {edges[2], edges[1]},
-        {edges[2], edges[3]},
-        {edges[0], edges[3]}
-    };
+        glm::vec2 points[4]{
+            {edges[0], edges[1]},
+            {edges[2], edges[1]},
+            {edges[2], edges[3]},
+            {edges[0], edges[3]}
+        };
 
-    ofSetColor(ofColor(255, 255, 255, 192));
-    ofDrawRectangle(points[0], points[2].x - points[0].x, points[2].y - points[0].y);
+        ofSetColor(ofColor(255, 255, 255, 192));
+        ofDrawRectangle(points[0], points[2].x - points[0].x, points[2].y - points[0].y);
 
-    ofSetColor(ofColor::white);
-    ofSetLineWidth(8.0);
-    ofDrawLine(points[0], points[1]);
-    ofDrawLine(points[1], points[2]);
-    ofDrawLine(points[2], points[3]);
-    ofDrawLine(points[3], points[0]);
+        ofSetColor(ofColor::white);
+        ofSetLineWidth(8.0);
+        ofDrawLine(points[0], points[1]);
+        ofDrawLine(points[1], points[2]);
+        ofDrawLine(points[2], points[3]);
+        ofDrawLine(points[3], points[0]);
+    }
+    else {
+        ofSetColor(ofColor(255, 255, 255, 192));
+        ofDrawCircle(
+            maskBrushPosition.x - maskBrushSize * 0.5,
+            maskBrushPosition.y - maskBrushSize * 0.5,
+            maskBrushSize * 0.5
+        );
+        ofNoFill();
+        ofSetColor(ofColor::white);
+        ofDrawCircle(
+            maskBrushPosition.x - maskBrushSize * 0.5,
+            maskBrushPosition.y - maskBrushSize * 0.5,
+            maskBrushSize * 0.5
+        );
+    }
 
 
 
@@ -361,7 +394,7 @@ bool Static_base::draw(pingPongFbo & mainFbo, bool _forceRedraw) const
         onRender(_forceRedraw);
 
         fbo.begin();
-        ofClear(0);
+        ofClear(0.0, 0.0);
         onDraw(_forceRedraw);
         fbo.end();
         
@@ -398,7 +431,7 @@ bool Filter_base::draw(pingPongFbo & mainFbo, bool _forceRedraw) const
         onRender(mainFbo.getBackTexture(), _forceRedraw);
 
         fbo.begin();
-        ofClear(0);
+        ofClear(0.0, 0.0);
         onDraw(mainFbo.getBackTexture(), _forceRedraw);
         fbo.end();
 

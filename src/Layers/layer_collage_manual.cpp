@@ -2,6 +2,22 @@
 
 REGISTER_TYPE(Layer_collage_manual, Manual Collage)
 
+string Layer_collage_manual::getCursorData() const
+{
+    string str = "";
+
+    if (paths.size() > 0) {
+        str += "f " + ofToString(pathIndex) + "\\"  + ofToString( getNumPaths() );
+    }
+
+    if (active_patch != nullptr) {
+        str += str == "" ? "" : "\n";
+        str += "s " + ofToString(active_patch->getScale());
+    }
+    
+    return str;
+}
+
 void  Layer_collage_manual::onSetupListeners()
 {
     Layer_collage::onSetupListeners();
@@ -96,7 +112,9 @@ void Layer_collage_manual::onMouseScrolled(ofMouseEventArgs & _args)
             if (ofGetKeyPressed(OF_KEY_CONTROL)) {
                 if (active_patch != nullptr) {
                     if (active_patch->isReady()) {
-                        pathIndex = (pathIndex + (int)_args.scrollY) % paths.size();
+
+                        pathIndex = (pathIndex + (int)_args.scrollY) % paths.size();                            
+
                         active_patch->setNewPath(paths[pathIndex]);
                         loadImage(active_patch);
                         redraw();

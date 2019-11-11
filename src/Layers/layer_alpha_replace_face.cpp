@@ -109,7 +109,7 @@ void Layer_alpha_replace_face::renderReplacmentFbo() const
 #endif
 
     replacementFbo.begin();
-    ofClear(0.0);
+    ofClear(0.0, 0.0);
     if (image.isAllocated()) {
         image.draw(
             replacementPosition.x - replacementScale * 0.5 * image.getWidth(),
@@ -130,7 +130,7 @@ void Layer_alpha_replace_face::setupFaceFbo()
 {
     faceFbo.allocate(size.x, size.y, GL_RGBA);
     faceFbo.begin();
-    ofClear(0.0);
+    ofClear(0.0, 0.0);
     faceFbo.end();
 }
 

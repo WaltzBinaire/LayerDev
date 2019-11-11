@@ -297,10 +297,13 @@ void SingleLayerGui::specialisedDrawGui(Layer_filter_adjustment * layer) {
     ofParameter<float> p_saturation   = layer->params.get( "Saturation"  ).cast<float>();
     ofParameter<float> p_vibrance     = layer->params.get( "Vibrance"    ).cast<float>();
     ofParameter<float> p_hue          = layer->params.get( "Hue"         ).cast<float>();
+    ofParameter<bool>  p_resetAdj     = layer->params.get( "Reset All"   ).cast<bool>();
 
      Slider(p_brightness );
      Slider(p_contrast   );
      Slider(p_saturation );
      Slider(p_vibrance   );
      Slider(p_hue        );
+
+     Button(p_resetAdj);
 };

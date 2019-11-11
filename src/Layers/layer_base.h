@@ -162,6 +162,8 @@ protected:
     ofParameter<bool> p_mask;
     ofParameter<bool> p_invertMask;
     ofParameter<bool> p_editMask;
+    ofParameter<bool> p_maskSnap;
+    ofParameter<bool> p_maskShape;
 
 
     ofEventListener l_paramsChanged;
@@ -200,7 +202,7 @@ private:
     void onMaskEditMouseScrolled( ofMouseEventArgs & _args);
     void drawMaskEditBrush      ( ofMouseEventArgs & _args);
     void updateMaskBrushPosition(ofMouseEventArgs & _args);
-    void drawMaskBrush() const;
+    void drawMaskBrushOverlay() const;
 
     static map<string, Layer_factory*>* GetFactoryDirectory() {        
         static map<string, Layer_factory*>* factories = new map<string, Layer_factory*>();

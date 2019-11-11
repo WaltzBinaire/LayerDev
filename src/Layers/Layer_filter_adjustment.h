@@ -13,7 +13,11 @@ protected:
 
     virtual void setupShader() override;
     virtual void setUniforms(const ofTexture & _baseTex) const override;
+
+    void onResetAdj(bool & _val);
     
+    ofParameter<bool> p_resetAdjustments;
+
     ofParameter<float> p_brightness;
     ofParameter<float> p_contrast;
     ofParameter<float> p_saturation;

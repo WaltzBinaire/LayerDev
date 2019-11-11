@@ -8,6 +8,10 @@ public:
     Layer_collage_manual(string name, int instance, Layer_Manager * _layer_manager)
         : Layer_collage(name, instance, _layer_manager) {}
 
+    int getPathIndex() const { return pathIndex;  }
+
+    virtual string getCursorData() const  override;
+
 protected:
 
     enum class MODE {NONE, PLACING} mode = MODE::NONE;
