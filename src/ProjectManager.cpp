@@ -2,31 +2,34 @@
 
 const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_rel_paths
 {
-    {RESOURCE_TYPE::RAW      , "Assets/Raw"       },
-    {RESOURCE_TYPE::SEGMENTED, "Assets/Segmented" },
-    {RESOURCE_TYPE::TARGET   , "Assets/Targets"   },
-    {RESOURCE_TYPE::COLLAGE  , "Assets/Collage"   },
-    {RESOURCE_TYPE::MASKS    , "Assets/Masks"     },
-    {RESOURCE_TYPE::FACES    , "Assets/Faces"     }
+    {RESOURCE_TYPE::RAW       , "Assets/Raw"       },
+    {RESOURCE_TYPE::SEGMENTED , "Assets/Segmented" },
+    {RESOURCE_TYPE::TARGET    , "Assets/Targets"   },
+    {RESOURCE_TYPE::COLLAGE   , "Assets/Collage"   },
+    {RESOURCE_TYPE::MASKS     , "Assets/Masks"     },
+    {RESOURCE_TYPE::FACES     , "Assets/Faces"     },
+    {RESOURCE_TYPE::PRECOLLAGE, "Assets/Precollage"}
 };
 
 const char* ProjectResource::resource_name_c[] = {
-    "Instagram",
-    "Segmented",
-    "Portrait" ,
-    "Collage"  , 
-    "Masks"    ,
-    "Faces"    
+    "Instagram"  ,
+    "Segmented"  ,
+    "Portrait"   ,
+    "Collage"    , 
+    "Masks"      ,
+    "Faces"      ,
+    "Intacollage"    
 };
 
 const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_names
 {
-    {RESOURCE_TYPE::RAW      , resource_name_c[0] },
-    {RESOURCE_TYPE::SEGMENTED, resource_name_c[1] },
-    {RESOURCE_TYPE::TARGET   , resource_name_c[2] },
-    {RESOURCE_TYPE::COLLAGE  , resource_name_c[3] },
-    {RESOURCE_TYPE::MASKS    , resource_name_c[4] },
-    {RESOURCE_TYPE::FACES    , resource_name_c[5] }
+    {RESOURCE_TYPE::RAW       , resource_name_c[0] },
+    {RESOURCE_TYPE::SEGMENTED , resource_name_c[1] },
+    {RESOURCE_TYPE::TARGET    , resource_name_c[2] },
+    {RESOURCE_TYPE::COLLAGE   , resource_name_c[3] },
+    {RESOURCE_TYPE::MASKS     , resource_name_c[4] },
+    {RESOURCE_TYPE::FACES     , resource_name_c[5] },
+    {RESOURCE_TYPE::PRECOLLAGE, resource_name_c[6] }
 };
 
 ProjectResource::~ProjectResource()
@@ -109,6 +112,7 @@ vector<string> ProjectResource::get_allowed_exts()
     case RESOURCE_TYPE::TARGET:
     case RESOURCE_TYPE::MASKS:
     case RESOURCE_TYPE::FACES:
+    case RESOURCE_TYPE::PRECOLLAGE:
         return LayerUtils::img_exts;
     case RESOURCE_TYPE::COLLAGE:
         return LayerUtils::collage_exts;

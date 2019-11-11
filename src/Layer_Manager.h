@@ -41,11 +41,19 @@ public:
     void exportLayers() const;
 
     shared_ptr<Layer_base> add_layer(string name, bool _activate = true);
+    deque<shared_ptr<Layer_base>>::iterator findLayer(shared_ptr<Layer_base> _layer);
+    void setActiveLayer(shared_ptr<Layer_base> _layer);
+    void delete_layer(shared_ptr<Layer_base> _layer);
+    void move_layer(shared_ptr<Layer_base> _layer, DIRECTION _dir);
     
     vector<string> get_layer_names();
+    const vector<string>&  getLayerTypes() { return layer_types; };
+
+    void setKeyLayer(shared_ptr<Layer_base> _layer);
+
     void redrawAll();
 
-    map<string, std::function<void(bool)>> specialLayers;
+    map<string, std::function<void(bool)>> presetLayers;
     shared_ptr<Layer_base> keyLayer;
 
 private:
@@ -62,11 +70,6 @@ private:
     void onKeyReleased (ofKeyEventArgs & _args);
 
     void onProjectLoaded(bool & _val);
-    void addPortraitLayer(bool _activate);
-    void addCollageLayer(bool _activate);
-    void addSingleCollageLayer(bool _activate);
-    void addAICollageLayer(bool _activate);
-    void addFaceSwapLayer(bool _activate);
 
     void addListeners();
     void removeListeners();
@@ -76,10 +79,7 @@ private:
     void onCanvasResized(glm::vec2 & _size);
     void onBackgroundChanged(bool & _var);
 
-    deque<shared_ptr<Layer_base>>::iterator findLayer(shared_ptr<Layer_base> _layer);
-    void setActiveLayer(shared_ptr<Layer_base> _layer);
-    void delete_layer(shared_ptr<Layer_base> _layer);
-    void move_layer(shared_ptr<Layer_base> _layer, DIRECTION _dir);
+
 
     mutable Canvas canvas;
     glm::vec2 mousePosition;

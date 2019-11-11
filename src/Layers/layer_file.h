@@ -14,6 +14,13 @@ public:
     glm::vec2 getScreenSize() const { return scale * glm::vec2(getFileWidth(), getFileHeight()); }
     float     getScale()      const { return scale; }
 
+    void setPlacing(bool _placing) { b_placing = _placing; }
+    void setDefaultPositionScale() {
+        scale = 1.0;
+        position = size * 0.5;
+        redraw();
+    }
+
 protected:
     virtual void onSetupParams()    override ;
     virtual void onSetupListeners() override ;

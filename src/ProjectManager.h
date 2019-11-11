@@ -13,7 +13,15 @@ class ProjectResource {
 
 public:
 
-    enum class RESOURCE_TYPE {  RAW, SEGMENTED, TARGET, COLLAGE, MASKS, FACES };
+    enum class RESOURCE_TYPE {  
+        RAW, 
+        SEGMENTED, 
+        TARGET, 
+        COLLAGE, 
+        MASKS, 
+        FACES,
+        PRECOLLAGE
+    };
     ProjectResource(RESOURCE_TYPE _rt) : rt(_rt) {};
     ~ProjectResource();
 

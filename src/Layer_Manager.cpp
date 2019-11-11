@@ -1,5 +1,6 @@
 #include "Layer_Manager.h"
 #include "Layers/layer.h"
+#include "Preset_layers.h"
 #include "GUI/LayerGui.h"
 #include "Utils/LayerUtils.h"
 
@@ -20,7 +21,6 @@ Layer_Manager::Layer_Manager()
 Layer_Manager::~Layer_Manager()
 {    
     removeListeners();
-
     if (gui != nullptr) delete(gui);
 }
 
@@ -44,6 +44,13 @@ shared_ptr<Layer_base> Layer_Manager::add_layer(string name, bool _activate)
 vector<string> Layer_Manager::get_layer_names()
 {
     return layer_types;
+}
+
+void Layer_Manager::setKeyLayer(shared_ptr<Layer_base> _layer) {
+    auto layer_itr = findLayer(_layer);
+    if (layer_itr != layers.end()) {
+        keyLayer = _layer;
+    }
 }
 
 void Layer_Manager::redrawAll()
@@ -100,7 +107,6 @@ void Layer_Manager::onKeyPressed(ofKeyEventArgs & _args)
     if (_args.key == 'o') {
         b_drawOverlay = !b_drawOverlay;
     }
-
     canvasKeyPressed.notify(_args);
 }
 
@@ -112,165 +118,15 @@ void Layer_Manager::onKeyReleased(ofKeyEventArgs & _args)
 
 void Layer_Manager::onProjectLoaded(bool & _val)
 {
-
-    specialLayers.clear();
     if (!_val)  return;
-
-    // Add Portrait Layer
-    if (projectManager().getResource(RESOURCE_TYPE::TARGET) != nullptr) {
-        std::function<void(bool)> func = [=](bool _activate) {
-            this->addPortraitLayer(_activate);
-        };
-        specialLayers.insert_or_assign("Portrait", func); 
-
-        // Add layer by default
-        addPortraitLayer(true);
-
-    }
-
-    // Add Collage Layer
-    if (projectManager().getResource(RESOURCE_TYPE::SEGMENTED) != nullptr) {
-        std::function<void(bool)> func = [=](bool _activate) {
-            this->addCollageLayer(_activate);
-        };
-        specialLayers.insert_or_assign("Collage", func);
-    }
-
-    // Add Manual Collage Layer
-    if (projectManager().getResource(RESOURCE_TYPE::SEGMENTED) != nullptr) {
-        std::function<void(bool)> func = [=](bool _activate) {
-            this->addSingleCollageLayer(_activate);
-        };
-        specialLayers.insert_or_assign("Single Collage", func);
-    }
-
-    // Add AI Collage Layer
-    if (projectManager().getResource(RESOURCE_TYPE::COLLAGE) != nullptr) {
-        std::function<void(bool)> func = [=](bool _activate) {
-            this->addAICollageLayer(_activate);
-        };
-        specialLayers.insert_or_assign("AI Collage", func);
-    }
-
-    // Add Face Swap
-    if (projectManager().getResource(RESOURCE_TYPE::FACES) != nullptr) {
-        std::function<void(bool)> func = [=](bool _activate) {
-            this->addFaceSwapLayer(_activate);
-        };
-        specialLayers.insert_or_assign("Face Swap", func);
+    presetLayers = Presets::getPresetLayers(this);
+    
+    auto potraitLayerFunc = presetLayers.find("Portrait");
+    if (potraitLayerFunc != presetLayers.end()) {
+        (potraitLayerFunc->second)(true);
     }
 }
 
-void Layer_Manager::addPortraitLayer(bool _activate)
-{
-    const string layer_name = "Mask Image";
-
-    auto targets = projectManager().getResource(RESOURCE_TYPE::TARGET);
-    auto masks   = projectManager().getResource(RESOURCE_TYPE::MASKS);
-
-    auto layer_type = find(layer_types.begin(), layer_types.end(), layer_name);
-    if (layer_type != layer_types.end()) {
-        shared_ptr<Layer_base> layer = add_layer(layer_name, _activate);
-        auto img_layer = dynamic_pointer_cast<Layer_image_advanced>(layer);
-
-        if (img_layer == nullptr) {
-            delete_layer(layer);
-        }
-        else {
-            img_layer->set_display_name("Portrait");
-            img_layer->handle_file( targets->getFilePath(0));
-
-            if (masks != nullptr) {
-                img_layer->loadBodyMask(masks->getFilePath(0));
-            }
-
-            img_layer->params.get("Mask").cast<bool>().set(true);
-            keyLayer = layer;
-        }
-    }
-}
-void Layer_Manager::addCollageLayer(bool _activate)
-{
-    const string layer_name = "Generative Collage";
-
-    auto targets = projectManager().getResource(RESOURCE_TYPE::SEGMENTED);
-
-    auto layer_type = find(layer_types.begin(), layer_types.end(), layer_name);
-    if (layer_type != layer_types.end()) {
-        auto layer = add_layer(layer_name, _activate);
-        auto collage_layer = dynamic_pointer_cast<Layer_collage_generative>(layer);
-
-        if (collage_layer == nullptr) {
-            delete_layer(layer);
-            return;
-        }
-        collage_layer->set_display_name(layer_name + " (Preset)" );
-        collage_layer->replace_images(targets->getDirectoryPath());
-    }
-}
-
-void Layer_Manager::addSingleCollageLayer(bool _activate)
-{
-    const string layer_name = "Single Collage";
-
-    auto targets = projectManager().getResource(RESOURCE_TYPE::SEGMENTED);
-
-    auto layer_type = find(layer_types.begin(), layer_types.end(), layer_name);
-    if (layer_type != layer_types.end()) {
-        shared_ptr<Layer_base> layer = add_layer(layer_name, _activate);
-        auto collage_layer = dynamic_pointer_cast<Layer_collage_single>(layer);
-
-        if (collage_layer == nullptr) {
-            delete_layer(layer);
-            return;
-        }
-        collage_layer->set_display_name(layer_name + " (Preset)" );
-        collage_layer->replace_images(targets->getDirectoryPath());
-    }
-}
-
-void Layer_Manager::addAICollageLayer(bool _activate)
-{
-    const string layer_name = "AI Collage";
-
-    auto targets = projectManager().getResource(RESOURCE_TYPE::COLLAGE);
-
-    auto layer_type = find(layer_types.begin(), layer_types.end(), layer_name);
-    if (layer_type != layer_types.end()) {
-        shared_ptr<Layer_base> layer = add_layer(layer_name, _activate);
-        auto collage_layer = dynamic_pointer_cast<Layer_file_aiCollage>(layer);
-
-        if (collage_layer == nullptr) {
-            delete_layer(layer);
-            return;
-        }
-        collage_layer->set_display_name(layer_name + " (Preset)" );
-        collage_layer->handle_file(targets->getFilePath(0));
-    }
-}
-
-void Layer_Manager::addFaceSwapLayer(bool _activate)
-{
-    const string layer_name = "Face Replace";
-
-    auto targets = projectManager().getResource(RESOURCE_TYPE::FACES);
-
-    auto layer_type = find(layer_types.begin(), layer_types.end(), layer_name);
-    if (layer_type != layer_types.end()) {
-        shared_ptr<Layer_base> layer = add_layer(layer_name, _activate);
-        auto face_layer = dynamic_pointer_cast<Layer_alpha_replace_face>(layer);
-
-        if (face_layer == nullptr) {
-            delete_layer(layer);
-            return;
-        }
-        for (int i = 0; i < targets->size(); i++) {
-            face_layer->handle_file(targets->getFilePath(i));
-        }
-        face_layer->set_display_name(layer_name + " (Preset)" );
-        face_layer->set_placing();
-    }
-}
 
 void Layer_Manager::addListeners()
 {

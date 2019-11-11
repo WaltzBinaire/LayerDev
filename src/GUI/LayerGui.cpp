@@ -229,10 +229,10 @@ float LayerGui::drawMainMenuBar()
         {
             ProjectManager & projectManager = manager->projectManager();
 
-            if (manager->specialLayers.size() > 0 && projectManager.isLoaded()) {
+            if (manager->presetLayers.size() > 0 && projectManager.isLoaded()) {
                 if (ImGui::BeginMenu("Presets"))
                 {
-                    for (auto & specialLayer : manager->specialLayers) {
+                    for (auto & specialLayer : manager->presetLayers) {
                         if (ImGui::MenuItem(specialLayer.first.c_str())) {
                             (specialLayer.second)(true);
                         }
