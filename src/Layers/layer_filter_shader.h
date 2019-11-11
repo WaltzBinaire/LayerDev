@@ -10,14 +10,10 @@ public:
 protected:
     virtual void onDraw(const ofTexture & _baseTex, bool _forced = false) const override;
     virtual void onSetup()  override;
-
-    virtual void setupMesh();
     virtual void setupShader() = 0;
     virtual void setUniforms(const ofTexture & _baseTex) const;
-    virtual void setMesh(const ofTexture & _baseTex) const;
 
     shared_ptr<AutoShader> shader;
-    mutable ofMesh mesh;
 
 private:
     ofEventListener l_onShaderLoad;

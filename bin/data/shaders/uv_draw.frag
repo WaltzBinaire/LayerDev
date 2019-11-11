@@ -8,6 +8,7 @@ uniform vec2  u_pos;
 uniform float u_blur;
 uniform float u_size;
 uniform int   u_shape;
+uniform int   u_overlay;
 uniform int   u_drawing;
 uniform int   u_initialized;
 
@@ -17,8 +18,9 @@ in vec2 texCoordVarying;
 out vec4 outputColor;
 
 #define CIRCLE    0
-#define LINE      1
-#define RECTANGLE 2
+#define HLINE     1
+#define VLINE     2
+#define RECTANGLE 3
 
 float sdBox( in vec2 p, in vec2 b )
 {
@@ -81,15 +83,17 @@ void main()
     vec2 pos     = _uv - vec2(u_pos.x, u_pos.y);
             
 
-    vec2  base_uv = _uv;
-    float base_a  = 1.0;            
-
+    vec2  base_uv;     
+    float base_a;
     if(u_initialized == 1){
         base_uv = texture( u_imageTex, _uv).rg;
         base_a  = texture( u_imageTex, _uv).a;      
-    }    
+    } else {
+        base_uv = _uv;
+        base_a  = 1.0; 
+    }
 
-    vec2 srt_uv = vec2(u_srtPos.x, u_srtPos.y) - vec2(u_pos.x, u_pos.y) + _uv;
+    vec2 srt_uv = vec2(u_srtPos.x, u_srtPos.y) - vec2(u_pos.x, u_pos.y) + _uv ;
     
     
     vec2 a_ratio = vec2( 1.0, u_resolution.x/u_resolution.y);
@@ -97,24 +101,28 @@ void main()
     float sdf = 1.0;
     if( u_shape == CIRCLE){
         sdf = sdEllipse( pos, u_size * 0.1 * a_ratio);
-    } else if (u_shape == LINE){
-        sdf = sdBox( pos, vec2(1.0, u_size * 0.1 * a_ratio));     
+    } else if (u_shape == HLINE){
+        sdf = sdBox( vec2(0.5, pos.y), vec2(1.0, (u_size * 0.1 * a_ratio.x))); 
+    } else if (u_shape == VLINE){
+        sdf = sdBox( vec2(pos.x, 0.5), vec2((u_size * 0.1 * a_ratio.y), 1.0)); 
     } else if (u_shape == RECTANGLE ){
         sdf = sdBox( pos, u_size * 0.1 * a_ratio);    
     }
-        
-    
-    float d_pos = smoothstep(u_blur * 0.1, 0.0, sdf);
 
-    vec2 uv = mix( base_uv, srt_uv, d_pos);
+    float d_pos = smoothstep((u_blur + 0.1) * 0.2, 0.0, sdf);
+
+    vec2 uv = mix( base_uv, srt_uv, pow(d_pos, 2.0));
     
-    if(u_drawing == 1){    
+    if(u_overlay == 1){
+        float a = mod(pow(d_pos, u_blur + 1), 0.99);
+        outputColor = vec4(0.0, 1.0, 0.0, a);    
+    } else if( u_drawing == 1 ) {        
         outputColor = vec4(uv.x, uv.y, 0.0, 1.0);
         //outputColor = vec4(srt_uv.x, srt_uv.y, 0.0, 1.0);
         //outputColor = vec4(base_uv.x, base_uv.y, 0.0, 1.0);
         //outputColor = vec4(d_pos, d_pos, d_pos, 1.0);
-    } else{
+
+    } else {
         outputColor = vec4(base_uv.x, base_uv.y, 0.0, base_a);
-    }
-    
+    }    
 }  

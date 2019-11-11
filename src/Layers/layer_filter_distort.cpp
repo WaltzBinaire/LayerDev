@@ -5,7 +5,18 @@ REGISTER_TYPE(Layer_filter_distort, Glitch Distort)
 
 void Layer_filter_distort::onRender(const ofTexture & _baseTex, bool _forced) const
 {
-    drawBrush(_baseTex);
+    if (!b_brushFboInitialised) {
+        brushFbo.swap();
+        brushFbo.begin();
+        drawBrush();
+        brushFbo.end();
+        b_brushFboInitialised = true;
+    }
+    brushFbo.swap();
+    brushFbo.begin();
+    drawBrush();
+    brushFbo.end();
+
 }
 
 void Layer_filter_distort::onDrawGui()
@@ -21,6 +32,7 @@ void Layer_filter_distort::onSetup()
 
 void Layer_filter_distort::onDrawOverlay()
 {
+    drawBrush(true);
 }
 
 void Layer_filter_distort::onReset()
@@ -35,7 +47,6 @@ void Layer_filter_distort::onUpdate()
         redraw();
     }
 }
-
 
 void Layer_filter_distort::onSetupParams()
 {
@@ -58,6 +69,7 @@ void Layer_filter_distort::onResize()
 void Layer_filter_distort::onSetupListeners()
 {
     l_onMousePressed  = layer_manager->canvasMousePressed .newListener( this, &Layer_filter_distort::onMousePressed );
+    l_onMouseMoved    = layer_manager->canvasMouseMoved .newListener  ( this, &Layer_filter_distort::onMouseMoved   );
     l_onMouseDragged  = layer_manager->canvasMouseDragged .newListener( this, &Layer_filter_distort::onMouseDragged );
     l_onMouseReleased = layer_manager->canvasMouseReleased.newListener( this, &Layer_filter_distort::onMouseReleased);
     l_onMouseScrolled = layer_manager->canvasMouseScrolled.newListener( this, &Layer_filter_distort::onMouseScrolled);
@@ -76,6 +88,12 @@ void Layer_filter_distort::onMousePressed(ofMouseEventArgs & _args)
     b_drawing = true;
 }
 
+void Layer_filter_distort::onMouseMoved(ofMouseEventArgs & _args)
+{
+    glm::vec2 movement = glm::vec2(_args.x, _args.y) - mousePosition;
+    mousePosition += movement * 0.4;
+}
+
 void Layer_filter_distort::onMouseDragged(ofMouseEventArgs & _args)
 {
     glm::vec2 movement = glm::vec2(_args.x, _args.y) - mousePosition;
@@ -89,15 +107,20 @@ void Layer_filter_distort::onMouseReleased(ofMouseEventArgs & _args)
 
 void Layer_filter_distort::onMouseScrolled(ofMouseEventArgs & _args)
 {
-    p_size += 0.05 * _args.scrollY;
-    p_size = ofClamp(p_size, p_size.getMin(), p_size.getMax());
+    if (ofGetKeyPressed(OF_KEY_ALT)) {
+        p_blur += 0.05 * _args.scrollY;
+        p_blur = ofClamp(p_blur, p_blur.getMin(), p_blur.getMax());
+    }
+    else {
+        p_size += 0.05 * _args.scrollY;
+        p_size = ofClamp(p_size, p_size.getMin(), p_size.getMax());
+    }
 }
 
 void Layer_filter_distort::setupShader()
 {
-    shader            = Shader_lib::get_uv_distort_shader();
-    uv_draw_shader    = Shader_lib::get_uv_draw_shader();
-    uv_overlay_shader = Shader_lib::get_uv_overlay_shader();
+    shader         = Shader_lib::get_uv_distort_shader();
+    uv_draw_shader = Shader_lib::get_uv_draw_shader();
     l_onUvShaderLoad = uv_draw_shader->onLoad.newListener([&](bool &) {return  b_brushFboInitialised = false;  this->redraw(); });
 }
 
@@ -123,29 +146,26 @@ void Layer_filter_distort::setupBrushFbo()
     brushFbo.allocate(settings);
 }
 
-void Layer_filter_distort::drawBrush(const ofTexture & _baseTex) const
+void Layer_filter_distort::drawBrush(bool _overlay) const
 {
-    brushFbo.swap();
-    brushFbo.begin();
+
     uv_draw_shader->begin();
 
-    glm::vec2 pos    = mousePosition        / glm::vec2(_baseTex.getWidth(), _baseTex.getHeight());
-    glm::vec2 srtPos = mousePressedPosition / glm::vec2(_baseTex.getWidth(), _baseTex.getHeight());
+    glm::vec2 pos    = mousePosition        / size;
+    glm::vec2 srtPos = mousePressedPosition / size;
 
     uv_draw_shader->setUniformTexture("u_imageTex", brushFbo.getBackTexture(), 0);
-    uv_draw_shader->setUniform2f("u_resolution", _baseTex.getWidth(), _baseTex.getHeight());
+    uv_draw_shader->setUniform2f("u_resolution", size);
     uv_draw_shader->setUniform2f("u_srtPos" , srtPos);
     uv_draw_shader->setUniform2f("u_pos"    , pos);
     uv_draw_shader->setUniform1f("u_size"   , p_size);
     uv_draw_shader->setUniform1f("u_blur"   , p_size * p_blur);
     uv_draw_shader->setUniform1i("u_shape"  , p_shape);
     uv_draw_shader->setUniform1i("u_drawing", (int)b_drawing);
+    uv_draw_shader->setUniform1i("u_overlay", (int)_overlay);
     uv_draw_shader->setUniform1i("u_initialized", (int)b_brushFboInitialised);
 
-    setMesh( _baseTex);
-    mesh.draw();
+    LayerUtils::UVQuad::getInstance().draw(0, 0, size.x, size.y);
 
     uv_draw_shader->end();
-    brushFbo.end();
-    b_brushFboInitialised = true;
 }

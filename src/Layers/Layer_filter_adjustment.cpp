@@ -9,7 +9,7 @@ void Layer_filter_adjustment::onDrawGui(){
 
 void Layer_filter_adjustment::onSetupParams()
 {
-    p_brightness.set("Brightness", 0.0, 0.0, 1.0);
+    p_brightness.set("Brightness", 0.0, -1.0, 1.0);
     p_contrast.set  ("Contrast"  , 1.0, 0.5, 2.0);
     p_saturation.set("Saturation", 1.0, 0.0, 2.0);
     p_vibrance.set  ("Vibrance"  , 1.0, 0.0, 2.0);

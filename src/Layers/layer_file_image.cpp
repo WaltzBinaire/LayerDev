@@ -8,6 +8,7 @@ void Layer_file_image::onDraw(bool _forced) const
     if (img.isAllocated()) {
         glm::vec2 size = scale * glm::vec2(getFileWidth(), getFileHeight());
         ofPushStyle();
+        ofEnableBlendMode(OF_BLENDMODE_ALPHA);
         img.draw( position - size * 0.5, size.x, size.y);
         ofPopStyle();
     }

@@ -31,8 +31,9 @@ protected:
     virtual void onSetupListeners() override;
 
     void onMousePressed(ofMouseEventArgs & _args);
-    void onMouseDragged(ofMouseEventArgs & _args);
     void onMouseReleased(ofMouseEventArgs & _args);
+    void onMouseDragged(ofMouseEventArgs & _args);
+    void onMouseMoved(ofMouseEventArgs & _args);
     void onMouseScrolled(ofMouseEventArgs & _args);
 
     virtual void setupShader() override;
@@ -41,14 +42,13 @@ protected:
     void setupBrushFbo();
 
     bool b_drawing;
-    void drawBrush(const ofTexture & _baseTex) const;
+    void drawBrush(bool _overlay = false) const;
 
     glm::vec2 mousePressedPosition;
     glm::vec2 mousePosition;
 
     mutable pingPongFbo brushFbo;
     shared_ptr<AutoShader> uv_draw_shader;
-    shared_ptr<AutoShader> uv_overlay_shader;
 
     ofParameter<float> p_blur;
     ofParameter<float> p_size;
@@ -56,6 +56,6 @@ protected:
 
 private:
     ofEventListener l_onUvShaderLoad;
-    mutable bool b_brushFboInitialised;
+    mutable bool b_brushFboInitialised = false;
 };
 

@@ -53,8 +53,6 @@ void Layer_alpha_replace_channel::update_alpha_texture(const ofTexture & _baseTe
 
 
     blur_shader->begin();
-    setMesh( _baseTex);
-
 
     const ofTexture * tex = &_baseTex;
 
@@ -65,7 +63,7 @@ void Layer_alpha_replace_channel::update_alpha_texture(const ofTexture & _baseTe
         blur_shader->setUniformTexture("u_imageTex", *tex , 0);
         blur_shader->setUniform2f("u_resolution", _baseTex.getWidth(), _baseTex.getHeight());
         blur_shader->setUniform2f("u_direction", glm::vec2(1.0, 0.0));
-        mesh.draw();
+        LayerUtils::UVQuad::getInstance().draw(0, 0, size.x, size.y);
 
         alphaBlur.end();
 
@@ -77,7 +75,7 @@ void Layer_alpha_replace_channel::update_alpha_texture(const ofTexture & _baseTe
         blur_shader->setUniformTexture("u_imageTex", *tex , 0);
         blur_shader->setUniform2f("u_resolution", _baseTex.getWidth(), _baseTex.getHeight());
         blur_shader->setUniform2f("u_direction", glm::vec2(0.0, 1.0));
-        mesh.draw();
+        LayerUtils::UVQuad::getInstance().draw(0, 0, size.x, size.y);
 
         alphaBlur.end();
         alphaBlur.swap();
@@ -96,7 +94,7 @@ void Layer_alpha_replace_channel::update_alpha_texture(const ofTexture & _baseTe
     threshold_shader->setUniform1i("u_invert", p_invert);
     threshold_shader->setUniform4f("u_color",  p_color);
 
-    mesh.draw();
+    LayerUtils::UVQuad::getInstance().draw(0, 0, size.x, size.y);
 
     threshold_shader->end();
     alphaBlur.end();

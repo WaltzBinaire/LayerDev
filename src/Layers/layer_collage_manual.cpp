@@ -107,7 +107,7 @@ void Layer_collage_manual::onMouseScrolled(ofMouseEventArgs & _args)
                 if (active_patch != nullptr) {
                     //glm::vec2 vector = glm::vec2(_args.x, _args.y) - lastMousePosition;
                     //float angle = atan2(vector.y, vector.x);
-                    float rotation = active_patch->getAngle() + _args.scrollY * TWO_PI * 0.04 ;
+                    float rotation = active_patch->getAngle() + _args.scrollY * TWO_PI * 0.02 ;
                     active_patch->setRotation(rotation);
                 }
             }
