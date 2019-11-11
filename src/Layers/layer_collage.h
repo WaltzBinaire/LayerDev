@@ -141,6 +141,7 @@ public:
     void replace_images(const string & _path) { paths.clear();  append_images(_path); }
 
     virtual string getCursorData() const  override;
+    virtual size_t getNumPaths()   const { return paths.size();  }
     
 protected:
 

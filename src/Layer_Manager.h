@@ -51,6 +51,8 @@ public:
 
     void setKeyLayer(shared_ptr<Layer_base> _layer);
 
+    size_t getNumLayers() { return layers.size(); }
+
     void redrawAll();
 
     map<string, std::function<void(bool)>> presetLayers;

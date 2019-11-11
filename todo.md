@@ -32,7 +32,7 @@
 ### Static Layers
   [x] Folder face replace
   [ ] Add video layer
-  [ ] Add fancy overlay for collages
+  [x] Add fancy overlay for collages
   [ ] Fix manual collage (with drag and drop?)
   [x] Add paint layer
 
@@ -41,7 +41,7 @@
   [ ] Add banding to Alpha replace
   [x] Add face replace layer
   [ ] Add PixelSorting Layer
-  [ ] Look into alpha blending for image layers
+  [x] Look into alpha blending for image layers
   [x] Change default settings in glitch distort layer
   [x] Change default alpha cutoff for collage rendering
  
@@ -79,7 +79,7 @@
 - uniform frame  + size typo
   [x] always Name in title in export layer
   [x] in export layer call main image beaty...png
-  [ ] click manual collage - visualize selected image - outlines white maybe?
+  [x] click manual collage - visualize selected image - outlines white maybe?
   [x] More obvious mask box
   [x] Single collage
   [x] F to flip

@@ -21,11 +21,11 @@ void SingleLayerGui::baseDrawGui(Layer_base * layer)
     ImGui::SameLine();
     IconButton(reset,   ICON_MDI_SYNC, "Reset layer");
     ImGui::SameLine();
-    IconToggle(disable, ICON_MDI_EYE, ICON_MDI_EYE, "Toggle visibility");
+    IconToggle(disable, ICON_MDI_EYE, ICON_MDI_EYE_OFF, "Toggle visibility");
     ImGui::SameLine();
     IconButton(redraw,  ICON_MDI_BRUSH, "Redraw layer");
     ImGui::SameLine();
-    IconToggle(mask, ICON_MDI_SELECTION, ICON_MDI_SELECT_OFF, "Toggle mask");
+    IconToggle(mask,    ICON_MDI_SELECTION, ICON_MDI_SELECT_OFF, "Toggle mask");
     ImGui::SameLine();
 
     static string ArtSaveLabel = ofToString(ICON_MDI_CONTENT_SAVE) + "##ArtworkSave";
@@ -39,19 +39,17 @@ void SingleLayerGui::baseDrawGui(Layer_base * layer)
         ImGui::EndTooltip();
     }
 
-
     // Mask
-    IconButton(loadMask, ICON_MDI_WALLPAPER, "Load mask from file");
-    ImGui::SameLine();
     IconButton(clearMask, ICON_MDI_BLOCK_HELPER, "Reset mask");
     ImGui::SameLine();
-    IconToggle(editMask , ICON_MDI_PENCIL, ICON_MDI_PENCIL_OFF, "Edit mask");
+    IconToggle(editMask ,  ICON_MDI_PENCIL, ICON_MDI_PENCIL_OFF, "Edit mask");
     ImGui::SameLine();
     IconToggle(invertMask, ICON_MDI_INVERT_COLORS_OFF, ICON_MDI_INVERT_COLORS, "Invert mask");
     ImGui::SameLine();
-    IconToggle(showMask, ICON_MDI_EYE_OUTLINE, ICON_MDI_EYE_OFF_OUTLINE, "Show mask");
+    IconToggle(showMask,   ICON_MDI_EYE_OFF_OUTLINE, ICON_MDI_EYE_OUTLINE, "View mask");
     ImGui::SameLine();
-
+    IconButton(loadMask, ICON_MDI_WALLPAPER, "Load mask from file");
+    ImGui::SameLine();
     static string MaskSaveLabel = ofToString(ICON_MDI_CONTENT_SAVE) + "##MaskSave";
     if (ImGui::Button(MaskSaveLabel.c_str())) layer->saveMask();
     if (ImGui::IsItemHovered())

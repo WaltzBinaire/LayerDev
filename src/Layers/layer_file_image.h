@@ -14,7 +14,6 @@ protected:
     virtual void onDraw(bool _forced = false) const override;
     virtual void onReset() override;
 
-    
     virtual float getFileWidth()  const { return img.getWidth(); };
     virtual float getFileHeight() const { return img.getHeight(); };
 

@@ -32,9 +32,6 @@ ImFont * LayerGui::setupFont(ImGuiIO & io, const string & path, const string & i
     if (font == nullptr) {
         ofLogError("LayerGui") << "Font could not be found: " << path;
     }
-    else if (!font->IsLoaded()) {
-        ofLogError("LayerGui") << "Font could not be loaded: " << path;
-    }
     else {
         ofLogVerbose("LayerGui") << "Font loaded: " << path;
     }
@@ -428,22 +425,25 @@ void LayerGui::drawInfoWindow(ImVec2 pos, ImVec2 size)
         switch (infoType)
         {
         case CPU:
-            ImGui::PlotLines("CPU",   Funcs::QueueGetter, (void*)&(monitor.getProcessCpuBuffer())          , monitor.getBufferSize(), 0, NULL, 0.0, 100, plotSize);
+            ImGui::PlotLines("##CPU",   Funcs::QueueGetter, (void*)&(monitor.getProcessCpuBuffer())          , monitor.getBufferSize(), 0, NULL, 0.0, 100, plotSize);
             break;
         case FPS:
-            ImGui::PlotLines("FPS",   Funcs::QueueGetter, (void*)&(monitor.getFpsBuffer())                 , monitor.getBufferSize(), 0, NULL, 0.0, 120, plotSize);
+            ImGui::PlotLines("##FPS",   Funcs::QueueGetter, (void*)&(monitor.getFpsBuffer())                 , monitor.getBufferSize(), 0, NULL, 0.0, 90, plotSize);
             break;
         case RAM:
-            ImGui::PlotLines("RAM",   Funcs::QueueGetter, (void*)&(monitor.getProcessPysicalMemoryBuffer()), monitor.getBufferSize(), 0, NULL, 0.0, monitor.getTotalPysicalMemory(), plotSize);
+            ImGui::PlotLines("##RAM",   Funcs::QueueGetter, (void*)&(monitor.getProcessPysicalMemoryBuffer()), monitor.getBufferSize(), 0, NULL, 0.0, monitor.getTotalPysicalMemory(), plotSize);
             break;
         case CACHE:
-            ImGui::PlotLines("CACHE", Funcs::QueueGetter, (void*)&(monitor.getProcessVirtualMemoryBuffer()), monitor.getBufferSize(), 0, NULL, 0.0, monitor.getTotalVirtualMemory(), plotSize);
+            ImGui::PlotLines("##CACHE", Funcs::QueueGetter, (void*)&(monitor.getProcessVirtualMemoryBuffer()), monitor.getBufferSize(), 0, NULL, 0.0, monitor.getTotalVirtualMemory(), plotSize);
             break;
         case PROJECT:
         default:
             Canvas& canvas = manager->getCanvas();
             string canvasDimensions = "Canvas: " + ofToString(canvas.getWidth()) + "x" + ofToString(canvas.getHeight());
             ImGui::Text(canvasDimensions.c_str());
+
+            string numLayers = "Layers: " + ofToString(manager->getNumLayers());
+            ImGui::Text(numLayers.c_str());
             break;
         }
 

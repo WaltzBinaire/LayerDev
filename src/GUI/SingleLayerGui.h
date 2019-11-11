@@ -74,6 +74,10 @@ void SingleLayerGui::specialisedDrawGui(Layer_collage * layer)
     ofParameter<glm::vec2> & p_alpha = layer->params.get("Alpha").cast<glm::vec2>();  
 
     LoadButton(p_load);
+    ImGui::SameLine();
+    int numLoaded = layer->getNumPaths();
+    string infoText = ofToString(numLoaded) + " files loaded";
+     ImGui::Text(infoText.c_str());
     SliderVec2(p_alpha);
 }
 
@@ -95,8 +99,8 @@ void SingleLayerGui::specialisedDrawGui(Layer_collage_generative * layer)
 template<>
 void SingleLayerGui::specialisedDrawGui(Layer_filter_alpha_replace * layer)
 {
-    ofParameter<bool> & p_load        = layer->params.get("Load").cast<bool>();   
-    ofParameter<bool>  & p_hFlip    = layer->params.get("H Flip"    ).cast<bool>();  
+    ofParameter<bool> & p_load      = layer->params.get("Load"  ).cast<bool>();   
+    ofParameter<bool>  & p_hFlip    = layer->params.get("H Flip").cast<bool>();  
 
     LoadButton(p_load);
     ImGui::SameLine();
@@ -141,12 +145,13 @@ void SingleLayerGui::specialisedDrawGui(Layer_filter_mpeg_glitch * layer)
     ofParameter<bool>  & p_greyScale      = layer->params.get("Greyscale"     ).cast<bool>();  
     ofParameter<bool>  & p_forceUpdate    = layer->params.get("New"           ).cast<bool>();  
 
+    
+    Button(p_forceUpdate);
     Slider(p_sizeOfKernel  );
     Slider(p_stopAmount    );
     Slider(p_globalStrength);
     Checkbox(p_greyScale);
 
-    Button(p_forceUpdate);
 }
 
 template<>
