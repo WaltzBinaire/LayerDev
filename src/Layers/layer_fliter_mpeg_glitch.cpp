@@ -40,20 +40,22 @@ void Layer_filter_mpeg_glitch::onDrawGui()
 void Layer_filter_mpeg_glitch::onSetupParams()
 {
 
-     l_onForceUpdate = p_forceUpdate.newListener([&](bool &) { this->time = ofGetSystemTimeMillis(); });
+    l_onForceUpdate = p_forceUpdate.newListener([&](bool &) { this->time = ofGetSystemTimeMillis(); });
 
-    p_sizeOfKernel.set  ("Size of Kernel", 1.0, 0.0, 1.0);
-    p_stopAmount.set    ("Stop Amount"   , 0.5, 0.0, 1.0);
-    p_globalStrength.set("Strength"      , 0.5, 0.0, 1.0);
-    p_forceUpdate.set   ("New"           , false        );
-    p_greyScale.set     ("Greyscale"     , false        );
+    p_effectFlags.set   ("Effects"       , (int)EFFECTS::ALL);
+    p_sizeOfKernel.set  ("Size of Kernel", 1.0, 0.0, 1.0    );
+    p_stopAmount.set    ("Stop Amount"   , 0.5, 0.0, 1.0    );
+    p_globalStrength.set("Strength"      , 0.5, 0.0, 1.0    );
+    p_forceUpdate.set   ("New"           , false            );
+    p_greyScale.set     ("Greyscale"     , false            );
 
     params.add(
         p_sizeOfKernel,
         p_stopAmount,
         p_globalStrength,
         p_forceUpdate,
-        p_greyScale
+        p_greyScale,
+        p_effectFlags
     );
 
 }
@@ -61,17 +63,18 @@ void Layer_filter_mpeg_glitch::onSetupParams()
 void Layer_filter_mpeg_glitch::setupShader()
 {
     shader = Shader_lib::get_mpeg_glitch_shader();
-    //shader = Shader_lib::get_passthrough_shader();
 }
 
 void Layer_filter_mpeg_glitch::setUniforms(const ofTexture & _baseTex) const
 {
     shader->setUniformTexture("u_imageTex" , _baseTex, 0);
     shader->setUniformTexture("u_noiseTex" , noiseTex, 1);
-    shader->setUniform2f("u_resolution"    , size.x, size.y);
-    shader->setUniform1f("u_sizeOfKernel" ,  p_sizeOfKernel         );
-    shader->setUniform1f("u_stopAmount"    , p_stopAmount           );
-    shader->setUniform1f("u_globalStrength", p_globalStrength       );
-    shader->setUniform1i("u_greyScale"     , p_greyScale            );
-    shader->setUniform1f("u_time"          , time                   );
+
+    shader->setUniform1i("u_effects"       , p_effectFlags   );
+    shader->setUniform2f("u_resolution"    , size.x, size.y  );
+    shader->setUniform1f("u_sizeOfKernel"  , p_sizeOfKernel  );
+    shader->setUniform1f("u_stopAmount"    , p_stopAmount    );
+    shader->setUniform1f("u_globalStrength", p_globalStrength);
+    shader->setUniform1i("u_greyScale"     , p_greyScale     );
+    shader->setUniform1f("u_time"          , time            );
 }

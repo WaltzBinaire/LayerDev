@@ -8,7 +8,16 @@ uniform float     u_stopAmount;
 uniform float     u_globalStrength;
 uniform vec2      u_resolution;
 uniform int       u_greyScale;
+uniform int       u_effects;
 uniform float     u_time;
+
+#define DISPLACE        int(1 << 0)
+#define DISCOLOR_LINE   int(1 << 1)
+#define RGB_LINES       int(1 << 2)
+#define RGB_LINES_VERT  int(1 << 3)
+#define LUMA            int(1 << 4)
+
+
 
 in vec2 texCoordVarying;
 
@@ -115,7 +124,7 @@ void main()
     outputColor = texture(u_imageTex, uv);
 
     float noiseTime    = getNoisedTime(u_stopAmount, time);
-	float sizeOfBlocks = getSizeofBlocks(u_sizeOfKernel, noiseTime);
+	float sizeOfBlocks = getSizeofBlocks(u_sizeOfKernel * 2.0, noiseTime);
 	
 	vec2 block = floor(uv * u_resolution / vec2( sizeOfBlocks, sizeOfBlocks));
 	vec2 uv_noise = block / vec2(256.0,256.0);
@@ -127,13 +136,13 @@ void main()
 	
 	float block_thresh = pow(fract(timeLocal * 1236.0453), 2.0) * 0.10;
 	float line_thresh = pow(fract(timeLocal * 2236.0453), 3.0) * 0.5;
+
 	
-	
-    outputColor.rgb = getGlitchDisplace    (uv      , uv_noise       , block_thresh   , line_thresh    ,mix(2.4,0.2,  u_globalStrength            ));
-	outputColor.rgb = getGlitchDiscolorLine(uv      , uv_noise       , noiseTime    , outputColor.rgb,line_thresh,  mix(3.0,1.4,u_globalStrength));
-    outputColor.rgb = getGlitchRGBLines    (uv      , uv_noise       , outputColor.rgb, block_thresh   ,line_thresh,  mix(3.0,0.8,u_globalStrength));
-    outputColor.rgb = getGlitchRGBLinesVert(uv      , uv_noise       , outputColor.rgb, block_thresh   ,line_thresh,  mix(3.0,1.2,u_globalStrength));
-    outputColor.rgb = getGlitchLuma        (          uv_noise       , outputColor.rgb, block_thresh   , mix(3.0,0.3,u_globalStrength)             );
+    if(bool(u_effects & DISPLACE       )) outputColor.rgb = getGlitchDisplace    (uv, uv_noise,                  block_thresh   ,line_thresh, mix(2.4, 0.2, u_globalStrength));
+	if(bool(u_effects & DISCOLOR_LINE  )) outputColor.rgb = getGlitchDiscolorLine(uv, uv_noise, noiseTime      , outputColor.rgb,line_thresh, mix(3.0, 1.4, u_globalStrength));
+    if(bool(u_effects & RGB_LINES      )) outputColor.rgb = getGlitchRGBLines    (uv, uv_noise, outputColor.rgb, block_thresh   ,line_thresh, mix(3.0, 0.8, u_globalStrength));
+    if(bool(u_effects & RGB_LINES_VERT )) outputColor.rgb = getGlitchRGBLinesVert(uv, uv_noise, outputColor.rgb, block_thresh   ,line_thresh, mix(3.0, 1.2, u_globalStrength));
+    if(bool(u_effects & LUMA           )) outputColor.rgb = getGlitchLuma        (    uv_noise, outputColor.rgb, block_thresh,                mix(3.0, 0.3, u_globalStrength));
 		
 	if (u_greyScale == 1.0) outputColor.rgb = vec3(outputColor.r,outputColor.r,outputColor.r); 
 

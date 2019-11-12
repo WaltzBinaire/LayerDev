@@ -7,7 +7,7 @@ string Layer_collage_manual::getCursorData() const
     string str = "";
 
     if (paths.size() > 0) {
-        str += "f " + ofToString(pathIndex) + "\\"  + ofToString( getNumPaths() );
+        str += "f " + ofToString(pathIndex + 1) + "\\"  + ofToString( getNumPaths() );
     }
 
     if (active_patch != nullptr) {
@@ -113,7 +113,14 @@ void Layer_collage_manual::onMouseScrolled(ofMouseEventArgs & _args)
                 if (active_patch != nullptr) {
                     if (active_patch->isReady()) {
 
-                        pathIndex = (pathIndex + (int)_args.scrollY) % paths.size();                            
+                        if ((int)_args.scrollY == -1) {
+                            if (pathIndex == 0) pathIndex = paths.size() - 1;
+                            else                pathIndex--;              
+                        }
+                        else if((int)_args.scrollY == 1) {
+                            pathIndex++;  
+                        }        
+                        pathIndex = pathIndex % paths.size();
 
                         active_patch->setNewPath(paths[pathIndex]);
                         loadImage(active_patch);

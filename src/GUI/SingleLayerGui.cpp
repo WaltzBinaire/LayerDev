@@ -68,7 +68,7 @@ void SingleLayerGui::baseDrawGui(Layer_base * layer)
         ImGui::EndTooltip();
     }
     ImGui::SameLine();
-    IconToggle(p_maskShape, ICON_MDI_CIRCLE_EDIT_OUTLINE, ICON_MDI_SQUARE_EDIT_OUTLINE, "Toggle mask shape");
+    IconToggle(p_maskShape, ICON_MDI_CIRCLE_EDIT_OUTLINE, ICON_MDI_SQUARE_EDIT_OUTLINE, "Mask Circle/Square");
 
 
     ImGui::Separator();

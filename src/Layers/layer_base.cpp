@@ -290,8 +290,8 @@ void Layer_base::drawMaskEditBrush(ofMouseEventArgs & _args)
     }
     else {
         ofDrawCircle(
-            maskBrushPosition.x - maskBrushSize * 0.5,
-            maskBrushPosition.y - maskBrushSize * 0.5,
+            maskBrushPosition.x,
+            maskBrushPosition.y,
             maskBrushSize * 0.5
         );
     }
@@ -342,15 +342,15 @@ void Layer_base::drawMaskBrushOverlay() const
     else {
         ofSetColor(ofColor(255, 255, 255, 192));
         ofDrawCircle(
-            maskBrushPosition.x - maskBrushSize * 0.5,
-            maskBrushPosition.y - maskBrushSize * 0.5,
+            maskBrushPosition.x,
+            maskBrushPosition.y,
             maskBrushSize * 0.5
         );
         ofNoFill();
         ofSetColor(ofColor::white);
         ofDrawCircle(
-            maskBrushPosition.x - maskBrushSize * 0.5,
-            maskBrushPosition.y - maskBrushSize * 0.5,
+            maskBrushPosition.x,
+            maskBrushPosition.y,
             maskBrushSize * 0.5
         );
     }

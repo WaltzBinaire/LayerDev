@@ -104,8 +104,12 @@ void Layer_Manager::onMouseExited(ofMouseEventArgs & _args) {
 
 void Layer_Manager::onKeyPressed(ofKeyEventArgs & _args)
 {
-    if (_args.key == 'o') {
+
+    switch (_args.key) {
+    case 'o':
         b_drawOverlay = !b_drawOverlay;
+        break;
+
     }
     canvasKeyPressed.notify(_args);
 }

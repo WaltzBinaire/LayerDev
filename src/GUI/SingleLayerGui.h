@@ -138,17 +138,37 @@ void SingleLayerGui::specialisedDrawGui(Layer_alpha_replace_face * layer) {
 
 template<>
 void SingleLayerGui::specialisedDrawGui(Layer_filter_mpeg_glitch * layer)
-{
-    ofParameter<float> & p_sizeOfKernel   = layer->params.get("Size of Kernel").cast<float>();   
-    ofParameter<float> & p_stopAmount     = layer->params.get("Stop Amount"   ).cast<float>();   
-    ofParameter<float> & p_globalStrength = layer->params.get("Strength"      ).cast<float>();   
-    ofParameter<bool>  & p_greyScale      = layer->params.get("Greyscale"     ).cast<bool>();  
-    ofParameter<bool>  & p_forceUpdate    = layer->params.get("New"           ).cast<bool>();  
+{ 
+    ofParameter<float> & p_sizeOfKernel   = layer->params.get("Size of Kernel").cast<float>();
+    ofParameter<float> & p_stopAmount     = layer->params.get("Stop Amount"   ).cast<float>();
+    ofParameter<float> & p_globalStrength = layer->params.get("Strength"      ).cast<float>();
+    ofParameter<bool>  & p_greyScale      = layer->params.get("Greyscale"     ).cast<bool>();
+    ofParameter<bool>  & p_forceUpdate    = layer->params.get("New"           ).cast<bool>();
+    ofParameter<int>   & p_effectFlags    = layer->params.get("Effects"       ).cast<int>();
 
-    
+
     Button(p_forceUpdate);
-    Slider(p_sizeOfKernel  );
-    Slider(p_stopAmount    );
+
+    using EFFECTS = Layer_filter_mpeg_glitch::EFFECTS;
+
+    if (ImGui::TreeNode("Effects"))
+    {
+
+        ImGui::Columns(2, NULL, false);
+        ImGui::CheckboxFlags("Displace"       , (unsigned int * )&p_effectFlags.get(), (unsigned int)EFFECTS::DISPLACE      );
+        ImGui::CheckboxFlags("Discolour Lines", (unsigned int * )&p_effectFlags.get(), (unsigned int)EFFECTS::DISCOLOR_LINE );
+        ImGui::CheckboxFlags("RGB Lines"      , (unsigned int * )&p_effectFlags.get(), (unsigned int)EFFECTS::RGB_LINES     );
+        ImGui::NextColumn();     
+        ImGui::CheckboxFlags("RGB Line Vert"  , (unsigned int * )&p_effectFlags.get(), (unsigned int)EFFECTS::RGB_LINES_VERT);
+        ImGui::CheckboxFlags("Luma"           , (unsigned int * )&p_effectFlags.get(), (unsigned int)EFFECTS::LUMA          );
+        ImGui::CheckboxFlags("All"            , (unsigned int * )&p_effectFlags.get(), (unsigned int)EFFECTS::ALL           );
+
+        ImGui::Columns(1);
+        ImGui::TreePop();
+    }
+
+    Slider(p_sizeOfKernel);
+    Slider(p_stopAmount);
     Slider(p_globalStrength);
     Checkbox(p_greyScale);
 
