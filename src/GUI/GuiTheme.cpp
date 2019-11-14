@@ -10,7 +10,7 @@ void GuiTheme::setup()
 {
     textColor      = ofColor(220);
     menuBackground = ofColor::fromHex(0x2d2c31);
-    menuLight      = ofColor::fromHex(0x737379);
+    menuLight      = ofColor::fromHex(0x59595f);
 
     ImGuiStyle* style = &ImGui::GetStyle();
     

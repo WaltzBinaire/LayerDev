@@ -1,6 +1,8 @@
 #include "LayerGui.h"
 #include "Layers\layer_base.h"
 
+using namespace ImGuiHelpers;
+
 LayerGui::LayerGui()
 {
     ImGui::CreateContext();
@@ -320,31 +322,50 @@ void LayerGui::drawLayerMenu(ImVec2 pos, ImVec2 size)
             bool isActive = (layer == manager->active_layer);
 
             if (isActive) {
-                ImGui::PushStyleColor(ImGuiCol_Button       , (ImVec4)ofColor::black);
-                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ofColor::black);
-                ImGui::PushStyleColor(ImGuiCol_ButtonActive , (ImVec4)ofColor::black);
+                ImGui::PushStyleColor(ImGuiCol_Button       , (ImVec4)theme->menuLight);
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)theme->menuLight);
+                ImGui::PushStyleColor(ImGuiCol_ButtonActive , (ImVec4)theme->menuLight);
             }
+
+#ifdef NDEBUG          
+            ofParameter<bool> & disable     = layer->params.get("Disable"    ).cast<bool>(); 
+            if (disable.get()) {
+                if (ImGui::Button((ICON_MDI_EYE_OFF + id_label).c_str()))  disable.set(false);
+            }
+            else {
+                if (ImGui::Button((ICON_MDI_EYE + id_label).c_str()))      disable.set(true);
+            }
+            ImGui::SameLine();
+#endif
+
+
             if (ImGui::Button((label + id_label).c_str(), ImVec2(170, 0))) {
                 manager->setActiveLayer(layer);
             }
-
-
-            float perf = max(layer->getUpdateTime(), layer->getDrawTime());
-            ofColor perfCol = (ofColor::forestGreen).getLerped(ofColor::indianRed,  ofMap(perf, 0.0, 66.0, 0.0, 1.0, true));
-
-            ImGui::PushStyleColor(ImGuiCol_Button       , (ImVec4)perfCol);
-            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)perfCol);
-            ImGui::PushStyleColor(ImGuiCol_ButtonActive , (ImVec4)perfCol);
             ImGui::SameLine();
-            string speedometer;
-            if (perf < 0.33)      speedometer = ICON_MDI_SPEEDOMETER;
-            else if( perf < 0.66) speedometer = ICON_MDI_SPEEDOMETER_MEDIUM;
-            else                  speedometer = ICON_MDI_SPEEDOMETER_SLOW;
-            ImGui::Button((speedometer + id_label).c_str());
-            ImGui::PopStyleColor(3);
+
+#ifdef DEBUG
+            { // Perf counter
+                float perf = max(layer->getUpdateTime(), layer->getDrawTime());
+                ofColor perfCol = (ofColor::forestGreen).getLerped(ofColor::indianRed, ofMap(perf, 0.0, 66.0, 0.0, 1.0, true));
+
+                ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)perfCol);
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)perfCol);
+                ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)perfCol);
+                string speedometer;
+                if (perf < 0.33)      speedometer = ICON_MDI_SPEEDOMETER;
+                else if (perf < 0.66) speedometer = ICON_MDI_SPEEDOMETER_MEDIUM;
+                else                  speedometer = ICON_MDI_SPEEDOMETER_SLOW;
+                ImGui::Button((speedometer + id_label).c_str());
+                ImGui::PopStyleColor(3);
+                ImGui::SameLine();
+            }
+
+#endif // DEBUG
 
 
-            ImGui::SameLine();
+
+            
             if (ImGui::Button((ICON_MDI_ARROW_UP_BOLD + id_label).c_str())) {
                 if (isActive) ImGui::PopStyleColor(3);
                 manager->move_layer(layer, Layer_Manager::UP);
@@ -471,7 +492,12 @@ void LayerGui::drawHistrogram(ImVec2 pos, ImVec2 size)
             ImTextureID tex_id;
             ofTexture & tex = histogram.getTexture();
 
+            static glm::vec2 imageSize(FBO_RESOLUTION_X, FBO_RESOLUTION_Y);
+
             if (getTextureId( tex, tex_id) ){
+                glm::vec2 cursorPos = 0.5 * ( ImGui::GetWindowSize() - imageSize);
+                cursorPos.y += 25;
+                ImGui::SetCursorPos(cursorPos);
                 ImGui::Image(tex_id, ImVec2(FBO_RESOLUTION_X, FBO_RESOLUTION_Y));
             }
     }

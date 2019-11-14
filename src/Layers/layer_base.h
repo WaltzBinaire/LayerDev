@@ -106,6 +106,8 @@ public:
     void setRedraw(bool _redraw)   const { b_redraw = _redraw; }
     bool needsRedraw() const { return b_redraw; }
 
+    bool isEnabled() const { return !p_disable; }
+
     void resize( int width, int height);
 
     const string get_unique_name() const { return name + ofToString(instance); }

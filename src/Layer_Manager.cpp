@@ -232,29 +232,38 @@ void Layer_Manager::move_layer(shared_ptr<Layer_base> _layer, DIRECTION _dir)
 
 void Layer_Manager::draw() const
 {
-    canvas.clear(); 
-
-    ofEnableBlendMode(ofBlendMode::OF_BLENDMODE_ALPHA);
-
-    bool forceRedraw = false;
+    bool needsRedraw = false;
     for (auto & layer : layers) {
+        needsRedraw |= layer->needsRedraw();
+    }
+    ofEnableBlendMode(ofBlendMode::OF_BLENDMODE_ALPHA);
+    if (needsRedraw) {
+        canvas.clear(); 
+        bool forceRedraw = false;
+        for (auto & layer : layers) {
         
-        auto s_layer = dynamic_pointer_cast<Static_base>(layer);
-        if (s_layer) {
-            forceRedraw |= s_layer->draw(canvas.getFbo());
-        }
-        else {
-            auto f_layer = dynamic_pointer_cast<Filter_base>(layer);
-            if (f_layer) {
+            auto s_layer = dynamic_pointer_cast<Static_base>(layer);
+            if (s_layer) {
+                forceRedraw |= s_layer->draw(canvas.getFbo());
+            }
+            else {
+                auto f_layer = dynamic_pointer_cast<Filter_base>(layer);
+                if (f_layer) {
 
-                forceRedraw |= f_layer->draw(canvas.getFbo(), forceRedraw);
+                    forceRedraw |= f_layer->draw(canvas.getFbo(), forceRedraw);
+                }
             }
         }
+
+        if (active_layer != nullptr && b_drawOverlay) {
+            active_layer->drawOverlay(canvas.getOverlayFbo());
+        }
+    }
+    else if (layers.size() == 0) {
+        canvas.clear();
     }
 
-    if (active_layer != nullptr && b_drawOverlay) {
-        active_layer->drawOverlay(canvas.getOverlayFbo());
-    }
+
 
     canvas.draw();
     drawFancyCursor();
@@ -331,9 +340,12 @@ void Layer_Manager::exportLayers() const
 
         int index = 0;
         for (auto & layer : layers) {
-            string layerName = name + "_L" + ofToString(index++) +  ".png";
-            string layerPath = ofFilePath::join(folderPath, layerName);
-            layer->saveLayer(layerPath);
+            if (!layer->isEnabled()) {
+                string layerName = name + "_L" + ofToString(index++) +  ".png";
+                string layerPath = ofFilePath::join(folderPath, layerName);
+                layer->saveLayer(layerPath);
+            }
+
         }
     }
 }
