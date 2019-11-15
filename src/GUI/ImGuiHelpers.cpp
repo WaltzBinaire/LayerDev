@@ -2,6 +2,21 @@
 
 namespace ImGuiHelpers {
 
+    //---------------------------------------------------------
+    // GET TEXTURE ID
+    //---------------------------------------------------------
+    bool getTextureId(const ofTexture & _tex, ImTextureID & _texID) {
+        if (_tex.isAllocated()) {
+            _texID = (ImTextureID)(uintptr_t)(_tex.texData.textureID);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+
+    #pragma region WIDGETS
     void LoadButton(ofParameter<bool> & load, std::string _name)
     {
         std::string buttonName = ( _name == "") ? "Load File" : _name;
@@ -143,5 +158,5 @@ namespace ImGuiHelpers {
 		    parameter.set(tmpRef);
 	    }
     }
-
+    #pragma endregion
 }

@@ -23,7 +23,7 @@ void main()
 	
 	float disp  = 0;
 	
-	if      ( u_channel == RED   ) { disp = texture( u_imageTex, texCoordVarying).r  + 0.0;  }
+	if      ( u_channel == RED   ) { disp = texture( u_imageTex, texCoordVarying).r  + 0.0; }
 	else if ( u_channel == GREEN ) { disp = texture( u_imageTex, texCoordVarying).g  + 1.0; }
 	else if ( u_channel == BLUE  ) { disp = texture( u_imageTex, texCoordVarying).b  + 2.0; }
 	

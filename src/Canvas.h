@@ -15,6 +15,8 @@ public:
     void fitToScreen() const;
 
     void clear();
+    void clearOverlay();
+    void clearContent();
         
     void draw(bool drawOverlay = true) const;
 

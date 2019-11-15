@@ -8,6 +8,8 @@
 
 
 #define THUMBNAIL_SIZE 150
+//#define USE_THUMBNAILS
+
 
 class ProjectResource {
 
@@ -25,10 +27,11 @@ public:
     ProjectResource(RESOURCE_TYPE _rt) : rt(_rt) {};
     ~ProjectResource();
 
-    //const vector<ofTexture> & getThumbnails() const;
-    //int getNumFiles() const { return thumbnail_images.size(); };
-    //int getNumLoadedFiles() const { return thumbnail_textures.size(); };
-
+#ifdef USE_THUMBNAILS
+    const vector<ofTexture> & getThumbnails() const;
+    int getNumFiles() const { return thumbnail_images.size(); };
+    int getNumLoadedFiles() const { return thumbnail_textures.size(); };
+#endif
     string getFilePath(int i) const { 
         if (i < filePaths.size()) return filePaths[i];
         else return "";
@@ -52,16 +55,17 @@ private:
 
     void scanDir(ofDirectory & dir, const vector<string>  & allowedExts);
 
-    //void loadThumbnails();
-    //void loadCollageThumbnails();
-
     ofDirectory rootDir;
     vector<string> filePaths;
 
-    //vector<ofImage*>   thumbnail_images;
-    //mutable vector<ofTexture> thumbnail_textures;
+#ifdef USE_THUMBNAILS
+    void loadThumbnails();
+    void loadCollageThumbnails();
+    vector<ofImage*>   thumbnail_images;
+    mutable vector<ofTexture> thumbnail_textures;
 
-    //threadedImageLoader imageLoader;
+    threadedImageLoader imageLoader;
+#endif
 
     RESOURCE_TYPE rt;
 

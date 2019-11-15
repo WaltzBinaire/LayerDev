@@ -51,7 +51,7 @@ void Layer_filter_distort::onUpdate()
 void Layer_filter_distort::onSetupParams()
 {
     p_blur.set("Blur", 0.4, 0.0, 1.0);
-    p_size.set("Size", 0.5, 0.0, 1.0);
+    p_size.set("Size", 0.5, 0.1, 1.0);
     p_shape.set("Shape"  , (int)SHAPE::CIRCLE, (int)SHAPE::CIRCLE, (int)SHAPE::RECTANGLE);
 
     params.add(

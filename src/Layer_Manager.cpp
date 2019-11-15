@@ -238,7 +238,7 @@ void Layer_Manager::draw() const
     }
     ofEnableBlendMode(ofBlendMode::OF_BLENDMODE_ALPHA);
     if (needsRedraw) {
-        canvas.clear(); 
+        canvas.clearContent(); 
         bool forceRedraw = false;
         for (auto & layer : layers) {
         
@@ -254,15 +254,16 @@ void Layer_Manager::draw() const
                 }
             }
         }
-
-        if (active_layer != nullptr && b_drawOverlay) {
-            active_layer->drawOverlay(canvas.getOverlayFbo());
-        }
     }
     else if (layers.size() == 0) {
-        canvas.clear();
+        canvas.clearContent();
     }
 
+
+    canvas.clearOverlay();
+    if (active_layer != nullptr && b_drawOverlay) {
+        active_layer->drawOverlay(canvas.getOverlayFbo());
+    }
 
 
     canvas.draw();
@@ -340,7 +341,7 @@ void Layer_Manager::exportLayers() const
 
         int index = 0;
         for (auto & layer : layers) {
-            if (!layer->isEnabled()) {
+            if (layer->isEnabled()) {
                 string layerName = name + "_L" + ofToString(index++) +  ".png";
                 string layerPath = ofFilePath::join(folderPath, layerName);
                 layer->saveLayer(layerPath);

@@ -21,22 +21,8 @@ public:
     void draw(Layer_Manager * manager);
     bool mouseOverGui() const { return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow); }
 
-    static  bool getTextureId(const ofTexture & _tex, ImTextureID & _texID) {
-        if (_tex.isAllocated()) {
-            _texID = (ImTextureID)(uintptr_t)(_tex.texData.textureID);
-            return true;
-        }
-        else {
-            return false;
-        }        
-    }
-
 private:
     
-    void setupFonts();
-    ImFont * setupFont(ImGuiIO & io, const string & path, const string & icon_path);
-
-
     float drawMainMenuBar();
     void  drawActiveLayerMenu(ImVec2 pos, ImVec2 size) ;
     void  drawInfoWindow(ImVec2 pos, ImVec2 size)      ;
@@ -44,6 +30,8 @@ private:
     void  drawLayerMenu(ImVec2 pos, ImVec2 size)       ;
     void  drawProjectMenu(ImVec2 pos, ImVec2 size)     ;
     
+    void setupFonts();
+    ImFont * setupFont(ImGuiIO & io, const string & path, const string & icon_path);
 
     ofxImGui::Gui gui;
     GuiTheme* theme;

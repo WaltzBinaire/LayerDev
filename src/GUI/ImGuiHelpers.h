@@ -4,6 +4,10 @@
 
 namespace ImGuiHelpers {
 
+    
+    bool getTextureId(const ofTexture & _tex, ImTextureID & _texID);
+
+    // WIDGETS
     void LoadButton (ofParameter<bool> & load, std::string _name = "");
     void Button     (ofParameter<bool> & load);
     void IconButton (ofParameter<bool> & var, const char* label, const char* tooltip = nullptr);
@@ -14,7 +18,6 @@ namespace ImGuiHelpers {
     void ColorPicker(ofParameter<glm::vec4>& parameter);
     void SliderVec2 (ofParameter<glm::vec2>& parameter);
     void Dropdown   (ofParameter<int>& parameter, std::vector<std::string> labels);
-
     void Checkbox(ofParameter<bool> & parameter);
 
 }

@@ -3,6 +3,8 @@
 
 using namespace ImGuiHelpers;
 
+
+#pragma region Public Functions
 LayerGui::LayerGui()
 {
     ImGui::CreateContext();
@@ -14,45 +16,12 @@ LayerGui::LayerGui()
     gui.setup();
     gui.setTheme(theme);
 }
-
-void LayerGui::setupFonts()
-{
-    const string font_normal_path = ofFilePath::getAbsolutePath("fonts\\sefeo_ui\\segoeui.ttf", true);
-    const string font_bold_path   = ofFilePath::getAbsolutePath("fonts\\sefeo_ui\\segoeuib.ttf" , true);
-    const string icons_path       = ofFilePath::getAbsolutePath("fonts\\materialDesign\\materialdesignicons.ttf", true);
-
-
-    ImGuiIO& io = ImGui::GetIO();
-    font_normal = setupFont(io, font_normal_path, icons_path);
-    font_bold   = setupFont(io, font_bold_path, icons_path);
-}
-
-ImFont * LayerGui::setupFont(ImGuiIO & io, const string & path, const string & icon_path)
-{
-
-    ImFont * font = io.Fonts->AddFontFromFileTTF(path.c_str(), TEXT_SIZE);
-    if (font == nullptr) {
-        ofLogError("LayerGui") << "Font could not be found: " << path;
-    }
-    else {
-        ofLogVerbose("LayerGui") << "Font loaded: " << path;
-    }
-
-    ImFontConfig config;
-    config.MergeMode = true;
-    config.GlyphMinAdvanceX = 13.0f; // Use if you want to make the icon monospaced
-    static const ImWchar icon_ranges[] = { ICON_MIN_MDI, ICON_MAX_MDI, 0 };
-
-    io.Fonts->AddFontFromFileTTF(icon_path.c_str(), 13.0f, &config, icon_ranges);
-
-    return font;
-}
-
-
 LayerGui::~LayerGui()
 {
 }
-
+//---------------------------------------------------------
+//DRAW
+//---------------------------------------------------------
 void LayerGui::draw(Layer_Manager * manager)
 {
     this->manager = manager;
@@ -98,6 +67,10 @@ void LayerGui::draw(Layer_Manager * manager)
     gui.end();
 }
 
+
+#pragma endregion
+
+#pragma region Private Draw Functions
 //---------------------------------------------------------
 // MENU BAR
 //---------------------------------------------------------
@@ -311,7 +284,7 @@ void LayerGui::drawLayerMenu(ImVec2 pos, ImVec2 size)
 
     ImGui::SetNextWindowPos( pos , ImGuiCond_Always);
     ImGui::SetNextWindowSize(size, ImGuiCond_Always);
-
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2, 6));
     if (ImGui::Begin("Layers", NULL, sidebarFlags)) {
 
         for (auto itr = manager->layers.rbegin(); itr != manager->layers.rend(); ++itr) {
@@ -339,7 +312,7 @@ void LayerGui::drawLayerMenu(ImVec2 pos, ImVec2 size)
 #endif
 
 
-            if (ImGui::Button((label + id_label).c_str(), ImVec2(170, 0))) {
+            if (ImGui::Button((label + id_label).c_str(), ImVec2(200, 0))) {
                 manager->setActiveLayer(layer);
             }
             ImGui::SameLine();
@@ -388,6 +361,8 @@ void LayerGui::drawLayerMenu(ImVec2 pos, ImVec2 size)
         }
         ImGui::End();
     }
+    
+    ImGui::PopStyleVar();
 }
 //---------------------------------------------------------
 // ACTIVE LAYER SETTINGS
@@ -411,7 +386,6 @@ void LayerGui::drawActiveLayerMenu(ImVec2 pos, ImVec2 size)
     }
     ImGui::End();
 }
-
 //---------------------------------------------------------
 // INFO
 //---------------------------------------------------------
@@ -442,7 +416,7 @@ void LayerGui::drawInfoWindow(ImVec2 pos, ImVec2 size)
         if (ImGui::Button("RAM"))     infoType = InfoType::RAM;     ImGui::SameLine();
         if (ImGui::Button("Cache"))   infoType = InfoType::CACHE;
 
-        static ImVec2 plotSize(0, 100);
+        static ImVec2 plotSize(size.x - 50, 100);
         switch (infoType)
         {
         case CPU:
@@ -460,7 +434,7 @@ void LayerGui::drawInfoWindow(ImVec2 pos, ImVec2 size)
         case PROJECT:
         default:
             Canvas& canvas = manager->getCanvas();
-            string canvasDimensions = "Canvas: " + ofToString(canvas.getWidth()) + "x" + ofToString(canvas.getHeight());
+            string canvasDimensions = "Canvas: " + ofToString(canvas.getWidth()) + "x" + ofToString(canvas.getHeight()) + "px";
             ImGui::Text(canvasDimensions.c_str());
 
             string numLayers = "Layers: " + ofToString(manager->getNumLayers());
@@ -538,27 +512,28 @@ void LayerGui::drawProjectMenu(ImVec2 pos, ImVec2 size)
 
             ImGui::BeginChild("Images##", ImVec2(0, 0), false);
             if (resource != nullptr) {
+#ifdef USE_THUMBNAILS
+                ostringstream str;
+                str << resource->getNumLoadedFiles() << "/" << resource->getNumFiles();
+                ImGui::Text(str.str().c_str());
 
-                //ostringstream str;
-                //str << resource->getNumLoadedFiles() << "/" << resource->getNumFiles();
-                //ImGui::Text(str.str().c_str());
+                const vector<ofTexture> & thumbnails = resource->getThumbnails();
 
-                //const vector<ofTexture> & thumbnails = resource->getThumbnails();
+                int numPerLine = floor(ImGui::GetWindowWidth() / THUMBNAIL_SIZE);
 
-                //int numPerLine = floor(ImGui::GetWindowWidth() / THUMBNAIL_SIZE);
+                int it = 0;
+                for (int i = 0; i < thumbnails.size(); i++)
+                {
+                    ImTextureID tex_id;
+                    
+                    if (getTextureId(thumbnails[i], tex_id) ){
+                        ImGui::Image(tex_id, ImVec2(THUMBNAIL_SIZE, THUMBNAIL_SIZE));
 
-                //int it = 0;
-                //for (int i = 0; i < thumbnails.size(); i++)
-                //{
-                //    ImTextureID tex_id;
-                //    
-                //    if (getTextureId(thumbnails[i], tex_id) ){
-                //        ImGui::Image(tex_id, ImVec2(THUMBNAIL_SIZE, THUMBNAIL_SIZE));
-
-                //        if (it++ % numPerLine == numPerLine - 1) continue;
-                //        ImGui::SameLine();
-                //    }
-                //}
+                        if (it++ % numPerLine == numPerLine - 1) continue;
+                        ImGui::SameLine();
+                    }
+                }
+#endif
             }
             ImGui::EndChild();
 
@@ -567,4 +542,46 @@ void LayerGui::drawProjectMenu(ImVec2 pos, ImVec2 size)
     }
 
 }
+#pragma endregion
+
+#pragma region Private Helpers
+//---------------------------------------------------------
+// SETUP FONTS
+//---------------------------------------------------------
+void LayerGui::setupFonts()
+{
+    const string font_normal_path = ofFilePath::getAbsolutePath("fonts\\sefeo_ui\\segoeui.ttf", true);
+    const string font_bold_path   = ofFilePath::getAbsolutePath("fonts\\sefeo_ui\\segoeuib.ttf" , true);
+    const string icons_path       = ofFilePath::getAbsolutePath("fonts\\materialDesign\\materialdesignicons.ttf", true);
+
+
+    ImGuiIO& io = ImGui::GetIO();
+    font_normal = setupFont(io, font_normal_path, icons_path);
+    font_bold   = setupFont(io, font_bold_path  , icons_path);
+}
+//---------------------------------------------------------
+// SETUP FONT
+//---------------------------------------------------------
+ImFont * LayerGui::setupFont(ImGuiIO & io, const string & path, const string & icon_path)
+{
+
+    ImFont * font = io.Fonts->AddFontFromFileTTF(path.c_str(), TEXT_SIZE);
+    if (font == nullptr) {
+        ofLogError("LayerGui") << "Font could not be found: " << path;
+    }
+    else {
+        ofLogVerbose("LayerGui") << "Font loaded: " << path;
+    }
+
+    ImFontConfig config;
+    config.MergeMode = true;
+    config.GlyphMinAdvanceX = 13.0f; // Use if you want to make the icon monospaced
+    static const ImWchar icon_ranges[] = { ICON_MIN_MDI, ICON_MAX_MDI, 0 };
+
+    io.Fonts->AddFontFromFileTTF(icon_path.c_str(), 13.0f, &config, icon_ranges);
+
+    return font;
+}
+#pragma endregion
+
 

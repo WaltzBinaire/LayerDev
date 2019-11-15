@@ -16,9 +16,9 @@ void main()
     vec3 col = vec3(0.0);
 	
 		
-	if      ( u_channel == RED   ) { col = vec3(1.0, 0.0, 0.0);  }
-	else if ( u_channel == GREEN ) { col = vec3(0.0, 1.0, 0.0);  }
-	else if ( u_channel == BLUE  ) { col = vec3(0.0, 0.0, 1.0);  }
+	if      ( u_channel == RED   ) { col = vec3(1.0, 0.2, 0.2);  }
+	else if ( u_channel == GREEN ) { col = vec3(0.2, 1.0, 0.2);  }
+	else if ( u_channel == BLUE  ) { col = vec3(0.2, 0.2, 1.0);  }
 
-    outputColor = vec4(col, .7);
+    outputColor = vec4(col, .8);
 }  

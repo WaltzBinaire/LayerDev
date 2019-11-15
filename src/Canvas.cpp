@@ -137,14 +137,24 @@ void Canvas::fitToScreen() const
 
 void Canvas::clear()
 {
-    fbo.clearAll();
-    fbo.begin();
-    ofBackground(backgroundColor);
-    fbo.end();
+    clearContent();
+    clearOverlay();
+}
+
+void Canvas::clearOverlay()
+{
 
     overlay.begin();
     ofClear(0.0);
     overlay.end();
+}
+
+void Canvas::clearContent()
+{
+    fbo.clearAll();
+    fbo.begin();
+    ofBackground(backgroundColor);
+    fbo.end();
 }
 
 void Canvas::onAutoResizeChanged(bool & _val)
