@@ -10,9 +10,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     windowSettings.windowMode = OF_WINDOW;
 
 #ifdef NDEBUG
-    windowSettings.title = "EMMA // Editor";
+    windowSettings.title = "Meisterstucke // Editor";
 #else
-    windowSettings.title = "EMMA // Editor - DEBUG";
+    windowSettings.title = "Meisterstucke // Editor - DEBUG";
 #endif
     windowSettings.decorated = true;
 

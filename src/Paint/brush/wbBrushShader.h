@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 #include "ftShader.h"
-#include "brush/brush.h"
+#include "Paint/brush/brush.h"
 
 
 namespace flowTools {

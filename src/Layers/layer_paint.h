@@ -2,9 +2,9 @@
 #include "Layers\layer_base.h"
 
 #include "ofxFlowTools.h"
-#include "fluid/wbFluidFlow.h"
+#include "Paint/fluid/wbFluidFlow.h"
 #include "wbPaintShader.h"
-#include "brush/Brush.h"
+#include "Paint/brush/Brush.h"
 
 using namespace flowTools;
 
