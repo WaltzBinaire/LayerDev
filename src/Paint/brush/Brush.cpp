@@ -1,5 +1,5 @@
-#include "brush/Brush.h"
-#include "brush/BrushShaders.h"
+#include "Paint/brush/Brush.h"
+#include "Paint/brush/BrushShaders.h"
 
 
 Brush::Brush()
