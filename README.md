@@ -15,3 +15,9 @@ Each artist was finally portrayed through their own art through Artificial Intel
 By making this code Open Source, we hope we can inspire makers everywhere to create new, exciting projects of their own.
 
 In other words: Do what’s never been done so people can feel what’s never been felt. Be the Meister.
+
+## Download
+
+
+## Build
+
