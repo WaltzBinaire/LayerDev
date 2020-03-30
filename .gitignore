@@ -12,6 +12,8 @@
 # general patterns
 #########################
 
+addons/
+
 docs/html
 docs/tagfile.xml
 

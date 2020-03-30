@@ -19,7 +19,7 @@ void LayerVisualiser::draw(const deque<shared_ptr<Layer_base>> & layers) const
 {
     const float maxXOffset = 1000;
     const float maxYOffset = 1000;
-    const float maxZOffset = -100;
+    const float maxZOffset = -500;
 
 
 
@@ -40,7 +40,7 @@ void LayerVisualiser::draw(const deque<shared_ptr<Layer_base>> & layers) const
         float f = (float)i/ layers.size();
         float xOffset = i * ofLerp( -maxXOffset, maxXOffset, mouseX );
         float yOffset = i * ofLerp( -maxYOffset, maxYOffset, mouseY );
-        float zOffset = ofMap(i, 0, layers.size() - 1, 0, maxZOffset);
+        float zOffset = ofMap(i, layers.size() - 1, 0, 0, maxZOffset);
 
         const Layer_base & layer = *(layers[i]);
 
