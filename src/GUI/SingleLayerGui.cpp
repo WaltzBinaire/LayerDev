@@ -18,7 +18,7 @@ void SingleLayerGui::baseDrawGui(Layer_base * layer)
     ofParameter<bool> & p_maskShape = layer->params.get("Mask Shape" ).cast<bool>();
 
 
-    ImGui::Text(layer->get_display_name().c_str());
+    ImGui::Text(layer->getDisplayName().c_str());
 
     IconToggle(pause,   ICON_MDI_PAUSE, ICON_MDI_PLAY, "Pause/Play");
     ImGui::SameLine();

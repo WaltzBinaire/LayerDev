@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "Layer_Manager.h"
 #include "Layers/layer.h"
 #include "ofxImGui.h"
 

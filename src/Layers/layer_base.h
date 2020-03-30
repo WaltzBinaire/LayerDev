@@ -2,11 +2,13 @@
 #include "ofMain.h"
 #include "Utils/AutoShader.h"
 #include "Utils/shader_base.h"
-#include "Layer_Manager.h"
+#include "utils/pingPongFbo.h"
+//#include "Layer_Manager.h"
 
 class Layer_factory;
+class Layer_Manager;
 
-#define REDRAW true
+#define REDRAW    true
 #define NO_REDRAW false
 #define MAX_MASK_BRUSH_SIZE 300.0
 #define MIN_MASK_BRUSH_SIZE 50.0
@@ -56,9 +58,13 @@ public:
     Layer_base(string _name, int _instance, Layer_Manager * _layer_manager);
     virtual ~Layer_base();
 
-    
     Layer_base(const Layer_base&) = delete;
     Layer_base& operator=(const Layer_base&) = delete;
+
+    static void registerType(const string& name, Layer_factory *factory);
+    static shared_ptr<Layer_base> create(const string &name, Layer_Manager * _layer_manager);
+    static bool isFilter(const string &name);
+    static vector<string> getLayerNames();
 
     void setup(int _height, int width);
 
@@ -70,57 +76,36 @@ public:
     void saveLayer(string path);
     void saveMask();
 
-    static void registerType(const string& name, Layer_factory *factory);
-    static shared_ptr<Layer_base> create(const string &name, Layer_Manager * _layer_manager);
-
-    static bool isFilter(const string &name);
-
-    static vector<string> get_layer_names();
-
     void update();
     void reset() { clearFbo(); onReset(); redraw(); };
 
-    void activate() {
-        if (!b_active) {
-            b_active = true;
-            onSetupListeners();
-            onActivate();
-        }
-    };
-    void deactivate() {
-        if (b_active) {
-            p_editMask = false;
-            b_active   = false;
-            clearListeners();
-            onDeactivate();
-        }
-    };
+    void activate();
+    void deactivate();
 
-    void destroy(){
-        deactivate();
-        onDestroy();
-    }
-
+    void destroy();
 
     void redraw() const { setRedraw(true); }
     void setRedraw(bool _redraw)   const { b_redraw = _redraw; }
     bool needsRedraw() const { return b_redraw; }
 
-    bool isEnabled() const { return !p_disable; }
-
     void resize( int width, int height);
 
-    const string get_unique_name() const { return name + ofToString(instance); }
-    const string get_display_name() const { 
-        if(customName == "" ) return name; 
-        else                  return customName;
-    }
-    void set_display_name(const string & newName) {  customName = newName; }
+    void setDisplayName(const string & newName) {  customName = newName; }
+
+    bool isEnabled() const { return !p_disable; }
+
+    const string getUniqueName() const { return name + ofToString(instance); }
+    const string getDisplayName() const;
 
     uint64_t getUpdateTime() const { return updatePerfCounter.getTimeMillis(); }
     uint64_t getDrawTime() const   { return drawPerfCounter.getTimeMillis();   }
+    int getWidth()   const { return size.x; }
+    int getHeight()  const { return size.y; }
+
+    const ofTexture & getContentTexture() const { return fbo.getTexture(); }
 
     virtual string getCursorData() const {  return ""; }
+
     ofParameterGroup params;
 
 protected:
@@ -139,8 +124,6 @@ protected:
     virtual void onDeactivate()    {};
     virtual void onDestroy()       {};
     virtual void onResize()        {};
-
-
 
     virtual void handle_mask(const string & _path);
 
@@ -187,7 +170,6 @@ protected:
     mutable pingPongFbo fbo;
     mutable ofFbo maskFbo;
     shared_ptr<AutoShader> mask_shader;
-
 
 
 private:

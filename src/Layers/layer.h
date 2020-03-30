@@ -1,6 +1,7 @@
 #pragma once
 #include "Layers/layer_base.h"
 
+
 // Static Layers
 #include "Layers/layer_collage.h"
 #include "Layers/layer_collage_generative.h"
@@ -25,4 +26,4 @@
 
 #include "Layers\layer_paint.h"
 
-#include "Layer_Manager.h"
+

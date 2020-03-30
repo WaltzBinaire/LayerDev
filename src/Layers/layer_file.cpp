@@ -1,4 +1,5 @@
 #include "Layers\layer_file.h"
+#include "Layer_Manager.h"
 #include "Utils\LayerUtils.h"
 #include "GUI/SingleLayerGui.h"
 

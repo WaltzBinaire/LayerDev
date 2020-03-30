@@ -1,4 +1,5 @@
 #include "Layers\layer_collage_manual.h"
+#include "Layer_Manager.h"
 
 REGISTER_TYPE(Layer_collage_manual, Manual Collage)
 

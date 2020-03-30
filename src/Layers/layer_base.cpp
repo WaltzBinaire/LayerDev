@@ -1,4 +1,5 @@
 #include "Layers\layer_base.h"
+#include "Layer_Manager.h"
 #include "GUI\SingleLayerGui.h"
 #include "Utils\LayerUtils.h"
 
@@ -123,7 +124,7 @@ bool Layer_base::isFilter(const string & name)
 
 }
 
-vector<string> Layer_base::get_layer_names()
+vector<string> Layer_base::getLayerNames()
 {
     vector<string> names;
     names.reserve((Layer_base::GetFactoryDirectory())->size());
@@ -141,6 +142,28 @@ void Layer_base::update() {
     onUpdate(); 
     updatePerfCounter.end();
 
+}
+
+void Layer_base::activate() {
+    if (!b_active) {
+        b_active = true;
+        onSetupListeners();
+        onActivate();
+    }
+}
+
+void Layer_base::deactivate() {
+    if (b_active) {
+        p_editMask = false;
+        b_active = false;
+        clearListeners();
+        onDeactivate();
+    }
+}
+
+void Layer_base::destroy() {
+    deactivate();
+    onDestroy();
 }
 
 void Layer_base::setupFbo(int w, int h)
@@ -184,6 +207,11 @@ void Layer_base::resize(int _width, int _height )
     setupFbo(size.x, size.y);
     onResize();
     redraw();
+}
+
+const string Layer_base::getDisplayName() const {
+    if (customName == "") return name;
+    else                  return customName;
 }
 
 void Layer_base::clearFbo() const

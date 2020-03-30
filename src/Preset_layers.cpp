@@ -81,7 +81,7 @@ void Presets::addPortraitLayer(Layer_Manager * layerManager, bool _activate)
             layerManager->delete_layer(layer);
         }
         else {
-            img_layer->set_display_name("Portrait");
+            img_layer->setDisplayName("Portrait");
             img_layer->handle_file(targets->getFilePath(0));
 
             if (masks != nullptr) {
@@ -111,7 +111,7 @@ void Presets::addCollageLayer(Layer_Manager * layerManager, bool _activate)
             layerManager->delete_layer(layer);
             return;
         }
-        collage_layer->set_display_name(layer_name + " (Preset)");
+        collage_layer->setDisplayName(layer_name + " (Preset)");
         collage_layer->replace_images(targets->getDirectoryPath());
     }
 }
@@ -133,7 +133,7 @@ void Presets::addSingleCollageLayer(Layer_Manager * layerManager, bool _activate
             layerManager->delete_layer(layer);
             return;
         }
-        collage_layer->set_display_name(layer_name + " (Preset)");
+        collage_layer->setDisplayName(layer_name + " (Preset)");
         collage_layer->replace_images(targets->getDirectoryPath());
     }
 }
@@ -155,7 +155,7 @@ void Presets::addAICollageLayer(Layer_Manager * layerManager, bool _activate)
             layerManager->delete_layer(layer);
             return;
         }
-        collage_layer->set_display_name(layer_name + " (Preset)");
+        collage_layer->setDisplayName(layer_name + " (Preset)");
         collage_layer->handle_file(targets->getFilePath(0));
     }
 }
@@ -180,7 +180,7 @@ void Presets::addFaceSwapLayer(Layer_Manager * layerManager, bool _activate)
         for (int i = 0; i < targets->size(); i++) {
             face_layer->handle_file(targets->getFilePath(i));
         }
-        face_layer->set_display_name(layer_name + " (Preset)");
+        face_layer->setDisplayName(layer_name + " (Preset)");
         face_layer->set_placing();
     }
 }
@@ -203,7 +203,7 @@ void Presets::addInstaCollageLayer(Layer_Manager * layerManager, bool _activate)
             layerManager->delete_layer(layer);
         }
         else {
-            img_layer->set_display_name("Instacollage");
+            img_layer->setDisplayName("Instacollage");
             img_layer->handle_file(image->getFilePath(0));
             img_layer->setDefaultPositionScale();
             img_layer->setPlacing(false);

@@ -1,6 +1,8 @@
 #version 410
 #define TINY 0.000001
 
+precision highp float;
+
 uniform sampler2D u_imageTex;
 
 out vec4 outputColor;

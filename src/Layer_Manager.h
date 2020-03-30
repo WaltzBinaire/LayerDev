@@ -2,6 +2,7 @@
 #include "Utils/AutoShader.h"
 #include "ProjectManager.h"
 #include "Canvas.h"
+#include "LayerVisualiser.h"
 
 class LayerGui;
 class Layer_base;
@@ -32,7 +33,7 @@ public:
     void drawGui();
     void update();
 
-    Canvas & getCanvas() { return canvas; }
+    Canvas & getCanvas() const { return canvas; }
     const glm::vec2 & getMousePosition() const { return mousePosition; }
     bool mouseOverGui() const { return b_mouseOverGui; }
 
@@ -51,12 +52,15 @@ public:
 
     void setKeyLayer(shared_ptr<Layer_base> _layer);
 
-    size_t getNumLayers() { return layers.size(); }
+    size_t getNumLayers() const { return layers.size(); }
+    const deque<shared_ptr<Layer_base>> & getLayers() const { return layers; };
 
     void redrawAll();
 
     map<string, std::function<void(bool)>> presetLayers;
     shared_ptr<Layer_base> keyLayer;
+
+    LayerVisualiser layerVisualiser;
 
 private:
 

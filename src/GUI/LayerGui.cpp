@@ -289,8 +289,8 @@ void LayerGui::drawLayerMenu(ImVec2 pos, ImVec2 size)
 
         for (auto itr = manager->layers.rbegin(); itr != manager->layers.rend(); ++itr) {
             shared_ptr<Layer_base> layer = (*itr);
-            string label = layer->get_display_name();
-            string id_label = "##" + layer->get_unique_name();
+            string label = layer->getDisplayName();
+            string id_label = "##" + layer->getUniqueName();
 
             bool isActive = (layer == manager->active_layer);
 

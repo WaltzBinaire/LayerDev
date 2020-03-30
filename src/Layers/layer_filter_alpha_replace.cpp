@@ -1,4 +1,5 @@
 #include "Layers\layer_filter_alpha_replace.h"
+#include "Layer_Manager.h"
 #include "Utils\LayerUtils.h"
 #include "GUI/SingleLayerGui.h"
 

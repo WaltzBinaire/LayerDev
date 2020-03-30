@@ -4,11 +4,12 @@
 #include "GUI/LayerGui.h"
 #include "Utils/LayerUtils.h"
 
+
 using RESOURCE_TYPE = ProjectResource::RESOURCE_TYPE ;
 
 Layer_Manager::Layer_Manager()
 {
-    layer_types = Layer_base::get_layer_names();
+    layer_types = Layer_base::getLayerNames();
     gui = new LayerGui();
 
     canvas.setup();
@@ -260,13 +261,22 @@ void Layer_Manager::draw() const
     }
 
 
-    canvas.clearOverlay();
-    if (active_layer != nullptr && b_drawOverlay) {
-        active_layer->drawOverlay(canvas.getOverlayFbo());
+
+    if (ofGetKeyPressed(' ')) {
+        layerVisualiser.draw(getLayers());
+    }
+    else {
+        canvas.clearOverlay();
+        if (active_layer != nullptr && b_drawOverlay) {
+            active_layer->drawOverlay(canvas.getOverlayFbo());
+        }
+        canvas.draw();
+
     }
 
 
-    canvas.draw();
+
+
     drawFancyCursor();
 }
 

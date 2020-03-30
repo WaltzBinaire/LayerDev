@@ -1,4 +1,5 @@
 #include "Layers\layer_filter_distort.h"
+#include "Layer_Manager.h"
 #include "GUI/SingleLayerGui.h"
 
 REGISTER_TYPE(Layer_filter_distort, Glitch Distort)
