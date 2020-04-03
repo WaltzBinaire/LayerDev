@@ -34,14 +34,3 @@ If you are using Windows you can download and try the project yourself.
 
 If you want to build the program, you will need to compile it with [openFrameworks](https://openframeworks.cc/). Check out [this](https://openframeworks.cc/learning/) tutorial for more information.
 
-## Shortcuts
-
-| Key | Function |
-|-----|----------|
-|     |          |
-|     |          |
-|     |          |
-|     |          |
-|     |          |
-|     |          |
-|     |          |gi
