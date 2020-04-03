@@ -14,15 +14,13 @@ By making this code Open Source, we hope we can inspire makers everywhere to cre
 In other words: Do what’s never been done so people can feel what’s never been felt. Be the Meister.
 
 ## Features
+
 |     Feature    |  Supported |
 |----------------|:----------:|
 | Filters        |      ✅    |
 | Painting       |      ✅    |
 | Face detection |      ✅    |
 | AI Collage     |      ❌    |
-|                |            |
-|                |            |
-|                |            |
 
 ## Download
 
