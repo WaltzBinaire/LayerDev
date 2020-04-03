@@ -1,16 +1,13 @@
-# LayerDev
-
 ![Teaser image](./imgs/cover.png)
 
-WELCOME TO <MEISTERSTÜCKE>
-
-URBAN ART MEETS A.I.
+## WELCOME TO <MEISTERSTÜCKE>
+### URBAN ART MEETS A.I.
 
 For this project, the Instagram accounts of 12 Urban Artists were used as a database.
 
 Each artist was finally portrayed through their own art through Artificial Intelligence.
 
-<MEISTERSTÜCKE> was initiated and enabled by Jägermeister.
+_<MEISTERSTÜCKE> was initiated and enabled by Jägermeister._
 
 By making this code Open Source, we hope we can inspire makers everywhere to create new, exciting projects of their own.
 
@@ -47,4 +44,4 @@ If you want to build the program, you will need to compile it with [openFramewor
 |     |          |
 |     |          |
 |     |          |
-|     |          |
+|     |          |gi
