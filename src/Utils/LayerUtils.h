@@ -1,6 +1,6 @@
 #pragma once
 #include "ofMain.h"
-#include "Utils\pingPongFbo.h"
+#include "pingPongFbo.h"
 #include "ProjectManager.h"
 
 namespace LayerUtils {

@@ -1,6 +1,6 @@
-#include "Layers\layer_aiCollage.h"
 #include "Layer_Manager.h"
-#include "layer_image_advanced.h"
+#include "Layers/layer_image_advanced.h"
+#include "Layers/layer_aiCollage.h"
 #include "GUI/SingleLayerGui.h"
 
 

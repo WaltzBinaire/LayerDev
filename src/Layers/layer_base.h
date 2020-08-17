@@ -2,7 +2,7 @@
 #include "ofMain.h"
 #include "Utils/AutoShader.h"
 #include "Utils/shader_base.h"
-#include "utils/pingPongFbo.h"
+#include "Utils/pingPongFbo.h"
 //#include "Layer_Manager.h"
 
 class Layer_factory;
