@@ -7,7 +7,6 @@
 #include "Canvas.h"
 #include "Layers/layer_base.h"
 
-#include "ofxMonitor.h"
 #include "Utils/Histogram.h"
 
 #define TEXT_SIZE 20.0
@@ -39,7 +38,6 @@ private:
     ImFont * font_normal;
     ImFont * font_bold;
     
-    ofxMonitor monitor;
     Histogram histogram;
     Layer_Manager * manager;
 

@@ -14,7 +14,7 @@ map<string, std::function<void(bool)>> Presets::getPresetLayers(Layer_Manager * 
         std::function<void(bool)> func = [=](bool _activate) {
             addPortraitLayer(layerManager, _activate);
         };
-        presetLayers.insert_or_assign("Portrait", func);
+        presetLayers["Portrait"] = func;
 
     }
 
@@ -23,7 +23,7 @@ map<string, std::function<void(bool)>> Presets::getPresetLayers(Layer_Manager * 
         std::function<void(bool)> func = [=](bool _activate) {
             addInstaCollageLayer(layerManager, _activate);
         };
-        presetLayers.insert_or_assign("Instacollage", func);
+        presetLayers["Instacollage"] = func;
 
     }
 
@@ -32,7 +32,7 @@ map<string, std::function<void(bool)>> Presets::getPresetLayers(Layer_Manager * 
         std::function<void(bool)> func = [=](bool _activate) {
             addCollageLayer(layerManager, _activate);
         };
-        presetLayers.insert_or_assign("Collage", func);
+        presetLayers["Collage"] = func;
     }
 
     // Add Manual Collage Layer
@@ -40,7 +40,7 @@ map<string, std::function<void(bool)>> Presets::getPresetLayers(Layer_Manager * 
         std::function<void(bool)> func = [=](bool _activate) {
             addSingleCollageLayer(layerManager, _activate);
         };
-        presetLayers.insert_or_assign("Single Collage", func);
+        presetLayers["Single Collage"] = func;
     }
 
     // Add AI Collage Layer
@@ -48,7 +48,7 @@ map<string, std::function<void(bool)>> Presets::getPresetLayers(Layer_Manager * 
         std::function<void(bool)> func = [=](bool _activate) {
             addAICollageLayer(layerManager, _activate);
         };
-        presetLayers.insert_or_assign("AI Collage", func);
+        presetLayers["AI Collage"] = func;
     }
 
     // Add Face Swap
@@ -56,7 +56,7 @@ map<string, std::function<void(bool)>> Presets::getPresetLayers(Layer_Manager * 
         std::function<void(bool)> func = [=](bool _activate) {
             addFaceSwapLayer(layerManager, _activate);
         };
-        presetLayers.insert_or_assign("Face Swap", func);
+        presetLayers["Face Swap"] = func;
     }
 
     return presetLayers;

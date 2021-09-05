@@ -3,7 +3,8 @@
 #include "ofxImGui.h"
 #include "ImGuiHelpers.h"
 
-using namespace ImGuiHelpers;
+namespace ImGuiHelpers {
+
 
 
 class SingleLayerGui
@@ -327,3 +328,4 @@ void SingleLayerGui::specialisedDrawGui(Layer_filter_adjustment * layer) {
 
      Button(p_resetAdj);
 };
+}

@@ -1,4 +1,5 @@
 #include "ProjectManager.h"
+#include "LayerUtils.h"
 
 const map<ProjectResource::RESOURCE_TYPE, string> ProjectResource::resource_rel_paths
 {
@@ -139,7 +140,8 @@ inline void ProjectResource::scanDir(ofDirectory & dir, const vector<string>& al
         }
         else if (file.isDirectory())
         {
-            scanDir(ofDirectory(file.getAbsolutePath()), allowedExts);
+            ofDirectory _dir = ofDirectory(file.getAbsolutePath());
+            scanDir(_dir, allowedExts);
         }
     }
 }
