@@ -1,5 +1,5 @@
 #pragma once
-#include "Layers\layer_filter_alpha_replace.h"
+#include "Layers/layer_filter_alpha_replace.h"
 
 #ifdef NDEBUG
 #include "ofxFaceTracker2.h"

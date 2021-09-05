@@ -1,6 +1,6 @@
 #pragma once
 #include "ofMain.h"
-#include "Layers\layer_collage.h"
+#include "Layers/layer_collage.h"
 
 class Layer_collage_manual : public Layer_collage
 {

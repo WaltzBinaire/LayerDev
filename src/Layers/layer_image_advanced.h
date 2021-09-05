@@ -1,7 +1,7 @@
 #pragma once
-#include "Layers\layer_file_image.h"
-#include "Utils\LayerUtils.h"
-#include "Utils\shader_base.h"
+#include "Layers/layer_file_image.h"
+#include "Utils/LayerUtils.h"
+#include "Utils/shader_base.h"
 #include "ofxCv.h"
 
 #ifdef NDEBUG

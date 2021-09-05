@@ -24,6 +24,6 @@
 #include "Layers/layer_alpha_replace_face.h"
 #include "Layers/layer_alpha_replace_chanel.h"
 
-#include "Layers\layer_paint.h"
+#include "Layers/layer_paint.h"
 
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "Layers\layer_file.h"
+#include "Layers/layer_file.h"
 #include "ofxCollageViewer.h"
 
 class Layer_file_aiCollage : public Layer_file
